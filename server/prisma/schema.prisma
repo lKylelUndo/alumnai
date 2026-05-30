@@ -7,13 +7,210 @@ datasource db {
   provider = "postgresql"
 }
 
+// USER SCHEMA
+
+enum RoleType {
+  ALUMNI
+  STUDENT
+  DEAN
+}
+
 model User {
-  id                String   @id @default(uuid())
-  email             String?  @unique
-  fullName          String?
+  id String @id @default(uuid())
+
+  email             String? @unique
   password          String
   student_id_number String
-  isEmailVerified   Boolean  @default(false)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+
+  isStudentVerified Boolean  @default(false)
+  role              RoleType @default(STUDENT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tokens  Token[]
+  profile Profile?
+
+  sentCollaborations     Collaboration[] @relation("CollaborationFrom")
+  receivedCollaborations Collaboration[] @relation("CollaborationTo")
+
+  sentMentorships     Mentorship[] @relation("MentorshipFrom")
+  receivedMentorships Mentorship[] @relation("MentorshipTo")
+
+  sentRecognitions     Recogntion[] @relation("RecognitionFrom")
+  receivedRecognitions Recogntion[] @relation("RecognitionTo")
+
+  messages Message[]
+}
+
+// PROFILE SCHEMA
+
+model Profile {
+  id String @id @default(uuid())
+
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  profilePicture String?
+  yearLevel      String?
+  fullName       String?
+
+  work_field       String?
+  socialLinks      Json?
+  companyName      String?
+  current_position String?
+  certifications   Json?
+
+  skills Skill[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// SKILL SCHEMA
+
+enum SkillType {
+  SOFT_SKILL
+  HARD_SKILL
+}
+
+model Skill {
+  id String @id @default(uuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  type        SkillType
+  name        String
+  level       Float?
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// TOKEN SCHEMA
+
+enum TokenType {
+  REFRESH
+  RESET_PASSWORD
+}
+
+model Token {
+  id   String    @id @default(uuid())
+  type TokenType
+
+  token      String    @unique
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  consumedAt DateTime?
+  revokedAt  DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// COLLABORATION SCHEMA
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+model Collaboration {
+  id String @id @default(uuid())
+
+  fromAlumniId String
+  toStudentId  String
+
+  fromAlumni User @relation("CollaborationFrom", fields: [fromAlumniId], references: [id])
+  toStudent  User @relation("CollaborationTo", fields: [toStudentId], references: [id])
+
+  message_details String
+  status          Status
+
+  conversation Conversation?
+
+  conversationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  userId String?
+}
+
+// MENTORSHIP SCHEMA
+
+model Mentorship {
+  id String @id @default(uuid())
+
+  fromStudentId String
+  toAlumniId    String
+
+  fromStudent User @relation("MentorshipFrom", fields: [fromStudentId], references: [id])
+  toAlumni    User @relation("MentorshipTo", fields: [toAlumniId], references: [id])
+
+  message_details String
+  status          Status
+
+  conversation Conversation?
+
+  conversationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// RECOGNITION SCHEMA
+
+model Recogntion {
+  id String @id @default(uuid())
+
+  fromStudentId String
+  toAlumniId    String
+
+  fromStudent User @relation("RecognitionFrom", fields: [fromStudentId], references: [id])
+  toAlumni    User @relation("RecognitionTo", fields: [toAlumniId], references: [id])
+
+  message String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// CONVERSATION SCHEMA
+
+enum ConversationType {
+  COLLABORATION
+  MENTORSHIP
+}
+
+model Conversation {
+  id String @id @default(uuid())
+
+  type ConversationType
+
+  mentorshipId    String @unique
+  collaborationId String @unique
+
+  mentorship    Mentorship    @relation(fields: [mentorshipId], references: [id])
+  collaboration Collaboration @relation(fields: [collaborationId], references: [id])
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+}
+
+// MESSAGE SCHEMA
+
+model Message {
+  id String @id @default(uuid())
+
+  conversationId String
+  senderId       String
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  sender       User         @relation(fields: [senderId], references: [id])
+
+  content   String
+  createdAt DateTime @default(now())
 }
