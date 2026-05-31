@@ -1,6 +1,23 @@
+"use client"
 import { Button } from "@/components/ui/button"
+import { useEffect } from "react"
+import { io } from "socket.io-client"
 
 export default function Page() {
+  useEffect(() => {
+    const socket = io("http://localhost:8000")
+
+    socket.on("connect", () => {
+      console.log("Connected", socket.id)
+
+      socket.emit("request", "Test Chat")
+    })
+
+    return () => {
+      socket.disconnect()
+    }
+  }, [])
+
   return (
     <div className="flex min-h-svh p-6">
       <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
