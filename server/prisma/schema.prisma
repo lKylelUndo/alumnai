@@ -22,7 +22,7 @@ model User {
   password          String
   student_id_number String
 
-  isStudentVerified Boolean  @default(false)
+  isAccountVerified Boolean  @default(false)
   role              RoleType @default(STUDENT)
 
   createdAt DateTime @default(now())
