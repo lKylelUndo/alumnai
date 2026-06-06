@@ -1,6 +1,7 @@
 import { decryptPassword, encryptPassword } from "@/lib/bcrypt";
 import { LoginInputTypes, SignupInputTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
+import { signAccessToken, signRefreshToken, TokenExpiry } from "@/lib/jwt";
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -43,16 +44,22 @@ export class AuthService {
 
   public login = async (data: LoginInputTypes) => {
     try {
-      const account = await this.userRepository.findByEmail(data.email);
+      const user = await this.userRepository.findByEmail(data.email);
 
-      if (!account)
-        return { status: "error", code: 400, message: "This account is not yet signed up" };
+      if (!user)
+        return { status: "error", code: 400, message: "This user is not yet signed up" };
 
-      if (!account?.isAccountVerified)
+      if (!user?.isAccountVerified)
         return { status: "error", code: 400, message: "This account is not yet verified" };
 
-      if (await decryptPassword(data.password, account.password) === false)
+      if (await decryptPassword(data.password, user.password) === false)
         return { status: "error", code: 400, message: "Password incorrect" };
+
+      console.log("account", user)
+
+      // Generate Tokens
+      const accessToken = signAccessToken(user.id, user.email, user.role);
+      const refreshToken = signRefreshToken(user.id, user.email, user.role);
 
       return { status: "success", code: 200, message: "login from services" };
     } catch (error) {
