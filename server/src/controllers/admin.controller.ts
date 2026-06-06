@@ -9,6 +9,8 @@ class AdminController {
     const response = await this.adminService.verify(id);
     return res.status(response.code).json(response);
   };
+
+  public suspendUser = async () => {};
 }
 
 export default new AdminController();

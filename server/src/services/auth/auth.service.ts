@@ -1,38 +1,67 @@
-import { AuthRepository } from "@/repositories/auth.repository";
-import { SignupInputTypes } from "@/schema/auth/signup.schema";
-import { encryptPassword } from "@/lib/bcrypt";
+import { decryptPassword, encryptPassword } from "@/lib/bcrypt";
+import { LoginInputTypes, SignupInputTypes } from "@/schema/auth";
+import { UserRepository } from "@/repositories/user.repository";
 
 export class AuthService {
-  private authRepository = new AuthRepository();
+  private userRepository = new UserRepository();
 
   public signup = async (data: SignupInputTypes) => {
-    data.password = await encryptPassword(data.password);
-    const isEmailExisted = await this.authRepository.findByEmail(data.email);
+    try {
+      data.password = await encryptPassword(data.password);
+      const isEmailExisted = await this.userRepository.findByEmail(data.email);
 
-    if (isEmailExisted) 
+      if (isEmailExisted)
+        return {
+          message: "The email used for this account is already pending for approval.",
+          status: "error",
+          code: 400,
+        };
+
+      const response = await this.userRepository.signup(data);
+
+      if (Object.keys(response).length === 0)
+        return {
+          message: "Error occur during signup",
+          status: "error",
+          code: 400,
+        };
+
       return {
-        message: "The email used for this account is already pending for approval.",
-        status: "error",
-        code: 400,
+        message: "Successfully signup - wait for the approval",
+        status: "success",
+        code: 201,
       };
-    
-    const response = await this.authRepository.signup(data);
-
-    if (Object.keys(response).length === 0)
+    } catch (error) {
+      console.error("AuthSignUpService Error: ", error);
       return {
-        message: "Error occur during signup",
+        code: 500,
         status: "error",
-        code: 400,
+        message: "Unable to signup an account",
       };
-
-    return {
-      message: "Successfully signup - wait for the approval",
-      status: "success",
-      code: 201,
-    };
+    }
   };
 
-  public login = async () => {
-    return { message: "login from services" };
+  public login = async (data: LoginInputTypes) => {
+    try {
+      const account = await this.userRepository.findByEmail(data.email);
+
+      if (!account)
+        return { status: "error", code: 400, message: "This account is not yet signed up" };
+
+      if (!account?.isAccountVerified)
+        return { status: "error", code: 400, message: "This account is not yet verified" };
+
+      if (await decryptPassword(data.password, account.password) === false)
+        return { status: "error", code: 400, message: "Password incorrect" };
+
+      return { status: "success", code: 200, message: "login from services" };
+    } catch (error) {
+      console.error("AuthLoginService Error: ", error);
+      return {
+        code: 500,
+        status: "error",
+        message: "Unable to login an account",
+      };
+    }
   };
 }

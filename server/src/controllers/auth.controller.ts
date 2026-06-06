@@ -12,8 +12,8 @@ class AuthController {
 
   public login = async (req: Request, res: Response) => {
     const { email, password } = req.body ?? {};
-
-    res.json("login");
+    const response = await this.authService.login({email, password});
+    return res.status(response.code).json(response);
   };
 
   public logout = async (req: Request, res: Response) => {
