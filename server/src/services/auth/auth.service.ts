@@ -2,9 +2,11 @@ import { decryptPassword, encryptPassword } from "@/lib/bcrypt";
 import { LoginInputTypes, SignupInputTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
 import { signAccessToken, signRefreshToken, TokenExpiry } from "@/lib/jwt";
+import { TokenRepository } from "@/repositories/token.repository";
 
 export class AuthService {
   private userRepository = new UserRepository();
+  private tokenRepository = new TokenRepository();
 
   public signup = async (data: SignupInputTypes) => {
     try {
@@ -55,20 +57,31 @@ export class AuthService {
       if (await decryptPassword(data.password, user.password) === false)
         return { status: "error", code: 400, message: "Password incorrect" };
 
-      console.log("account", user)
-
       // Generate Tokens
       const accessToken = signAccessToken(user.id, user.email, user.role);
       const refreshToken = signRefreshToken(user.id, user.email, user.role);
 
-      return { status: "success", code: 200, message: "login from services" };
+      // Save refresh token to DB
+      await this.tokenRepository.storeRefreshToken(user.id, refreshToken, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
+
+      return {
+        status: "success", 
+        code: 200, 
+        message: "Login successfully",
+        data: {
+          tokens: {
+            accessToken,
+            refreshToken,
+            accessTokenExpiresIn: TokenExpiry.ACCESS_TOKEN_EXPIRES,
+            refreshTokenExpiresIn: TokenExpiry.REFRESH_TOKEN_EXPIRES
+          },
+          user
+        }
+      };
+
     } catch (error) {
       console.error("AuthLoginService Error: ", error);
-      return {
-        code: 500,
-        status: "error",
-        message: "Unable to login an account",
-      };
+      return { code: 500, status: "error", message: "Unable to login an account" };
     }
   };
 }
