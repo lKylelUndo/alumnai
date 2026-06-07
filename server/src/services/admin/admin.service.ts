@@ -1,4 +1,7 @@
+import { ENV } from "@/config/env";
 import { AdminRepository } from "@/repositories/admin.repository";
+import { renderTemplate } from "@/utils/template";
+import { sendEmail } from "@/services/mail/mailer";
 
 export class AdminService {
   private adminRepository = new AdminRepository();
@@ -20,6 +23,22 @@ export class AdminService {
         status: "error",
         code: 400,
       };
+
+    // Generate a url for back to login
+    const backToLoginURL = `${ENV.FRONTEND_URL}/login`; 
+
+    // Formal email for official verified 
+    const html = renderTemplate("verified-email.html", {
+      studentIdNumber: response.student_id_number,
+      backToLoginURL,
+    })
+
+     // Send Email Verification
+    await sendEmail({
+      to: response.email ?? "",
+      subject: "You are now a verified user",
+      html,
+    });
 
     return {
       message: `Successfully verify a user - Student ID Number: ${response.student_id_number}`,
