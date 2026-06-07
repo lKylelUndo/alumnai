@@ -8,13 +8,20 @@ class AuthController {
 
   private setAuthCookies = async (res: Response, tokens: { accessToken: string, refreshToken: string}) => {
     const isProduction = ENV.NODE_ENV === "production";
-    const domain = isProduction ? "" : undefined;
+    const domain = isProduction ? "/" : undefined;
 
     res.cookie("accessToken", tokens.accessToken, {
       httpOnly: true,
       secure: isProduction, // right now its false cuz its development era
       sameSite: isProduction ? "none" : "lax",
       maxAge: ms(15, "minutes")
+    })
+
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      secure: isProduction, // right now its false cuz its development era
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: ms(7, "days")
     })
   }
 
@@ -35,7 +42,13 @@ class AuthController {
   };
 
   public logout = async (req: Request, res: Response) => {
-    res.json("logout");
+    const isProduction = ENV.NODE_ENV === "production";
+    const domain = isProduction ? ".cloomero.cloud" : undefined;
+
+    res.clearCookie("accessToken", { domain });
+    res.clearCookie("refreshToken", { domain });
+
+    return res.status(200).json({ code: 200, status: "success", message: "Logged out successfully" });
   };
 }
 
