@@ -1,3 +1,5 @@
+"use client"
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -22,7 +24,7 @@ const formSchema = z
     path: ["confirmNewPassword"],
   })
 
-const ForgetPasswordForm = ({ token }: { token: string }) => {
+const ForgetPasswordForm = ({ token }: { token: string}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
