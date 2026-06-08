@@ -27,7 +27,7 @@ export class AdminService {
     // Generate a url for back to login
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`; 
 
-    // Formal email for official verified 
+    // Format email for official verified 
     const html = renderTemplate("verified-email.html", {
       studentIdNumber: response.student_id_number,
       backToLoginURL,
