@@ -3,24 +3,13 @@ import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-
 
 const formSchema = z
   .object({
+    token: z.string(),
     newPassword: z
       .string()
       .min(8, "Password must be at least 8 characters.")
@@ -33,10 +22,11 @@ const formSchema = z
     path: ["confirmNewPassword"],
   })
 
-const ForgetPasswordForm = () => {
+const ForgetPasswordForm = ({ token }: { token: string }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      token: token || "",
       newPassword: "",
       confirmNewPassword: "",
     },
@@ -44,7 +34,7 @@ const ForgetPasswordForm = () => {
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     // Do something with the form values.
-    console.log(data)
+    console.log("submit", data)
   }
 
   return (
