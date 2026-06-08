@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import routes from "@/routes/index"
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { ENV } from '@/config/env';
@@ -26,7 +27,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // --- Routes Folder Prepared ---
-// app.use('/api', routes);
+app.use('/api', routes);
 
 // --- 404 Handler ---
 app.use((req: Request, res: Response) => {
