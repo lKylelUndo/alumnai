@@ -21,7 +21,6 @@ function buildTransporter(): Transporter {
   return nodemailer.createTransport({
     host: ENV.SMTP.HOST,
     port: Number(ENV.SMTP.PORT),
-    secure: ENV.SMTP.SECURE === true,
     auth: {
       user: ENV.SMTP.USER,
       pass: ENV.SMTP.PASS,
