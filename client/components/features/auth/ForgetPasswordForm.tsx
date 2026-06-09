@@ -24,7 +24,7 @@ const formSchema = z
     path: ["confirmNewPassword"],
   })
 
-const ForgetPasswordForm = ({ token }: { token: string}) => {
+const ResetPasswordForm = ({ token }: { token: string}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -105,4 +105,4 @@ const ForgetPasswordForm = ({ token }: { token: string}) => {
   )
 }
 
-export default ForgetPasswordForm
+export default ResetPasswordForm

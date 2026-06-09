@@ -4,6 +4,10 @@ import { UserRepository } from "@/repositories/user.repository";
 import { signAccessToken, signRefreshToken, TokenExpiry } from "@/lib/jwt";
 import { TokenRepository } from "@/repositories/token.repository";
 import { ForgetPasswordRequestInputTypes } from "@/schema/auth/forget.password.request";
+import { generateResetPasswordToken, hashResetPasswordToken } from "@/utils/crypto";
+import { ENV } from "@/config/env";
+import { renderTemplate } from "@/utils/template";
+import { sendEmail } from "../mail/mailer";
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -88,12 +92,32 @@ export class AuthService {
 
   public forgetPasswordRequest = async (data: ForgetPasswordRequestInputTypes) => {
     try {
-      const isEmailExisted = await this.userRepository.findByEmail(data.email)
-      if (!isEmailExisted)
+      const isAccountExisted = await this.userRepository.findByEmail(data.email)
+      if (!isAccountExisted)
         return {message: "This email is not yet registered or verified", status: "error", code: 400};
       
+
+      // Generate token using crypto node
+      const rawResetPasswordToken = generateResetPasswordToken();
+      const hashedResetPasswordToken = hashResetPasswordToken(rawResetPasswordToken);
+ 
+      await this.tokenRepository.storeResetPasswordToken(isAccountExisted.id, hashedResetPasswordToken, new Date(Date.now() + 10 * 60 * 1000))
       
-      console.log("s", isEmailExisted);
+      // Generate a url for reset password link
+      const resetPasswordURL = `${ENV.FRONTEND_URL}/reset-password/${rawResetPasswordToken}`;
+
+      // Format email for official verified 
+      const html = renderTemplate("reset-password.html", {
+        resetPasswordURL,
+      })
+
+      // Send Email Verification
+      await sendEmail({
+        to: isAccountExisted.email ?? "",
+        subject: "Reset password link",
+        html,
+      });
+
       return { 
         message: "Successfully request a password reset link", 
         status: "success", 

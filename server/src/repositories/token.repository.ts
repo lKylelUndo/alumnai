@@ -12,4 +12,15 @@ export class TokenRepository {
             }
         })
     }
+
+    async storeResetPasswordToken(userId: string, token: string, expiresAt: string | Date) {
+         return prisma.token.create({
+            data: {
+                userId,
+                token,
+                expiresAt,
+                type: TokenType.RESET_PASSWORD
+            }
+        })
+    }
 }
