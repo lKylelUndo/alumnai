@@ -1,5 +1,5 @@
 import { decryptPassword, encryptPassword } from "@/lib/bcrypt";
-import { LoginInputTypes, SignupInputTypes, VerifyResetPasswordTokenTypes } from "@/schema/auth";
+import { LoginInputTypes, ResetPasswordInputTypes, SignupInputTypes, VerifyResetPasswordTokenTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
 import { signAccessToken, signRefreshToken, TokenExpiry } from "@/lib/jwt";
 import { TokenRepository } from "@/repositories/token.repository";
@@ -129,6 +129,41 @@ export class AuthService {
     }
   }
 
+  public resetPassword = async (data: ResetPasswordInputTypes) => {
+    try {
+      const hashedToken = hashResetPasswordToken(data.token);
+      const token = await this.tokenRepository.findToken(hashedToken);
+
+      if (!token)
+        return { message: "Invalid or expired token", status: "error", code: 400 };
+
+      const user = await this.userRepository.findById(data.userId);
+
+      if (!user) 
+        return {message: "User not found", status: "error", code: 400 }
+
+      const hashedPassword = await encryptPassword(data.newPassword);
+
+      // Update the password
+      await this.userRepository.resetPassword(user.id, hashedPassword);
+
+      // Consume the token for this reset password
+      await this.tokenRepository.consumeToken(hashedToken);
+
+      // revoke all other remaining reset tokens for this user
+      await this.tokenRepository.revokeAllResetTokens(token.userId, hashedToken);
+
+      return {
+        message: "Successfully reset password",
+        status: "success",
+        code: 200
+      }
+    } catch (error) {
+      console.error("ResetPasswordTokenService", error);
+      return { code: 500, status: "error", message: "Unable to reset password" };
+    }
+  }
+
   public verifyResetPasswordToken = async (data: VerifyResetPasswordTokenTypes) => {
     try {
       const hashedToken = hashResetPasswordToken(data.token)
@@ -144,7 +179,7 @@ export class AuthService {
       }
     } catch (error) {
       console.error("VerifyResetPasswordTokenService", error);
-       return { code: 500, status: "error", message: "Unable to verify reset password token if valid" };
+      return { code: 500, status: "error", message: "Unable to verify reset password token if valid" };
     }
   }
 }

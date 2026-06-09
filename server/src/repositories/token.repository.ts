@@ -35,4 +35,24 @@ export class TokenRepository {
             }
         })
     }
+
+    async consumeToken(token: string) {
+        return await prisma.token.update({
+            where: { token },
+            data: { consumedAt: new Date() }
+        })
+    }
+
+    async revokeAllResetTokens(userId: string, exceptToken?: string) {
+        return prisma.token.updateMany({
+            where: {
+                userId,
+                type: TokenType.RESET_PASSWORD,
+                consumedAt: null,
+                revokedAt: null,
+                token: { not: exceptToken } // skip the one we just consumed
+            },
+            data: { revokedAt: new Date() }
+        })
+    }
 }
