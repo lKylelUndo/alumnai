@@ -17,20 +17,14 @@ const formSchema = z
       .min(8, "Password must be at least 8 characters.")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[0-9]/, "Password must contain at least one number"),
-    confirmNewPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: "Passwords don't match",
-    path: ["confirmNewPassword"],
   })
 
-const ForgetPasswordForm = ({ token }: { token: string}) => {
+const ResetPasswordForm = ({ token }: { token: string}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       token: token || "",
       newPassword: "",
-      confirmNewPassword: "",
     },
   })
 
@@ -68,26 +62,6 @@ const ForgetPasswordForm = ({ token }: { token: string}) => {
                 </Field>
               )}
             />
-            <Controller
-              name="confirmNewPassword"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-description">
-                    Confirm New Password
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-rhf-demo-description"
-                    aria-invalid={fieldState.invalid}
-                    type="password"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
           </FieldGroup>
         </form>
       </CardContent>
@@ -105,4 +79,4 @@ const ForgetPasswordForm = ({ token }: { token: string}) => {
   )
 }
 
-export default ForgetPasswordForm
+export default ResetPasswordForm

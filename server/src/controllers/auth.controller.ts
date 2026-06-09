@@ -50,6 +50,24 @@ class AuthController {
 
     return res.status(200).json({ code: 200, status: "success", message: "Logged out successfully" });
   };
+
+  public forgetPassword = async (req: Request, res: Response) => {
+    const { email } = req.body ?? {};
+    const response = await this.authService.forgetPasswordRequest({email});
+    return res.status(response.code).json(response);
+  }
+
+  public resetPassword = async (req: Request, res: Response) => {
+    const { newPassword, token, userId } = req.body ?? {};
+    const response = await this.authService.resetPassword({newPassword, token, userId})
+    return res.status(response.code).json(response);
+  }
+
+  public verifyResetPasswordToken = async (req: Request, res: Response) => {
+    const { token } = req.body ?? {};
+    const response = await this.authService.verifyResetPasswordToken({token})
+    return res.status(response.code).json(response);
+  }
 }
 
 export default new AuthController();
