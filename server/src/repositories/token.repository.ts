@@ -23,4 +23,16 @@ export class TokenRepository {
             }
         })
     }
+
+    async findToken(token: string) {
+        return prisma.token.findFirst({
+            where: {
+                token,
+                type: TokenType.RESET_PASSWORD,
+                expiresAt:   { gt: new Date() },   //  6:10 pm > 6:15 pm dapat less than sa new time huhu
+                consumedAt:  null,                 // not already used
+                revokedAt:   null,                 // not revoked
+            }
+        })
+    }
 }

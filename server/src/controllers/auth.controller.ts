@@ -60,6 +60,12 @@ class AuthController {
   public resetPassword = async (req: Request, res: Response) => {
     const { newPassword, token } = req.body ?? {};
   }
+
+  public verifyResetPasswordToken = async (req: Request, res: Response) => {
+    const { token } = req.body ?? {};
+    const response = await this.authService.verifyResetPasswordToken({token})
+    return res.status(response.code).json(response);
+  }
 }
 
 export default new AuthController();

@@ -1,5 +1,5 @@
 import { decryptPassword, encryptPassword } from "@/lib/bcrypt";
-import { LoginInputTypes, SignupInputTypes } from "@/schema/auth";
+import { LoginInputTypes, SignupInputTypes, VerifyResetPasswordTokenTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
 import { signAccessToken, signRefreshToken, TokenExpiry } from "@/lib/jwt";
 import { TokenRepository } from "@/repositories/token.repository";
@@ -126,6 +126,22 @@ export class AuthService {
     } catch (error) {
       console.error("AuthForgetPasswordRequestService Error: ", error);
       return { code: 500, status: "error", message: "Unable to request reset password link" };
+    }
+  }
+
+  public verifyResetPasswordToken = async (data: VerifyResetPasswordTokenTypes) => {
+    try {
+      const hashedToken = hashResetPasswordToken(data.token)
+      const token = await this.tokenRepository.findToken(hashedToken)
+      console.log("tokzz",token);
+      return {
+        message: "Successfully verified token",
+        status: "success",
+        code: 200
+      }
+    } catch (error) {
+      console.error("VerifyResetPasswordTokenService", error);
+       return { code: 500, status: "error", message: "Unable to verify reset password token if valid" };
     }
   }
 }
