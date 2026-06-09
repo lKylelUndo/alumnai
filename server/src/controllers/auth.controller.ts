@@ -50,6 +50,16 @@ class AuthController {
 
     return res.status(200).json({ code: 200, status: "success", message: "Logged out successfully" });
   };
+
+  public forgetPassword = async (req: Request, res: Response) => {
+    const { email } = req.body ?? {};
+    const response = await this.authService.forgetPasswordRequest({email});
+    return res.status(response.code).json(response);
+  }
+
+  public resetPassword = async (req: Request, res: Response) => {
+    const { newPassword, token } = req.body ?? {};
+  }
 }
 
 export default new AuthController();

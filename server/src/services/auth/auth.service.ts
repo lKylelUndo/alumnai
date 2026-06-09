@@ -3,6 +3,7 @@ import { LoginInputTypes, SignupInputTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
 import { signAccessToken, signRefreshToken, TokenExpiry } from "@/lib/jwt";
 import { TokenRepository } from "@/repositories/token.repository";
+import { ForgetPasswordRequestInputTypes } from "@/schema/auth/forget.password.request";
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -84,4 +85,23 @@ export class AuthService {
       return { code: 500, status: "error", message: "Unable to login an account" };
     }
   };
+
+  public forgetPasswordRequest = async (data: ForgetPasswordRequestInputTypes) => {
+    try {
+      const isEmailExisted = await this.userRepository.findByEmail(data.email)
+      if (!isEmailExisted)
+        return {message: "This email is not yet registered or verified", status: "error", code: 400};
+      
+      
+      console.log("s", isEmailExisted);
+      return { 
+        message: "Successfully request a password reset link", 
+        status: "success", 
+        code: 201 
+      }
+    } catch (error) {
+      console.error("AuthForgetPasswordRequestService Error: ", error);
+      return { code: 500, status: "error", message: "Unable to request reset password link" };
+    }
+  }
 }
