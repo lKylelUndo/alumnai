@@ -133,7 +133,10 @@ export class AuthService {
     try {
       const hashedToken = hashResetPasswordToken(data.token)
       const token = await this.tokenRepository.findToken(hashedToken)
-      console.log("tokzz",token);
+
+      if (!token)
+        return { message: "Invalid or expired reset password token", status: "error", code: 400 };
+      
       return {
         message: "Successfully verified token",
         status: "success",

@@ -15,6 +15,6 @@ router.post("/v1/forget-password", validateSchema(forgetPasswordRequestSchema), 
 
 router.post("/v1/reset-password", validateSchema(resetPasswordSchema), authController.resetPassword);
 
-router.post("/v1/verify-reset-token", validateSchema(verifyResetPasswordTokenSchema), authController.verifyResetPasswordToken)
+router.post("/v1/verify-reset-password-token", validateSchema(verifyResetPasswordTokenSchema), authController.verifyResetPasswordToken)
 
 export default router;

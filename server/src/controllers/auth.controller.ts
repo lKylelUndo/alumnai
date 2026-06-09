@@ -63,6 +63,7 @@ class AuthController {
 
   public verifyResetPasswordToken = async (req: Request, res: Response) => {
     const { token } = req.body ?? {};
+    console.log("tz", token);
     const response = await this.authService.verifyResetPasswordToken({token})
     return res.status(response.code).json(response);
   }
