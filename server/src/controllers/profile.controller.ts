@@ -9,7 +9,9 @@ class ProfileController {
     }
 
     public viewProfile = async (req: Request, res: Response) => {
-
+        const { id } = req.body ?? {};
+        const response = await this.profileService.viewProfile(id);
+        return res.status(response.code).json(response);
     }
 
     public allProfiles = async (req: Request, res: Response) => {

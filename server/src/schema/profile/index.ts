@@ -1,0 +1,1 @@
+export { viewProfileSchema } from "@/schema/profile/view-profile";
