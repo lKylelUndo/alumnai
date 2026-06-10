@@ -1,0 +1,22 @@
+import { ProfileService } from "@/services/profile/profile.service";
+import type { Request, Response } from "express";
+
+class ProfileController {
+    private profileService = new ProfileService();
+
+    public updateProfile = async (req: Request, res: Response) => {
+        return res.json("Test");
+    }
+
+    public viewProfile = async (req: Request, res: Response) => {
+
+    }
+
+    public allProfiles = async (req: Request, res: Response) => {
+        const response = await this.profileService.allProfiles();
+        return res.status(response.code).json(response);
+    }
+ 
+}
+
+export default new ProfileController();
