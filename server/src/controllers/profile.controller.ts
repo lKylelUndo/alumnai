@@ -5,6 +5,7 @@ class ProfileController {
     private profileService = new ProfileService();
 
     public updateProfile = async (req: Request, res: Response) => {
+        const { profilePicture, yearLevel, fullName, work_field, socialLinks, companyName, current_position, certifications } = req.body ?? {}
         return res.json("Test");
     }
 
