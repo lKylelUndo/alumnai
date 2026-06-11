@@ -12,6 +12,6 @@ export const updateProfileSchema = z.object({
     current_position: z.string().optional(),
     certifications: z.array(z.string()).optional()
   }),
-});
+}).refine((data) => Object.keys(data.body).length > 1, { message: "At least one field is required to update" });
 
 export type UpdateProfileInputTypes = z.infer<typeof updateProfileSchema>["body"];

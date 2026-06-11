@@ -1,4 +1,5 @@
 import { ProfileRepository } from "@/repositories/profile.repository";
+import { UpdateProfileInputTypes } from "@/schema/profile";
 
 export class ProfileService {
   private profileRepository = new ProfileRepository();
@@ -22,7 +23,19 @@ export class ProfileService {
     }
   };
 
-  public updateProfile = async () => {};
+  public updateProfile = async (data: UpdateProfileInputTypes) => {
+    try {
+      const profile = await this.profileRepository.update(data)
+
+      if (!profile)
+        return { status: "error", code: 400, message: "Failed update profile" };
+
+      return { status: "success", code: 200, message: "Profile updated successfully" };
+    } catch (error) {
+      console.error("UpdateProfileService", error);
+      return { status: "error", code: 500, message: "Unable to update profile"}
+    }
+  };
 
   public allProfiles = async () => {
     try {

@@ -5,8 +5,9 @@ class ProfileController {
     private profileService = new ProfileService();
 
     public updateProfile = async (req: Request, res: Response) => {
-        const { profilePicture, yearLevel, fullName, work_field, socialLinks, companyName, current_position, certifications } = req.body ?? {}
-        return res.json("Test");
+        const { userId, profilePicture, yearLevel, fullName, work_field, socialLinks, companyName, current_position, certifications } = req.body ?? {}
+        const response = await this.profileService.updateProfile({ userId, profilePicture, yearLevel, fullName, work_field, socialLinks, companyName, current_position, certifications })
+        return res.status(response.code).json(response);
     }
 
     public viewProfile = async (req: Request, res: Response) => {
