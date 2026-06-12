@@ -8,5 +8,9 @@ export class SkillRepository {
     });
   }
 
-  async remove() {}
+  async remove(id: string) {
+    return await prisma.skill.delete({
+        where: { id }
+    })
+  }
 }

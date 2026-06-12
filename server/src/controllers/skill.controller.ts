@@ -11,7 +11,9 @@ class SkillController {
     }
 
     public remove = async (req: Request, res: Response) => {
-        
+        const { id } = req.body ?? {};
+        const response = await this.skillService.remove(id);
+        return res.status(response.code).json(response); 
     }
 }
 

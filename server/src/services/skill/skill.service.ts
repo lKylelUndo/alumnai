@@ -17,9 +17,13 @@ export class SkillService {
     }
   };
 
-  public remove = async () => {
+  public remove = async (id: string) => {
     try {
-        
+        const response = await this.skillRepository.remove(id);
+        if (!response)
+            return { status: "error", code: 400, message: "Unable to remove  skill" }
+
+        return { status: "success", code: 200, message: "Successfully remove skill" }
     } catch (error) {
         console.error("RemoveSkillService", error);
         return { status: "error", code: 500, message: "Unable to remove a skill on profile" };
