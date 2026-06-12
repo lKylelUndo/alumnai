@@ -10,6 +10,15 @@ export class UserRepository {
     });
   }
 
+  async findById(id: string) {
+    return await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+
   async signup(data: SignupInputTypes) {
     return await prisma.user.create({
       data: {
@@ -18,5 +27,12 @@ export class UserRepository {
         password: data.password,
       },
     });
+  }
+
+   async resetPassword(id: string, password: string) {
+    return await prisma.user.update({
+      where: { id },
+      data: { password }
+    })
   }
 }

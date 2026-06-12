@@ -3,6 +3,7 @@ import routes from "@/routes/index"
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { ENV } from '@/config/env';
+import { redis } from './lib/redis';
 
 const app = express();
 

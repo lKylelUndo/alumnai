@@ -1,1 +1,1 @@
-export { verifyUserSchema } from "@/schema/admin/verify-a-user.schema"
+export { verifyUserSchema } from "@/schema/admin/verify.a.user.schema"
