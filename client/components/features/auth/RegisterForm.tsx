@@ -1,5 +1,7 @@
 import Link from "next/link";
 import AuthCard from "./AuthCard";
+import { Field, FieldLabel, FieldSet } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export default function RegisterForm() {
   return (
@@ -7,71 +9,89 @@ export default function RegisterForm() {
       title="Create an Account"
       subtitle="Register as a student to get started"
     >
-      <form className="space-y-5">
-        
-        <div>
-          <label className="block mb-2 font-medium text-[#232C77]">
-            Student ID Number
-          </label>
+      <form
+  // onSubmit={handleSubmit(onSubmit)}
+  className="space-y-5"
+>
 
-          <input
-            type="text"
-            placeholder="2023-00001"
-            className="w-full border rounded-lg px-4 py-3"
-          />
-        </div>
+  <FieldSet>
+    <Field>
+      <FieldLabel
+        htmlFor="studentId"
+        className="text-[#1A216D]"
+      >
+        Student ID Number
+      </FieldLabel>
 
-        <div>
-          <label className="block mb-2 font-medium text-[#232C77]">
-            Email Address
-          </label>
+      <Input
+        id="studentId"
+        autoComplete="off"
+        placeholder="20230001"
+      />
+    </Field>
 
-          <input
-            type="email"
-            placeholder="youremail@email.com"
-            className="w-full border rounded-lg px-4 py-3"
-          />
-        </div>
+    <Field>
+      <FieldLabel
+        htmlFor="email"
+        className="text-[#1A216D]"
+      >
+        Email Address
+      </FieldLabel>
 
-        <div>
-          <label className="block mb-2 font-medium text-[#232C77]">
-            Password
-          </label>
+      <Input
+        id="email"
+        type="email"
+        autoComplete="off"
+        placeholder="youremail@email.com"
+      />
+    </Field>
 
-          <input
-            type="password"
-            className="w-full border rounded-lg px-4 py-3"
-          />
-        </div>
+    <Field>
+      <FieldLabel
+        htmlFor="password"
+        className="text-[#1A216D]"
+      >
+        Password
+      </FieldLabel>
 
-        <div>
-          <label className="block mb-2 font-medium text-[#232C77]">
-            Confirm Password
-          </label>
+      <Input
+        id="password"
+        type="password"
+      />
+    </Field>
 
-          <input
-            type="password"
-            className="w-full border rounded-lg px-4 py-3"
-          />
-        </div>
+    <Field>
+      <FieldLabel
+        htmlFor="confirmPassword"
+        className="text-[#1A216D]"
+      >
+        Confirm Password
+      </FieldLabel>
 
-        <button
-          type="submit"
-          className="w-full bg-[#3478E5] text-white py-3 rounded-lg font-medium"
-        >
-          Sign Up
-        </button>
-      </form>
+      <Input
+        id="confirmPassword"
+        type="password"
+      />
+    </Field>
+  </FieldSet>
 
-      <p className="text-center mt-6 text-gray-600">
-        Already have an account?{" "}
-        <Link
-          href="/login"
-          className="text-[#3478E5]"
-        >
-          Sign in here
-        </Link>
-      </p>
+  <button
+    type="submit"
+    className="w-full rounded-lg bg-[#3478E5] py-2 mt-3 text-white"
+  >
+    Sign Up
+  </button>
+
+  <p className="text-center text-sm text-gray-600">
+    Already have an account?{" "}
+    <Link
+      href="/login"
+      className="font-medium text-[#3478E5]"
+    >
+      Sign in here
+    </Link>
+  </p>
+</form>
     </AuthCard>
   );
 }

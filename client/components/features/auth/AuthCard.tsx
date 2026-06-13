@@ -36,7 +36,7 @@ export default function AuthCard({
           {title}
         </h2>
 
-        <p className="text-gray-500 mb-8">
+        <p className="text-gray-500 mb-8 text-sm">
           {subtitle}
         </p>
 
