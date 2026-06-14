@@ -1,9 +1,21 @@
 import { prisma } from "@/lib/prisma";
+import { redis } from "@/lib/redis";
 import { UpdateProfileInputTypes } from "@/schema/profile";
 
 export class ProfileRepository {
   async all() {
-    return await prisma.profile.findMany();
+    const cacheKey = "all-profiles";
+
+    // try cache first
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    // fallback to db
+    const profiles = await prisma.profile.findMany();
+
+    await redis.set(cacheKey, JSON.stringify(profiles), "PX", 1000 * 60 * 5);
+
+    return profiles;
   }
 
   async findById(userId: string) {
