@@ -37,8 +37,8 @@ model User {
   sentMentorships     Mentorship[] @relation("MentorshipFrom")
   receivedMentorships Mentorship[] @relation("MentorshipTo")
 
-  sentRecognitions     Recogntion[] @relation("RecognitionFrom")
-  receivedRecognitions Recogntion[] @relation("RecognitionTo")
+  sentRecognitions     Recognition[] @relation("RecognitionFrom")
+  receivedRecognitions Recognition[] @relation("RecognitionTo")
 
   messages Message[]
 }
@@ -162,7 +162,7 @@ model Mentorship {
 
 // RECOGNITION SCHEMA
 
-model Recogntion {
+model Recognition {
   id String @id @default(uuid())
 
   fromStudentId String
@@ -189,11 +189,11 @@ model Conversation {
 
   type ConversationType
 
-  mentorshipId    String @unique
-  collaborationId String @unique
+  mentorshipId    String? @unique
+  collaborationId String? @unique
 
-  mentorship    Mentorship    @relation(fields: [mentorshipId], references: [id])
-  collaboration Collaboration @relation(fields: [collaborationId], references: [id])
+  mentorship    Mentorship?    @relation(fields: [mentorshipId], references: [id])
+  collaboration Collaboration? @relation(fields: [collaborationId], references: [id])
 
   messages Message[]
 

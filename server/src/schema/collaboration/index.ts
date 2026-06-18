@@ -1,0 +1,1 @@
+export { viewAllCollabInviteSchema } from "@/schema/collaboration/view.collaboration.schema"
