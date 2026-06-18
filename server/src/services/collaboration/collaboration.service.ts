@@ -1,4 +1,5 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
+import { SendCollaborationInviteInputTypes } from "@/schema/collaboration";
 
 export class CollaborationService {
   private collaborationRepository = new CollaborationRepository();
@@ -29,5 +30,13 @@ export class CollaborationService {
     }
   };
 
-  public sendCollaborationInvite = async () => {};
+  public sendCollaborationInvite = async (data: SendCollaborationInviteInputTypes) => {
+    try {
+        const response = await this.collaborationRepository.send(data);
+        return { status: "success", code: 200, message: "Successfully send an invitation" };
+    } catch (error) {
+        console.error("SendCollaborationInviteService", error);
+        return { status: "error", code: 500, message: "Unable to send an invitation"}
+    }
+  };
 }

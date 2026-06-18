@@ -116,6 +116,7 @@ model Token {
 enum Status {
   ACTIVE
   INACTIVE
+  PENDING
 }
 
 model Collaboration {
@@ -132,7 +133,7 @@ model Collaboration {
 
   conversation Conversation?
 
-  conversationId String
+  conversationId String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

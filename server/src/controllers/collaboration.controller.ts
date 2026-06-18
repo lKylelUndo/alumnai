@@ -14,7 +14,10 @@ class CollaborationController {
     return res.status(response.code).json(response);
   };
 
-  public sendCollaborationInvite = async () => {};
+  public sendCollaborationInvite = async (req: Request, res: Response) => {
+    const { toStudentId, message_details } = req.body ?? {};
+    const response = await this.collaborationService.sendCollaborationInvite({ toStudentId, message_details });
+  };
 }
 
 export default new CollaborationController();
