@@ -13,7 +13,15 @@ export class CollaborationRepository {
     });
   }
 
-  async send(data: SendCollaborationInviteInputTypes) {
-    
+  async send(userId: string, data: SendCollaborationInviteInputTypes) {
+    console.log("data", data);
+    return await prisma.collaboration.create({
+      data: {
+        fromAlumniId: userId,
+        toStudentId: data.toStudentId,
+        message_details: data.message_details,
+        status: "PENDING"
+      },
+    });
   }
 }

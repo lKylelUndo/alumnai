@@ -9,14 +9,16 @@ class CollaborationController {
   public declineCollaboration = async () => {};
 
   public viewAllCollaborationInvites = async (req: Request, res: Response) => {
-    const { userId } = req.body ?? {};
+    const { userId } = req.user!;
     const response = await this.collaborationService.viewAllCollaborationInvites(userId);
     return res.status(response.code).json(response);
   };
 
   public sendCollaborationInvite = async (req: Request, res: Response) => {
+    const { userId } = req.user!;
     const { toStudentId, message_details } = req.body ?? {};
-    const response = await this.collaborationService.sendCollaborationInvite({ toStudentId, message_details });
+    const response = await this.collaborationService.sendCollaborationInvite(userId, { toStudentId, message_details });
+    return res.status(response.code).json(response);
   };
 }
 
