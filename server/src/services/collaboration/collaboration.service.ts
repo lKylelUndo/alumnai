@@ -72,4 +72,18 @@ export class CollaborationService {
         return { status: "error", code: 500, message: "Unable to send an invitation"}
     }
   };
+
+  public endCollaboration = async (collabId: string) => {
+    try {
+      const response = await this.collaborationRepository.end(collabId);
+
+      if (!response)
+        return { status: "error", code: 400, message: "Failed to end a collaboration" };
+      
+      return { status: "success", code: 200, message: "Successfully end a collaboration" };
+    } catch (error) {
+      console.error("EndCollabService", error);
+      return { status: "error", code: 500, message: "Unable to end a collaboration"}
+    }
+  }
 }
