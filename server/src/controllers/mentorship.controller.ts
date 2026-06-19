@@ -4,9 +4,17 @@ import { Request, Response } from "express";
 class MentorshipController {
   private mentorshipService = new MentorshipService();
 
-  public acceptMentorship = async (req: Request, res: Response) => {};
+  public acceptMentorship = async (req: Request, res: Response) => {
+    const { mentorshipId } = req.body ?? {};
+    const response = await this.mentorshipService.acceptMentorship(mentorshipId)
+    return res.status(response.code).json(response);
+  };
 
-  public declineMentorship = async (req: Request, res: Response) => {};
+  public declineMentorship = async (req: Request, res: Response) => {
+    const { mentorshipId } = req.body ?? {};
+    const response = await this.mentorshipService.declineMentorship(mentorshipId)
+    return res.status(response.code).json(response);
+  };
 
   public viewAllMentorshipInvites = async (req: Request, res: Response) => {
     const { userId } = req.user!;

@@ -4,13 +4,41 @@ import { SendMentorshipInviteTypes } from "@/schema/mentorship";
 export class MentorshipService {
     private mentorshipRepository = new MentorshipRepository();
 
-    public acceptMentorship = async () => {};
+    public acceptMentorship = async (mentorshipId: string) => {
+        try {
+            const response = await this.mentorshipRepository.accept(mentorshipId)
 
-    public declineMentorship = async () => {};
+            if (!response)
+                return { status: "error", code: 400, message: "Failed to accept mentorship invite" };
+
+            return { status: "success", code: 200, message: "Successfully accept a mentorship" }; 
+        } catch (error) {
+            console.error("AcceptMentorshipService", error);
+            return { status: "error", code: 500, message: "Unable to accept a mentorship" }; 
+        }
+    };
+
+    public declineMentorship = async (mentorshipId: string) => {
+        try {
+            const response = await this.mentorshipRepository.decline(mentorshipId)
+
+            if (!response)
+                return { status: "error", code: 400, message: "Failed to decline mentorship invite" };
+
+            return { status: "success", code: 200, message: "Successfully decline a mentorship invite" }; 
+        } catch (error) {
+            console.error("DeclineMentorshipService", error);
+            return { status: "error", code: 500, message: "Unable to decline a mentorship" }; 
+        }
+    };
 
     public viewAllMentorshipInvites = async (userId: string) => {
         try {
             const invites = await this.mentorshipRepository.getAllInvites(userId);
+            
+            if (Object.keys(invites).length === 0) 
+                return { status: "error", code: 400, message: "There are no mentorship invites at the moment" };
+
             return { status: "success", code: 200, invites }
         } catch (error) {
             console.error("ViewAllMentorshipInvitesService", error);
