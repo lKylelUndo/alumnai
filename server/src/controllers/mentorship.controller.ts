@@ -28,6 +28,12 @@ class MentorshipController {
     const response = await this.mentorshipService.sendMentorshipInvite(userId, { toAlumniId, message_details } );
     return res.status(response.code).json(response);
   };
+
+  public endMentorship = async (req: Request, res: Response) => {
+    const { mentorshipId } = req.body ?? {};
+    const response = await this.mentorshipService.endMentorship(mentorshipId);
+    return res.status(response.code).json(response);
+  };
 }
 
 export default new MentorshipController();

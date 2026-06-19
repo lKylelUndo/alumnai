@@ -45,4 +45,11 @@ export class CollaborationRepository {
       where: { id: collaborationId },
     });
   }
+
+  async end(collaborationId: string) {
+    return await prisma.collaboration.update({
+      where: { id: collaborationId },
+      data: { status: "INACTIVE" },
+    });
+  }
 }

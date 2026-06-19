@@ -42,4 +42,11 @@ export class MentorshipRepository {
       },
     });
   }
+
+  async end(id: string) {
+    return await prisma.mentorship.update({
+      where: { id },
+      data: { status: "INACTIVE" },
+    });
+  }
 }
