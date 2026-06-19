@@ -64,4 +64,18 @@ export class MentorshipService {
             return { status: "error", code: 500, message: "Unable to send mentorship invite" };
         }
     };
+
+    public endMentorship = async (mentorshipId: string) => {
+        try {
+            const response = await this.mentorshipRepository.end(mentorshipId);
+
+            if (!response) 
+                return { status: "error", code: 400, message: "Failed to end mentorship"};
+
+            return { status: "success", code: 200, message: "Successfully end mentorship"};
+        } catch (error) {
+            console.error("EndMentorshipService", error);
+            return { status: "error", code: 500, message: "Unable to end mentorship"}
+        }
+    }
 }
