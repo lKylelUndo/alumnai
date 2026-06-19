@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 class MentorshipController {
   public acceptMentorship = async (req: Request, res: Response) => {};
 
