@@ -32,6 +32,11 @@ export class CollaborationService {
 
   public sendCollaborationInvite = async (userId: string, data: SendCollaborationInviteInputTypes) => {
     try {
+        const alreadyInvited = await this.collaborationRepository.findInviteIfExisted(userId, data.toStudentId)
+        
+        if (alreadyInvited) 
+          return { status: "error", code: 400, message: "You already sent an invitation" };
+  
         const response = await this.collaborationRepository.send(userId, data);
 
         if (Object.keys(response).length === 0)

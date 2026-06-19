@@ -14,13 +14,21 @@ export class CollaborationRepository {
   }
 
   async send(userId: string, data: SendCollaborationInviteInputTypes) {
-    console.log("data", data);
     return await prisma.collaboration.create({
       data: {
         fromAlumniId: userId,
         toStudentId: data.toStudentId,
         message_details: data.message_details,
-        status: "PENDING"
+        status: "PENDING",
+      },
+    });
+  }
+
+  async findInviteIfExisted(fromAlumniId: string, toStudentId: string) {
+    return await prisma.collaboration.findFirst({
+      where: {
+        fromAlumniId,
+        toStudentId,
       },
     });
   }

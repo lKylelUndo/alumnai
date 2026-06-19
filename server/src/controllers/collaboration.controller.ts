@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 class CollaborationController {
   private collaborationService = new CollaborationService();
 
-  public acceptCollaboration = async () => {};
+  public acceptCollaboration = async (req: Request, res: Response) => {};
 
   public declineCollaboration = async () => {};
 
