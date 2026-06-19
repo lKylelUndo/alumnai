@@ -13,9 +13,18 @@ export class MentorshipRepository {
     });
   }
 
-  async accept(userId: string) {}
+  async accept(id: string) {
+    return await prisma.mentorship.update({
+      where: { id },
+      data: { status: "ACTIVE" },
+    });
+  }
 
-  async decline() {}
+  async decline(id: string) {
+    return await prisma.mentorship.delete({
+      where: { id },
+    });
+  }
 
   async findIfInviteExisted(fromStudentId: string, toAlumniId: string) {
     return await prisma.mentorship.findFirst({
