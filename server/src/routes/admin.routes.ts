@@ -5,6 +5,7 @@ import { Router } from "express";
 
 const router = Router();
 
+router.get("/v1/get-unverified-users", adminController.getUnverifiedUsers)
 router.post("/v1/verify-a-user", validateSchema(verifyUserSchema), adminController.verifyUser)
 
 export default router;
