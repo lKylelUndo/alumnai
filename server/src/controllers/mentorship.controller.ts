@@ -8,12 +8,17 @@ class MentorshipController {
 
   public declineMentorship = async (req: Request, res: Response) => {};
 
-  public viewAllMentorshipInvites = async (req: Request, res: Response) => {};
+  public viewAllMentorshipInvites = async (req: Request, res: Response) => {
+    const { userId } = req.user!;
+    const response = await this.mentorshipService.viewAllMentorshipInvites(userId);
+    return res.status(response.code).json(response);
+  };
 
   public sendMentorshipInvite = async (req: Request, res: Response) => {
     const { userId } = req.user!;
     const { toAlumniId, message_details } = req.body ?? {};
     const response = await this.mentorshipService.sendMentorshipInvite(userId, { toAlumniId, message_details } );
+    return res.status(response.code).json(response);
   };
 }
 

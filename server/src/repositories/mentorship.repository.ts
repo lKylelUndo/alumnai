@@ -22,4 +22,15 @@ export class MentorshipRepository {
       where: { fromStudentId, toAlumniId, status: "PENDING" },
     });
   }
+
+  async getAllInvites(id: string) {
+    return await prisma.mentorship.findMany({
+      where: { toAlumniId: id },
+      include: {
+        fromStudent: {
+          select: { profile: true, id: true, email: true },
+        },
+      },
+    });
+  }
 }

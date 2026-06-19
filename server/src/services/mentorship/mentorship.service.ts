@@ -8,7 +8,15 @@ export class MentorshipService {
 
     public declineMentorship = async () => {};
 
-    public viewAllMentorshipInvites = async () => {};
+    public viewAllMentorshipInvites = async (userId: string) => {
+        try {
+            const invites = await this.mentorshipRepository.getAllInvites(userId);
+            return { status: "success", code: 200, invites }
+        } catch (error) {
+            console.error("ViewAllMentorshipInvitesService", error);
+            return { status: "error", code: 500, message: "Unable to view all mentorship invites" }
+        }
+    };
 
     public sendMentorshipInvite = async (userId: string, data: SendMentorshipInviteTypes) => {
         try {
