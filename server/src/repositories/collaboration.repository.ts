@@ -39,4 +39,10 @@ export class CollaborationRepository {
       data: { status: "ACTIVE" },
     });
   }
+
+  async decline(collaborationId: string) {
+    return await prisma.collaboration.delete({
+      where: { id: collaborationId },
+    });
+  }
 }

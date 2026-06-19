@@ -18,7 +18,19 @@ export class CollaborationService {
     }
   };
 
-  public declineCollaboration = async () => {};
+  public declineCollaboration = async (collaborationId: string) => {
+    try {
+      const response = await this.collaborationRepository.decline(collaborationId)
+
+      if (!response)
+        return { status: "error", code: 400, message: "Failed to decline a collaboration" };
+
+      return { status: "success", code: 200, message: "Successfully decline a collaboration" };
+    } catch (error) {
+      console.error("DeclineCollaborationService", error);
+      return { status: "error", code: 500, message: "Unable to decline a collaboration" };
+    }
+  };
 
   public viewAllCollaborationInvites = async (userId: string) => {
     try {

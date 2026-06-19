@@ -11,7 +11,11 @@ class CollaborationController {
     return res.status(response.code).json(response);
   };
 
-  public declineCollaboration = async (req: Request, res: Response) => {};
+  public declineCollaboration = async (req: Request, res: Response) => {
+    const { collaborationId } = req.body ?? {};
+    const response = await this.collaborationService.declineCollaboration(collaborationId);
+    return res.status(response.code).json(response);
+  };
 
   public viewAllCollaborationInvites = async (req: Request, res: Response) => {
     const { userId } = req.user!;
