@@ -1,4 +1,4 @@
-import { Roboto, Roboto_Slab } from "next/font/google"
+import { Roboto } from "next/font/google"
 import "@/styles/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
