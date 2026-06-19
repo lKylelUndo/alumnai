@@ -1,0 +1,25 @@
+import { prisma } from "@/lib/prisma";
+import { SendMentorshipInviteTypes } from "@/schema/mentorship";
+
+export class MentorshipRepository {
+  async send(fromStudentId: string, data: SendMentorshipInviteTypes) {
+    return await prisma.mentorship.create({
+      data: {
+        fromStudentId,
+        message_details: data.message_details,
+        toAlumniId: data.toAlumniId,
+        status: "PENDING",
+      },
+    });
+  }
+
+  async accept() {}
+
+  async decline() {}
+
+  async findIfInviteExisted(fromStudentId: string, toAlumniId: string) {
+    return await prisma.mentorship.findFirst({
+      where: { fromStudentId, toAlumniId, status: "PENDING" },
+    });
+  }
+}
