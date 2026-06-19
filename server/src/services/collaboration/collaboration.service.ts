@@ -4,7 +4,19 @@ import { SendCollaborationInviteInputTypes } from "@/schema/collaboration";
 export class CollaborationService {
   private collaborationRepository = new CollaborationRepository();
 
-  public acceptCollaboration = async () => {};
+  public acceptCollaboration = async (collaborationId: string) => {
+    try {
+      const response = await this.collaborationRepository.accept(collaborationId)
+
+      if (!response)
+        return { status: "error", code: 400, message: "Failed to accept a collaboration" };
+
+      return { status: "success", code: 200, message: "Successfully accept a collaboration" };
+    } catch (error) {
+      console.error("AcceptCollaborationService", error);
+      return { status: "error", code: 500, message: "Unable to accept a collaboration" };
+    }
+  };
 
   public declineCollaboration = async () => {};
 
