@@ -13,7 +13,7 @@ export class MentorshipRepository {
     });
   }
 
-  async accept() {}
+  async accept(userId: string) {}
 
   async decline() {}
 

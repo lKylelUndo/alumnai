@@ -11,6 +11,10 @@ export class MentorshipService {
     public viewAllMentorshipInvites = async (userId: string) => {
         try {
             const invites = await this.mentorshipRepository.getAllInvites(userId);
+            
+            if (Object.keys(invites).length === 0) 
+                return { status: "error", code: 400, message: "There are no mentorship invites at the moment" };
+
             return { status: "success", code: 200, invites }
         } catch (error) {
             console.error("ViewAllMentorshipInvitesService", error);
