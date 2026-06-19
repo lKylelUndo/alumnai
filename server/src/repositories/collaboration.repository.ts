@@ -32,4 +32,17 @@ export class CollaborationRepository {
       },
     });
   }
+
+  async accept(collaborationId: string) {
+    return await prisma.collaboration.update({
+      where: { id: collaborationId },
+      data: { status: "ACTIVE" },
+    });
+  }
+
+  async decline(collaborationId: string) {
+    return await prisma.collaboration.delete({
+      where: { id: collaborationId },
+    });
+  }
 }

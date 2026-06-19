@@ -4,9 +4,18 @@ import { Request, Response } from "express";
 class CollaborationController {
   private collaborationService = new CollaborationService();
 
-  public acceptCollaboration = async (req: Request, res: Response) => {};
+  public acceptCollaboration = async (req: Request, res: Response) => {
+    //const { userId } = req.user!
+    const { collaborationId } = req.body ?? {};
+    const response = await this.collaborationService.acceptCollaboration(collaborationId)
+    return res.status(response.code).json(response);
+  };
 
-  public declineCollaboration = async () => {};
+  public declineCollaboration = async (req: Request, res: Response) => {
+    const { collaborationId } = req.body ?? {};
+    const response = await this.collaborationService.declineCollaboration(collaborationId);
+    return res.status(response.code).json(response);
+  };
 
   public viewAllCollaborationInvites = async (req: Request, res: Response) => {
     const { userId } = req.user!;
