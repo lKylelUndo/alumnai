@@ -1,6 +1,5 @@
 import { Roboto } from "next/font/google"
 import "@/styles/globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
 
 const roboto = Roboto({
@@ -20,7 +19,7 @@ export default function RootLayout({
       className={cn("antialiased", roboto.className)}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        {children}
       </body>
     </html>
   )
