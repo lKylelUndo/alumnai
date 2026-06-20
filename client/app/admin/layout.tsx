@@ -1,13 +1,15 @@
-import AdminHeader from "@/components/common/AdminHeader";
+import AdminBanner from "@/components/features/admin/AdminBanner";
+import AdminHeader from "@/components/features/admin/AdminHeader";
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-        <header>
+        <header className="lg:max-w-300 md:max-w-200 mx-auto">
             <AdminHeader />
         </header>
-        <main>
-
+        <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
+            <AdminBanner />
+            {children}
         </main>
     </>
   )
