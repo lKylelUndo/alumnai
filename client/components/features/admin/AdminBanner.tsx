@@ -1,15 +1,16 @@
+import Image from "next/image"
 import AdminStatCards from "./AdminStatCards"
 
 const AdminBanner = () => {
   return (
     <section className="mt-4 lg:mt-8">
       <div className="flex items-center gap-x-4">
-        <img
-          src="/images/admindashboardicon.svg"
+        <Image
+          src="/images/admindashboardicon.png"
           alt="Admin dashboard icon"
-          width={40}
-          height={40}
-          className="h-20 w-20"
+          width={70}
+          height={70}
+       
         />
 
         <div>

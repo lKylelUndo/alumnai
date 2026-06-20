@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import VerifyStudents from "./VerifyStudents"
 import TopMentors from "./TopMentors"
 import AlumniRequest from "./AlumniRequest"
-import ManagerUsers from "./ManagerUsers"
+import UserManagement from "./UserManagement"
 import Analytics from "./Analytics"
 
 const DashboardPanel = () => {
@@ -30,7 +30,7 @@ const DashboardPanel = () => {
         </TabsContent>
 
         <TabsContent value="manage-users">
-          <ManagerUsers />
+          <UserManagement />
         </TabsContent>
 
         <TabsContent value="analytics">
