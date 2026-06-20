@@ -1,6 +1,10 @@
+import { ChartPie } from "./PieChart"
+
 const Analytics = () => {
   return (
-    <div>Analytics</div>
+    <>
+      <ChartPie />
+    </>
   )
 }
 
