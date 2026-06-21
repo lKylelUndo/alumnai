@@ -1,15 +1,15 @@
 import Image from "next/image"
+import AlumniStatCards from "./AlumniStatCards"
 
 const AlumniBanner = () => {
   return (
     <section className="mt-4 lg:mt-8">
-      <div className="flex items-center gap-x-4">
+      <div className="flex items-center gap-x-4 px-4 md:px-0">
         <Image
           src="/images/alumniicon.png"
           alt="Alumni dashboard icon"
           width={70}
           height={70}
-       
         />
 
         <div>
@@ -21,6 +21,8 @@ const AlumniBanner = () => {
           </p>
         </div>
       </div>
+
+      <AlumniStatCards />
     </section>
   )
 }
