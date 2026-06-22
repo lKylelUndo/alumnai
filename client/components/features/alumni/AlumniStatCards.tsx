@@ -1,5 +1,5 @@
-"use client"
 import { Handshake, Mail, Users, Target, Briefcase } from "lucide-react"
+
 const AlumniStatCards = () => {
   return (
     <section className="mt-6 grid grid-cols-1 gap-6 px-4 md:p-0 md:px-0 lg:grid-cols-4">
