@@ -7,6 +7,7 @@ class AIController {
   public smartSearch = async (req: Request, res: Response) => {
     const { rawSearch } = req.body ?? {};
     const response = await this.aIService.smartSearch(rawSearch);
+    return res.status(response.code).json(response);
     
   };
 
