@@ -6,6 +6,6 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/v1/parse-search-input", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), aiController.parseAlumniSearchInput)
+router.post("/v1/search-students", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), aiController.smartSearch)
 
 export default router;
