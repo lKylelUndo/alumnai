@@ -1,9 +1,13 @@
+import { AIService } from "@/services/ai/ai.service";
 import { Request, Response } from "express";
 
 class AIController {
+  private aIService = new AIService();
+
   public smartSearch = async (req: Request, res: Response) => {
     const { rawSearch } = req.body ?? {};
-    const response = 0;
+    const response = await this.aIService.smartSearch(rawSearch);
+    
   };
 
   public analyzeSkillGap = async () => {};
