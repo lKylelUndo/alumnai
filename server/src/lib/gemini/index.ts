@@ -1,6 +1,9 @@
 import { ENV } from "@/config/env";
 import { GoogleGenAI } from "@google/genai";
 
+export { extractTechnicalSkills } from "@/lib/gemini/extract.technical.skills"
+export { recommendStudent } from "@/lib/gemini/recommendStudent"
+
 export const AVAILABLE_GEMINI_MODELS = [
   "gemini-2.5-pro",
   "gemini-2.5-flash",
@@ -11,7 +14,3 @@ export const AVAILABLE_GEMINI_MODELS = [
 
 export const EMBEDDING_MODEL = "gemini-embedding-2";
 export const genAI = new GoogleGenAI({ apiKey: ENV.GEMINI_KEY });
-
-export { extractTechnicalSkills } from "@/lib/gemini/extract.technical.skills"
-
-
