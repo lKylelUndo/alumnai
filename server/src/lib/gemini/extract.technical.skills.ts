@@ -1,20 +1,9 @@
-import { ENV } from "@/config/env";
-import { GoogleGenAI } from "@google/genai";
+import { AVAILABLE_GEMINI_MODELS, genAI } from ".";
 
-const AVAILABLE_GEMINI_MODELS = [
-  "gemini-2.5-pro",
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-2.0-flash",
-  "gemini-2.0-flash-lite",
-] as const;
-
-export const EMBEDDING_MODEL = "gemini-embedding-2";
-
-export const genAI = new GoogleGenAI({ apiKey: ENV.GEMINI_KEY });
-
-export async function parseRawInput(rawSearch: string) {
+export async function extractTechnicalSkills(rawSearch: string) {
   const wordCount = rawSearch.trim().split(/\s+/).length;
+
+  console.log("ww", wordCount);
 
   // Skip AI for simple searches
   if (wordCount <= 3) {

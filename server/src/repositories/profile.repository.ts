@@ -35,4 +35,22 @@ export class ProfileRepository {
       },
     });
   }
+
+  async matchSkill(skills: string[]) {
+    return await prisma.profile.findMany({
+      where: {
+        skills: {
+          some: {
+            name: {
+              in: skills,
+            },
+          },
+        },
+      },
+      include: {
+        skills: true,
+        user: true,
+      },
+    });
+  }
 }

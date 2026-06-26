@@ -1,12 +1,41 @@
-import { parseRawInput } from "@/lib/gemini";
+import { extractTechnicalSkills, recommendStudent } from "@/lib/gemini";
+import { ProfileRepository } from "@/repositories/profile.repository";
+import { formatCandidates } from "@/utils/format.recommended.candidates";
 
-export const smartSearch = async (rawSearch: string) => {
+export const SmartSearchService = async (rawSearch: string) => {
+  const profileRepository = new ProfileRepository();
+
   try {
-    await parseRawInput(rawSearch);
+    // Extract skills
+    const extractedSkills = await extractTechnicalSkills(rawSearch);
 
-    const students = 0;
+    // Get matching candidates
+    const students = await profileRepository.matchSkill(extractedSkills);
 
-    return { status: "success", code: 200, students };
+    // Ranked formatted candidates
+    const formattedCandidates = formatCandidates(students, extractedSkills);
+
+    const recommendedStudents = await recommendStudent(rawSearch,extractedSkills,formattedCandidates);
+
+    const candidateById = new Map(
+      formattedCandidates.map((candidate) => [candidate.id, candidate]),
+    );
+
+    const recommendedStudentsWithProfile = recommendedStudents.map(
+      (item: any) => ({
+        ...candidateById.get(item.id),
+        ...item,
+        skills: candidateById.get(item.id)?.skills ?? [],
+        bio: candidateById.get(item.id)?.bio ?? "",
+        name: candidateById.get(item.id)?.name ?? "",
+      }),
+    );
+
+    return {
+      status: "success",
+      code: 200,
+      recommendedStudents: recommendedStudentsWithProfile,
+    };
   } catch (error) {
     console.error("smartSearch", error);
     return { status: "error", code: 500, message: "Unable to search" };
