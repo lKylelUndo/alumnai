@@ -12,12 +12,30 @@ export const SmartSearchService = async (rawSearch: string) => {
     // Get matching candidates
     const students = await profileRepository.matchSkill(extractedSkills);
 
-    // Ranked candidates
+    // Ranked formatted candidates
     const formattedCandidates = formatCandidates(students, extractedSkills);
-    
-    const recommendedStudents = await recommendStudent(rawSearch, extractedSkills, formattedCandidates)
 
-    return { status: "success", code: 200, recommendedStudents };
+    const recommendedStudents = await recommendStudent(rawSearch,extractedSkills,formattedCandidates);
+
+    const candidateById = new Map(
+      formattedCandidates.map((candidate) => [candidate.id, candidate]),
+    );
+
+    const recommendedStudentsWithProfile = recommendedStudents.map(
+      (item: any) => ({
+        ...candidateById.get(item.id),
+        ...item,
+        skills: candidateById.get(item.id)?.skills ?? [],
+        bio: candidateById.get(item.id)?.bio ?? "",
+        name: candidateById.get(item.id)?.name ?? "",
+      }),
+    );
+
+    return {
+      status: "success",
+      code: 200,
+      recommendedStudents: recommendedStudentsWithProfile,
+    };
   } catch (error) {
     console.error("smartSearch", error);
     return { status: "error", code: 500, message: "Unable to search" };
