@@ -1,1 +1,1 @@
-export { smartSearch } from "@/services/ai/smart.search.service";
+export { SmartSearchService } from "@/services/ai/smart.search.service";

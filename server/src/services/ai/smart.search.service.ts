@@ -1,8 +1,8 @@
-import { parseRawInput } from "@/lib/gemini";
+import { extractTechnicalSkills } from "@/lib/gemini";
 
-export const smartSearch = async (rawSearch: string) => {
+export const SmartSearchService = async (rawSearch: string) => {
   try {
-    await parseRawInput(rawSearch);
+    const response = await extractTechnicalSkills(rawSearch);
 
     const students = 0;
 
