@@ -1,25 +1,18 @@
 import { Roboto } from "next/font/google"
 import "@/styles/globals.css"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
+import { AuthProvider } from "@/context/AuthContext"
 
 const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '700'],
-});
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+})
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn("antialiased", roboto.className)}
-    >
+    <html lang="en" suppressHydrationWarning className={cn("antialiased", roboto.className)} >
       <body>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   )
