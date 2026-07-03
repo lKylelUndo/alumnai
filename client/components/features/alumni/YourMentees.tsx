@@ -104,7 +104,7 @@ const YourMentees = () => {
       <div className="mb-4">
         <h2 className="text-lg font-bold text-primary">Your Mentees</h2>
         <p className="text-xs text-muted-foreground">
-          Students you're currently mentoring
+          Students you&apos;re currently mentoring
         </p>
       </div>
       <DataTable columns={columns} data={dummyMentees} />
