@@ -1,11 +1,11 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./DataTable"
 import { Button } from "@/components/ui/button"
+import { DataTable } from "@/components/common/DataTable"
 export type MentorshipRequest = {
   id: string
   name: string
-  track: "FRONTEND" | "BACKEND" | "FULL-STACK" | "UI/UX"
+  track: string
   year: "1ST YEAR" | "2ND YEAR" | "3RD YEAR" | "4TH YEAR"
   status: "Active" | "Pending" | "Completed"
 }
@@ -109,7 +109,7 @@ const ManageMentorships = () => {
           Students who are requesting for your mentorship
         </p>
       </div>
-      <DataTable columns={columns} data={dummyRequests} />
+      <DataTable columns={columns} data={dummyRequests} filterColumn="name" filterPlaceholder="Search by name..." />
     </div>
   )
 }

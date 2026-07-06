@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./DataTable"
+import { DataTable } from "@/components/common/DataTable"
 
 export type TopMentors = {
   ranking: string | number
