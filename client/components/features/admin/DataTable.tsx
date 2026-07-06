@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  filterColumn: string
+  filterPlaceholder: string
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder }: DataTableProps<TData, TValue>) {
   const [pageSize] = useState(5); // default 10 per page
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const table = useReactTable({
@@ -35,16 +37,16 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div>
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Filter by StudentId..."
-            value={(table.getColumn("studentId")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("studentId")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
+    
+          <div className="flex items-center py-4">
+            <Input
+              placeholder={filterPlaceholder}
+              value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
+              onChange={(event) => table.getColumn(filterColumn)?.setFilterValue(event.target.value)}
+              className="max-w-sm"
+            />
+          </div>
+        
         <div className="overflow-hidden rounded-md border">
           <Table>
             <TableHeader>

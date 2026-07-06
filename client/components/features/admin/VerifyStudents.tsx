@@ -116,7 +116,7 @@ const VerifyStudents = async () => {
           Approve or reject student verification requests
         </p>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} filterColumn="studentId" filterPlaceholder="Search by Student Id" />
     </div>
   )
 }
