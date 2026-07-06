@@ -1,11 +1,11 @@
 "use client"
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./DataTable"
 import { Button } from "@/components/ui/button"
+import { DataTable } from "@/components/common/DataTable"
 export type Collaboration = {
   id: string
   name: string
-  track: "FRONTEND" | "BACKEND" | "FULL-STACK" | "UI/UX"
+  track: string
   year: "1ST YEAR" | "2ND YEAR" | "3RD YEAR" | "4TH YEAR"
   status: "Active" | "Pending" | "Completed"
 }
@@ -107,7 +107,7 @@ const YourCollaborations = () => {
           Students you&apos;re collaborating with
         </p>
       </div>
-      <DataTable columns={columns} data={dummyCollaborations} />
+      <DataTable columns={columns} data={dummyCollaborations} filterColumn="name" filterPlaceholder="Search by name..." />
     </div>
   )
 }

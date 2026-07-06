@@ -1,5 +1,5 @@
+import { DataTable } from "@/components/common/DataTable"
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./DataTable"
 
 export type UserManagement = {
   user: string
