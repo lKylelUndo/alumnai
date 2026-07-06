@@ -36,6 +36,72 @@ async function getData(): Promise<VerifyStudents[]> {
       status: "pending",
       email: "m@example.com",
     },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
     // ...
   ]
 }
@@ -50,7 +116,7 @@ const VerifyStudents = async () => {
           Approve or reject student verification requests
         </p>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} filterColumn="studentId" filterPlaceholder="Search by Student Id" />
     </div>
   )
 }

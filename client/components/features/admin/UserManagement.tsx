@@ -50,7 +50,7 @@ const ManagerUsers = async () => {
           Review and manage user accounts and roles
         </p>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} filterColumn="user" filterPlaceholder="Search by user..." />
     </div>
   )
 }

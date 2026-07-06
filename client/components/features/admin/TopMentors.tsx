@@ -44,7 +44,7 @@ const TopMentors = async () => {
           Alumni with the most mentees and contributions
         </p>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} filterColumn="name" filterPlaceholder="Search by name..." />
     </div>
   )
 }
