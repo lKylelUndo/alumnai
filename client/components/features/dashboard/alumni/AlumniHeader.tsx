@@ -24,4 +24,4 @@ const AlumniHeader = () => {
   )
 }
 
-export default AlumniHeader
+export default AlumniHeader;

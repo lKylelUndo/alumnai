@@ -1,4 +1,4 @@
-import DashboardPanel from "@/components/features/alumni/DashboardPanel"
+import DashboardPanel from "@/components/features/dashboard/alumni/DashboardPanel"
 
 export default function AlumniDashboardPage() {
   return (

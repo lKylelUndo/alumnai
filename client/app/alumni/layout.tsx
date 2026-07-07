@@ -1,5 +1,5 @@
-import AlumniBanner from "@/components/features/alumni/AlumniBanner";
-import AlumniHeader from "@/components/features/alumni/AlumniHeader";
+import AlumniBanner from "@/components/features/dashboard/alumni/AlumniBanner";
+import AlumniHeader from "@/components/features/dashboard/alumni/AlumniHeader";
 
 export default function AlumniDashboardLayout({ children }: { children: React.ReactNode }) {
     return (
