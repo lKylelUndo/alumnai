@@ -1,12 +1,15 @@
 import { Brain } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
 
 const AdminHeader = () => {
   return (
     <nav className="mt-2 flex justify-between">
       <div className="flex items-center gap-x-1">
         <Brain />
-        <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
+        <Link href="/admin/dashboard">
+          <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
+        </Link>
       </div>
 
       <DropdownMenu>
