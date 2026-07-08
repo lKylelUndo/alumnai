@@ -32,8 +32,9 @@ export const authService = {
     return response.data;
   },
 
-  testAuth: async () => {
-    const response = await axiosInstance.get("/api/auth/test-auth");
+  // Get Current User Session
+  getMe: async () => {
+    const response = await axiosInstance.get("/api/auth/v1/me");
     return response.data;
-  },
+  }
 };

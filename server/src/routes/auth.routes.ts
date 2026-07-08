@@ -18,9 +18,7 @@ router.post("/v1/reset-password", validateSchema(resetPasswordSchema), authContr
 
 router.post("/v1/verify-reset-password-token", validateSchema(verifyResetPasswordTokenSchema), authController.verifyResetPasswordToken)
 
-// TESTING
-router.get("/test-auth", authMiddleware.execute, (req, res) => {
-    return res.json(req.user);
-})
+// Get Current User Session
+router.get("/v1/me", authMiddleware.execute, authController.me);
 
 export default router;

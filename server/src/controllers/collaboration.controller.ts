@@ -1,10 +1,4 @@
-import {
-  AcceptCollaborationService,
-  DeclineCollaborationService,
-  ViewAllCollaborationInvitesService,
-  SendCollaborationInviteService,
-  EndCollaborationService,
-} from "@/services/collaboration";
+import { AcceptCollaborationService, DeclineCollaborationService, ViewAllCollaborationInvitesService, SendCollaborationInviteService, EndCollaborationService } from "@/services/collaboration";
 import { Request, Response } from "express";
 
 class CollaborationController {
