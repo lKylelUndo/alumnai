@@ -19,7 +19,7 @@ export default function AuthCard({ title, subtitle, children }: AuthCardProps) {
         ← Back to Homepage
       </Link>
 
-      <div className="mt-4 border-[3px] border-[#232C77] bg-white p-6 rounded-md">
+      <div className="mt-4  border border-2 bg-white p-6 rounded-md">
         
         {/* <div className="flex items-center justify-center gap-x-1">
             <Brain size={28} color="#2D7EE2"/>
