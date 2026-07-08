@@ -1,57 +1,101 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import AuthCard from "./AuthCard";
-import { Field, FieldSet, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button"
+import AuthCard from "./AuthCard"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { loginSchema } from "@/schema/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Controller, useForm } from "react-hook-form"
+import { z } from "zod"
+import Link from "next/link"
 
 export default function LoginForm() {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
+
+  function onSubmit(data: z.infer<typeof loginSchema>) {
+    // Do something with the form values.
+    console.log("submit", data)
+  }
 
   return (
     <AuthCard
       title="Welcome Back"
       subtitle="Sign in to your account to continue"
-
     >
-      <form className="space-y-5">
-        <FieldSet>
+      <form id="form-rhf-login" onSubmit={form.handleSubmit(onSubmit)}>
+        <FieldGroup>
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="form-rhf-email">Email</FieldLabel>
+                <Input
+                  {...field}
+                  id="form-rhf-email"
+                  aria-invalid={fieldState.invalid}
+                  autoComplete="off"
+                  type="email"
+                  required
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-        <Field>
-           <FieldLabel htmlFor="email" className="text-[#1A216D]">Email Address</FieldLabel>
-           <Input id="email" autoComplete="off" placeholder="youremail@email.com" />
-        </Field> 
-
-        <Field>
-           <FieldLabel htmlFor="password" className="text-[#1A216D]">Password</FieldLabel>
-           <Input id="password"/>
-        </Field> 
-
-        </FieldSet>
-
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="form-rhf-password">Password</FieldLabel>
+                <Input
+                  {...field}
+                  id="form-rhf-password"
+                  aria-invalid={fieldState.invalid}
+                  autoComplete="off"
+                  type="password"
+                  required
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
         <Link
-          href="/forgot-password"
-          className="text-sm font-medium text-[#3478E5] mb-3"
+          href={"/forgot-password"}
+          className="text-xs text-primary hover:underline"
         >
-          Forgot Password
+          Forgot password?
         </Link>
-
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-[#3478E5] py-2 mt-3 text-white"
-          >
-            Sign In
-        </button>
       </form>
 
+      <Field orientation="horizontal" className="mt-4">
+        <Button type="submit" form="form-rhf-login" className="w-full">
+          Login
+        </Button>
+      </Field>
+
       <p className="mt-6 text-center text-sm text-gray-600">
-        {"Don't have an account?"}
+        Don't have an account?{" "}
         <Link
           href="/register"
-          className="text-[#3478E5]"
+          className="font-medium text-[#2D7EE2] hover:underline"
         >
           Register here
         </Link>
       </p>
     </AuthCard>
-  );
+  )
 }

@@ -8,27 +8,18 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-
-const formSchema = z
-  .object({
-    token: z.string(),
-    newPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters.")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number"),
-  })
+import { resetPasswordSchema } from "@/schema/auth"
 
 const ResetPasswordForm = ({ token }: { token: string}) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       token: token || "",
       newPassword: "",
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
     // Do something with the form values.
     console.log("submit", data)
   }
@@ -39,19 +30,19 @@ const ResetPasswordForm = ({ token }: { token: string}) => {
         <CardTitle>Reset Password</CardTitle>
       </CardHeader>
       <CardContent>
-        <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
+        <form id="form-rhf-forgetpassword" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="newPassword"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-title">
+                  <FieldLabel htmlFor="form-rhf-newPassword">
                     New Password
                   </FieldLabel>
                   <Input
                     {...field}
-                    id="form-rhf-demo-title"
+                    id="form-rhf-newPassword"
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                     type="password"
@@ -70,7 +61,7 @@ const ResetPasswordForm = ({ token }: { token: string}) => {
           <Button type="button" variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="form-rhf-demo">
+          <Button type="submit" form="form-rhf-forgetpassword">
             Submit
           </Button>
         </Field>
