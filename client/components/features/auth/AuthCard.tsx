@@ -9,11 +9,7 @@ interface AuthCardProps {
   children: ReactNode;
 }
 
-export default function AuthCard({
-  title,
-  subtitle,
-  children,
-}: AuthCardProps) {
+export default function AuthCard({ title, subtitle, children }: AuthCardProps) {
   return (
     <div className="w-full max-w-md">
       <Link
@@ -23,22 +19,24 @@ export default function AuthCard({
         ← Back to Homepage
       </Link>
 
-      <div className="mt-4 border-[3px] border-[#232C77] bg-white p-10">
+      <div className="mt-4 border-[3px] border-[#232C77] bg-white p-6 rounded-md">
         
-        <div className="flex items-center justify-center gap-2 mb-4">
+        {/* <div className="flex items-center justify-center gap-x-1">
             <Brain size={28} color="#2D7EE2"/>
-             <h3 className={`${roboto_slab.className} text-[#1A216D] font-bold text-2xl`}>
+             <h3 className={`${roboto_slab.className} text-[#1A216D] font-bold text-xl`}>
                 alumnAI
              </h3>
-          </div>  
+        </div>   */}
 
-        <h2 className="text-2xl font-extrabold text-[#232C77]">
-          {title}
-        </h2>
-
-        <p className="text-gray-500 mb-8 text-sm">
-          {subtitle}
-        </p>
+       <div className="">
+          <h2 className="text-2xl font-extrabold text-[#232C77]">
+            {title}
+          </h2>
+  
+          <p className="text-gray-500 mb-8 text-sm">
+            {subtitle}
+          </p>
+       </div>
 
         {children}
       </div>
