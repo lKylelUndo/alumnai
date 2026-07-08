@@ -5,6 +5,7 @@ import {
   AuthForgetPasswordRequestService,
   AuthResetPasswordService,
   AuthVerifyResetPasswordTokenService,
+  GetMeService,
 } from "@/services/auth";
 import { ENV } from "@/config/env";
 import { ms } from "@/lib/jwt";
@@ -72,6 +73,13 @@ class AuthController {
     const response = await AuthVerifyResetPasswordTokenService({token})
     return res.status(response.code).json(response);
   }
+
+  // Get Current User Session
+  public me = async (req: Request, res: Response) => {
+    const { userId } = req.user!;
+    const result = await GetMeService(userId);
+    return res.status(result.code).json(result);
+  };
 }
 
 export default new AuthController();
