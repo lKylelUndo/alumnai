@@ -6,6 +6,6 @@ export { verifyResetPasswordTokenSchema } from "@/schema/auth/verify-token.schem
 
 export type { LoginInputTypes } from "@/schema/auth/login.schema";
 export type { SignupInputTypes } from "@/schema/auth/signup.schema";
-export type { ResetPasswordRequestInput } from "@/schema/auth/reset.password.request.schema";
-export type { ResetPasswordInput } from "@/schema/auth/reset-password.schema";
-export type { VerifyResetPasswordTokenInput } from "@/schema/auth/verify-token.schema";
+export type { ResetPasswordRequestInputTypes } from "@/schema/auth/reset.password.request.schema";
+export type { ResetPasswordInputTypes } from "@/schema/auth/reset-password.schema";
+export type { VerifyResetPasswordTokenInputTypes } from "@/schema/auth/verify-token.schema";

@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios";
-import { LoginInputTypes, SignupInputTypes, ForgetPasswordRequestInput, ResetPasswordInput, VerifyResetPasswordTokenInput } from "@/schema/auth";
+import type { LoginInputTypes, SignupInputTypes, ResetPasswordRequestInputTypes, ResetPasswordInputTypes, VerifyResetPasswordTokenInputTypes } from "@/schema/auth";
 
 export const authService = {
   signup: async (data: SignupInputTypes) => {
@@ -17,17 +17,17 @@ export const authService = {
     return response.data;
   },
 
-  forgetPassword: async (data: ForgetPasswordRequestInput) => {
+  forgetPassword: async (data: ResetPasswordRequestInputTypes) => {
     const response = await axiosInstance.post("/api/auth/v1/forget-password", data);
     return response.data;
   },
 
-  resetPassword: async (data: ResetPasswordInput) => {
+  resetPassword: async (data: ResetPasswordInputTypes) => {
     const response = await axiosInstance.post("/api/auth/v1/reset-password", data);
     return response.data;
   },
 
-  verifyResetPasswordToken: async (data: VerifyResetPasswordTokenInput) => {
+  verifyResetPasswordToken: async (data: VerifyResetPasswordTokenInputTypes) => {
     const response = await axiosInstance.post("/api/auth/v1/verify-reset-password-token", data);
     return response.data;
   },
