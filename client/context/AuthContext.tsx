@@ -1,7 +1,7 @@
 "use client"
 import { LoginInputTypes, SignupInputTypes } from "@/schema/auth"
 import { authService } from "@/services/auth.service"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { createContext, ReactNode, useContext, useState } from "react"
 
 interface User {
