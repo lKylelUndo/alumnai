@@ -2,14 +2,20 @@
 import { LoginInputTypes, SignupInputTypes } from "@/schema/auth"
 import { authService } from "@/services/auth.service"
 import { useRouter } from "next/navigation"
-import { createContext, ReactNode, useContext, useState } from "react"
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
 
 interface User {
   id: string
-  name: string
-  email: string
+  email: string | null
   student_id_number: string | null
   role: string
+  isAccountVerified: boolean
 }
 
 interface AuthContextType {
@@ -28,10 +34,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const savedUser = localStorage.getItem("user")
+      if (savedUser) {
+        try {
+          // Parse since this is json format
+          const parsedUser = JSON.parse(savedUser)
+          setUser(parsedUser)
+
+          // Verify session
+          const response = await authService.getMe()
+          if (response.code !== 200) {
+            throw new Error("Session invalid")
+          }
+
+          // Update user data with latest
+          setUser(response.data.user)
+          localStorage.setItem("user", JSON.stringify(response.data.user))
+        } catch (error: any) {
+          console.error("Session verification failed", error)
+          // Only clear session if it's a definitive auth failure (401/403)
+          const status = error.response?.status
+          if (status === 401 || status === 403) {
+            setUser(null)
+            localStorage.removeItem("user")
+          }
+          console.log("[AuthContext]", error)
+        }
+      }
+
+      setIsLoading(false);
+    };
+
+    initializeAuth()
+  }, [])
+
   const login = async (data: LoginInputTypes) => {
     try {
       const response = await authService.login(data)
-      router.push("/profile")
+
+      console.log("Response", response)
+
+      if (response.code === 200) {
+        const userData = response.data.user
+        setUser(userData)
+        localStorage.setItem("user", JSON.stringify(userData))
+
+        // Trigger Role Base
+        if (userData.role === "STUDENT") {
+          router.push("/student/dashboard")
+        } else if (userData.role === "ALUMNI") {
+          router.push("/alumni/dashboard")
+        } else if (userData.role === "ADMIN") {
+          router.push("/admin/dashboard")
+        }
+      } else {
+        console.log("Failed to login")
+        throw new Error("Invalid credentials")
+      }
     } catch (error) {
       throw error
     }
@@ -39,8 +100,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signup = async (data: SignupInputTypes) => {
     try {
-      await authService.signup(data)
-      router.push("/profile")
+      const response = await authService.signup(data)
+      if (response.code === 200 || response.code === 201) {
+        router.push("/login")
+      } else {
+        console.log("Failed to signup")
+        throw new Error("Invalid credentials")
+      }
     } catch (error) {
       throw error
     }
@@ -49,9 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       await authService.logout()
-      //revalidatePath("/profile")
     } catch (error) {
-      throw error
+      console.error("Logout error", error)
+    } finally {
+      setUser(null)
+      localStorage.removeItem("user")
+      router.push("/login")
     }
   }
 

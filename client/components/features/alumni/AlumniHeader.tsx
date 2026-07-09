@@ -1,7 +1,11 @@
+"use client";
 import { Brain } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useAuthContext } from "@/context/AuthContext"
 
 const AlumniHeader = () => {
+  const { logout } = useAuthContext()
+  
   return (
     <nav className="mt-2 flex justify-between">
       <div className="flex items-center gap-x-1">
@@ -17,7 +21,8 @@ const AlumniHeader = () => {
           <DropdownMenuGroup>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            </DropdownMenuGroup>
+            <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </nav>

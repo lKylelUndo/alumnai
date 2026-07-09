@@ -29,6 +29,8 @@ export const AuthLoginService = async (data: LoginInputTypes) => {
       new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     );
 
+    const { password, ...rest } = user;
+
     return {
       status: "success",
       code: 200,
@@ -40,7 +42,7 @@ export const AuthLoginService = async (data: LoginInputTypes) => {
           accessTokenExpiresIn: TokenExpiry.ACCESS_TOKEN_EXPIRES,
           refreshTokenExpiresIn: TokenExpiry.REFRESH_TOKEN_EXPIRES,
         },
-        user,
+        user: rest,
       },
     };
   } catch (error) {
