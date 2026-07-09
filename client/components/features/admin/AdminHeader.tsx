@@ -1,10 +1,11 @@
+"use client"
 import { Brain } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
 
 const AdminHeader = () => {
-  const {logout} = useAuthContext()
+  const { logout } = useAuthContext()
   
   return (
     <nav className="mt-2 flex justify-between">
