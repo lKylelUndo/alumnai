@@ -9,8 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import Link from "next/link"
+import { useAuthContext } from "@/context/AuthContext"
 
 export default function RegisterForm() {
+  const {signup} = useAuthContext();
+  
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -21,9 +24,8 @@ export default function RegisterForm() {
     },
   })
 
-  function onSubmit(data: z.infer<typeof signupSchema>) {
-    // Do something with the form values.
-    console.log("submit", data)
+  async function onSubmit(data: z.infer<typeof signupSchema>) {
+    await signup(data);
   }
 
   return (
