@@ -16,7 +16,7 @@ export const GetMeService = async (userId: string) => {
     if (!user) 
       return { code: 404, status: "error",message: "User not found" };
     
-    return { code: 200, status: "success", data: user };
+    return { code: 200, status: "success", data: {user} };
   } catch (error) {
     console.error(error);
     return { code: 500, status: "error", message: "GetMeServiceError", error };
