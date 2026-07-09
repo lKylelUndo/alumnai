@@ -16,6 +16,18 @@ interface User {
   student_id_number: string | null
   role: string
   isAccountVerified: boolean
+  profile?: {
+    id?: string
+    userId?: string
+    profilePicture?: string | null
+    yearLevel?: string | null
+    fullName?: string | null
+    work_field?: string | null
+    companyName?: string | null
+    socialLinks?: any
+    current_position?: string | null
+    certifications?: any
+  } | null
 }
 
 interface AuthContextType {
@@ -64,8 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      setIsLoading(false);
-    };
+      setIsLoading(false)
+    }
 
     initializeAuth()
   }, [])

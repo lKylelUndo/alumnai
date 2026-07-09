@@ -28,7 +28,7 @@ export class UserRepository {
     return await prisma.user.findUnique({
       where: {
         id,
-      },
+      }
     });
   }
 
