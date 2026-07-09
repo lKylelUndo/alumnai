@@ -9,10 +9,17 @@ const AlumniHeader = () => {
   
   return (
     <nav className="mt-2 flex justify-between">
-      <div className="flex items-center gap-x-1">
-        <Brain />
-        <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
-        <Link href={`/alumni/profile`}>Profile</Link>
+      <div className="flex items-center gap-x-10 lg:max-w-[500px] md:max-w-[300px] w-full">
+        <div className="flex items-center gap-x-1">
+          <Brain />
+          <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
+        </div>
+        <div>
+          <Link href={`/alumni/profile`} className="text-[14px] text-primary">Profile</Link>
+        </div>
+        <div>
+          <Link href={`/alumni/test`} className="text-[14px] text-primary">Collaborators</Link>
+        </div>
       </div>
 
       <DropdownMenu>
