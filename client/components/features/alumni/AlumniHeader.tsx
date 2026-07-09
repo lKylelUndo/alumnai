@@ -2,6 +2,7 @@
 import { Brain } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuthContext } from "@/context/AuthContext"
+import Link from "next/link";
 
 const AlumniHeader = () => {
   const { logout } = useAuthContext()
@@ -11,6 +12,7 @@ const AlumniHeader = () => {
       <div className="flex items-center gap-x-1">
         <Brain />
         <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
+        <Link href={`/alumni/profile`}>Profile</Link>
       </div>
 
       <DropdownMenu>

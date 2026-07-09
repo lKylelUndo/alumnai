@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import AlumniBanner from "@/components/features/alumni/AlumniBanner";
 import AlumniHeader from "@/components/features/alumni/AlumniHeader";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
 import type { ReactNode } from "react";
@@ -16,7 +15,6 @@ export default function AlumniDashboardLayout({ children }: { children: ReactNod
                 <AlumniHeader />
             </header>
             <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
-                <AlumniBanner />
                 {children}
             </main>
         </AuthGuard>
