@@ -23,17 +23,12 @@ export function AuthGuard({ children, mode = "GUEST" }: AuthGuardProps) {
       return
     }
 
-    // role mismatch — redirect 
-    if (mode === "ALUMNI" && user?.role !== "ALUMNI") {
-      router.push("/")
-      return;
-    }
-    if (mode === "STUDENT" && user?.role !== "STUDENT") {
-      router.push("/")
-      return
-    }
-    if (mode === "ADMIN" && user?.role !== "ADMIN") {
-      router.push("/")
+    // role mismatch authenticated routes — redirect to their respective dashboard
+    if (mode !== "GUEST" && user?.role !== mode) {
+      if (user?.role === "ALUMNI") router.push("/alumni/dashboard")
+      else if (user?.role === "STUDENT") router.push("/student/dashboard")
+      else if (user?.role === "ADMIN") router.push("/admin/dashboard")
+      else router.push("/")
       return
     }
 
@@ -53,12 +48,10 @@ export function AuthGuard({ children, mode = "GUEST" }: AuthGuardProps) {
   // not authenticated — render nothing para walay makita na glimpse of UI while redirect happens
   if (!isAuthenticated && mode !== "GUEST") return <Spinner content="Redirecting..."/>
 
-  // role mismatch — render nothing para wala kay makita na glimpse of UI while redirect happens
-  if (mode === "ALUMNI" && user?.role !== "ALUMNI") return <Spinner content="Redirecting..."/>
-  if (mode === "STUDENT" && user?.role !== "STUDENT") return <Spinner content="Redirecting..."/>
-  if (mode === "ADMIN" && user?.role !== "ADMIN") return <Spinner content="Redirecting..."/>
+  // role mismatch auth routes — render redirect spinner
+  if (mode !== "GUEST" && user?.role !== mode) return <Spinner content="Redirecting..."/>
 
-  // guest page but user is logged in — render nothing while redirect happens
+  // guest pages but user is logged in — render nothing while redirect happens
   if (mode === "GUEST" && isAuthenticated) return <Spinner content="Redirecting..."/>
 
   return <>{children}</>

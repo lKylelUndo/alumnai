@@ -3,7 +3,6 @@ import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
 import { AuthProvider } from "@/context/AuthContext"
 import type { Metadata } from "next"
-import { AuthGuard } from "@/components/features/auth/AuthGuard"
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -20,7 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning className={cn("antialiased", roboto.className)} >
       <body>
         <AuthProvider>
-          <AuthGuard mode="GUEST">{children}</AuthGuard>
+          {children}
         </AuthProvider>
       </body>
     </html>
