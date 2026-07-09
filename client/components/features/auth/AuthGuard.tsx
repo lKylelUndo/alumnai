@@ -1,5 +1,6 @@
 "use client"
 
+import Spinner from "@/components/common/Spinner"
 import { useAuthContext } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { ReactNode, useEffect } from "react"
@@ -40,20 +41,13 @@ export function AuthGuard({ children, mode = "GUEST" }: AuthGuardProps) {
     if (mode === "GUEST" && isAuthenticated) {
       if (user?.role === "ALUMNI") router.push("/alumni/dashboard")
       else if (user?.role === "STUDENT") router.push("/student/dashboard")
-      else if (user?.role === "DEAN") router.push("/admin/dashboard")
+      else if (user?.role === "ADMIN") router.push("/admin/dashboard")
     }
   }, [isLoading, isAuthenticated, user, mode])
 
   // only show spinner while auth state is being determined
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground animate-pulse">Verifying session...</p>
-        </div>
-      </div>
-    )
+    return <Spinner content="Verifying session..." />
   }
 
   // not authenticated — render nothing para walay makita na glimpse of UI while redirect happens
