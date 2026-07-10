@@ -1,3 +1,5 @@
+import UpdateProfileForm from "@/components/features/alumni/UpdateProfileForm";
+
 export default function UpdateProfilePage() {
-    return <h1>Update Profile</h1>
+  return <UpdateProfileForm />;
 }
