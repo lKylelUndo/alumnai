@@ -1,268 +1,131 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { updateProfileSchema } from "@/schema/profile"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Field } from "@/components/ui/field"
+import { updateProfileSchema } from "@/schema/profile"
+import type { SavedSkill, HandleDialogSave } from "@/schema/profile"
+import AddTechOrToolsDialog from "@/components/features/alumni/AddTechOrToolsDialog"
+import { useAuthContext } from "@/context/AuthContext"
+
+import ProfilePictureUpload from "./ProfilePictureUpload"
+import ProfileFormFields from "./ProfileFormFields"
+
 const UpdateProfileForm = () => {
+  const { user } = useAuthContext()
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [techTags, setTechTags] = useState<string[]>([])
+  const [savedSkills, setSavedSkills] = useState<SavedSkill[]>([])
+
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
-      userId: "",
-      email: "",
-      profilePicture: "",
-      yearLevel: "",
-      graduationYear: "",
-      fullName: "",
-      work_field: "",
-      coreSkills: [],
-      socialLinks: "",
-      companyName: "",
+      userId:           user?.id || "",
+      email:            user?.email || "",
+      profilePicture:   "",
+      yearLevel:        "",
+      graduationYear:   "",
+      fullName:         "",
+      work_field:       "",
+      coreSkills:       [],
+      socialLinks:      "",
+      companyName:      "",
       current_position: "",
-      certifications: [],
+      certifications:   [],
     },
   })
 
+  const handleDialogSave: HandleDialogSave = (data) => {
+    setTechTags(data.techTags)
+    form.setValue("coreSkills", data.coreSkills)
+
+    setSavedSkills((prev) => {
+      const exists = prev.findIndex((s) => s.name === data.skill.name)
+      if (exists >= 0) {
+        const updated = [...prev]
+        updated[exists] = data.skill
+        return updated
+      }
+      return [...prev, data.skill]
+    })
+
+    if (data.certifications.length > 0) {
+      form.setValue(
+        "certifications",
+        data.certifications.map((c) => c.name).filter(Boolean)
+      )
+    }
+  }
+
   function onSubmit(data: z.infer<typeof updateProfileSchema>) {
-    // Do something with the form values.
-    console.log(data)
+    console.log("submit")
+    console.log("Profile update payload:", data)
+    console.log("Skills to submit separately:", savedSkills)
   }
 
   return (
-    <div className="mx-auto mt-10 lg:max-w-[1000px]">
+    <div className="mx-auto mt-10 px-4 lg:max-w-[1000px]">
       <div>
         <h1 className="font-bold text-primary lg:text-3xl">Update Profile</h1>
-        <p className="text-[14px]">Update your profile information</p>
+        <p className="text-[14px] text-muted-foreground">
+          Update your information. Changes will be reviewed by the school dean.
+        </p>
       </div>
 
       <Card className="mt-8 w-full">
         <CardHeader>
           <CardTitle>Profile Information</CardTitle>
+          <CardDescription>All changes will be reviewed from the school dean</CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form
-            id="form-rhf-updateprofileform"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            <FieldGroup className="grid lg:grid-cols-2">
-              <Controller
-                name="fullName"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-fullname">
-                      Full Name
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-fullname"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Full Name"
-                      autoComplete="off"
-                      type="text"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+          <ProfilePictureUpload
+            value={form.watch("profilePicture")}
+            onChange={(base64) => form.setValue("profilePicture", base64)}
+          />
 
-              <Controller
-                name="email"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-email">
-                      Email Address
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-email"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Email Address"
-                      autoComplete="off"
-                      type="email"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="companyName"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-companyname">
-                      Company Name
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-companyname"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Company Name"
-                      autoComplete="off"
-                      type="text"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="current_position"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-currentposition">
-                      Current Position
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-currentposition"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Current Position"
-                      autoComplete="off"
-                      required
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="graduationYear"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-graduationyear">
-                      Graduation Year
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-graduationyear"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Graduation Year"
-                      autoComplete="off"
-                      type="text"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="coreSkills"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-coreskills">
-                      Core Skills
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-coreskills"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Core Skills"
-                      autoComplete="off"
-                      required
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="certifications"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-certifications">
-                      Certifications
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-certifications"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Certifications"
-                      autoComplete="off"
-                      required
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="socialLinks"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-rhf-demo-sociallinks">
-                      Social Links
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-rhf-demo-sociallinks"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Social Links"
-                      autoComplete="off"
-                      required
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
+          <form id="form-rhf-updateprofileform" onSubmit={form.handleSubmit(onSubmit)}>
+            <ProfileFormFields
+              control={form.control}
+              techTags={techTags}
+              onOpenDialog={() => setDialogOpen(true)}
+            />
           </form>
         </CardContent>
+
         <CardFooter>
           <Field orientation="horizontal">
             <Button
               type="button"
               variant="outline"
-              onClick={() => form.reset()}
+              className="flex-1"
+              onClick={() => {
+                form.reset()
+                setTechTags([])
+                setSavedSkills([])
+              }}
             >
-              Reset
+              Cancel
             </Button>
-            <Button type="submit" form="form-rhf-demo">
-              Submit
+            <Button type="submit" form="form-rhf-updateprofileform" className="flex-1">
+              Update
             </Button>
           </Field>
         </CardFooter>
       </Card>
+
+      <AddTechOrToolsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        techTags={techTags}
+        coreSkills={form.watch("coreSkills") || []}
+        onSave={handleDialogSave}
+      />
     </div>
   )
 }
