@@ -5,37 +5,14 @@ import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusIcon, XIcon, PaperclipIcon, Trash2Icon } from "lucide-react"
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
-import {
-  addTechOrToolsSchema,
-  PROFICIENCY_OPTIONS,
-  type AddTechOrToolsFormValues,
-  type AddTechOrToolsDialogProps,
-} from "@/schema/skill"
+import { addTechOrToolsSchema, PROFICIENCY_OPTIONS, type AddTechOrToolsFormValues, type AddTechOrToolsDialogProps } from "@/schema/skill"
 
-export default function AddTechOrToolsDialog({
-  open,
-  onOpenChange,
-  techTags,
-  onSave,
-}: AddTechOrToolsDialogProps) {
-  // ── Local tag management ─────────────────────────────────────────────────
+export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, onSave }: AddTechOrToolsDialogProps) {
   const [tags, setTags]         = useState<string[]>(techTags)
   const [tagInput, setTagInput] = useState("")
   const fileInputRefs           = useRef<(HTMLInputElement | null)[]>([])
@@ -51,15 +28,13 @@ export default function AddTechOrToolsDialog({
     },
   })
 
-  const { fields, append, remove, update } = useFieldArray({
-    control: form.control,
-    name:    "certifications",
+  const { fields, append, remove, update } = useFieldArray({ 
+    control: form.control, 
+    name: "certifications" 
   })
 
-  // Watch certifications for reactive file name display
   const watchedCerts = useWatch({ control: form.control, name: "certifications" })
 
-  // ── Tag helpers ──────────────────────────────────────────────────────────
   const addTag = () => {
     const trimmed = tagInput.trim()
     if (trimmed && !tags.includes(trimmed)) {
@@ -70,7 +45,6 @@ export default function AddTechOrToolsDialog({
 
   const removeTag = (tag: string) => setTags((prev) => prev.filter((t) => t !== tag))
 
-  // ── File upload ──────────────────────────────────────────────────────────
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
@@ -99,7 +73,6 @@ export default function AddTechOrToolsDialog({
     }
   }
 
-  // ── Submit ───────────────────────────────────────────────────────────────
   const onSubmit = (values: AddTechOrToolsFormValues) => {
     const levelNumber = parseInt(values.level, 10)
 

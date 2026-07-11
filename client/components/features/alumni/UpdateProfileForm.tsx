@@ -42,8 +42,7 @@ const UpdateProfileForm = () => {
     },
   })
 
-  console.log("Form errors:", form.formState.errors)
-
+  // console.log("Form errors:", form.formState.errors)
 
   // Profile picture file change handler 
   const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
