@@ -63,6 +63,9 @@ const UpdateProfileForm = () => {
     // Update tech tags displayed in the field
     setTechTags(data.techTags)
 
+    // Sync core skills to the form state
+    form.setValue("coreSkills", data.coreSkills)
+
     // Accumulate saved skills (will be submitted via skill endpoint)
     setSavedSkills((prev) => {
       const exists = prev.findIndex((s) => s.name === data.skill.name)
@@ -281,36 +284,6 @@ const UpdateProfileForm = () => {
                 )}
               />
 
-              {/* Core Skills — backend: Profile.coreSkills (array) */}
-              <Controller
-                name="coreSkills"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="update-profile-coreskills" className="font-semibold text-primary">
-                      Core Skills
-                    </FieldLabel>
-                    <Input
-                      id="update-profile-coreskills"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Database Design"
-                      autoComplete="off"
-                      value={Array.isArray(field.value) ? field.value.join(", ") : ((field.value ?? "") as string)}
-                      onChange={(e) => {
-                        // Store as comma-separated then split to array on submit
-                        field.onChange(
-                          e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean)
-                        )
-                      }}
-                    />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                  </Field>
-                )}
-              />
-
               {/* Tech or Tools — opens dialog on + click */}
               {/* Skills are submitted separately via POST /api/skill/v1/add-skill */}
               <Field>
@@ -393,6 +366,7 @@ const UpdateProfileForm = () => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         techTags={techTags}
+        coreSkills={form.watch("coreSkills") || []}
         onSave={handleDialogSave}
       />
     </div>

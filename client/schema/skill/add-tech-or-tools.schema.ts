@@ -11,20 +11,17 @@ export const PROFICIENCY_OPTIONS = [
 export const certificationRowSchema = z.object({
   name:       z.string().optional(),
   issuer:     z.string().optional(),
-  fileBase64: z.string().optional(), // file stored as base64 data URL
+  fileBase64: z.string().optional(),
   fileName:   z.string().optional(),
 });
 
 export type CertificationRow = z.infer<typeof certificationRowSchema>;
-
 
 export const addTechOrToolsSchema = z.object({
   name: z.string().min(1, "Tech/Tool name is required"),
   level: z.string().min(1, "Proficiency level is required"),
   description: z.string().optional(),
   others: z.string().optional(),
-
-
   certifications: z.array(certificationRowSchema).optional(),
 });
 
@@ -32,12 +29,11 @@ export type AddTechOrToolsFormValues = z.infer<typeof addTechOrToolsSchema>;
 
 export interface SkillPayload {
   name:         string;
-  level:        number; // 0–100, derived from PROFICIENCY_OPTIONS
+  level:        number;
   description?: string;
   type:         "HARD_SKILL";
 }
 
-/** A single certification record for Profile.certifications JSON field */
 export interface CertificationPayload {
   name:        string;
   issuer:      string;
@@ -45,16 +41,17 @@ export interface CertificationPayload {
   fileName?:   string;
 }
 
-/** Full data shape returned by the dialog's onSave callback */
 export interface AddTechOrToolsSaveData {
   skill:          SkillPayload;
   certifications: CertificationPayload[];
-  techTags:       string[]; // merged tag list (existing + new skill name + others)
+  techTags:       string[];
+  coreSkills:     string[];
 }
 
 export interface AddTechOrToolsDialogProps {
   open:         boolean;
   onOpenChange: (open: boolean) => void;
   techTags:     string[];
+  coreSkills:   string[];
   onSave:       (data: AddTechOrToolsSaveData) => void;
 }
