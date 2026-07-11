@@ -1,4 +1,5 @@
-import { Handshake, Mail, Users, Target, Briefcase } from "lucide-react"
+import DashboardQuickAction from "@/components/common/DashboardQuickAction"
+import { Handshake, Mail, Users } from "lucide-react"
 
 const AlumniStatCards = () => {
   return (
@@ -58,28 +59,11 @@ const AlumniStatCards = () => {
         </div>
       </div>
       {/* Quick Actions Panel */}
-      <div className="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs lg:col-span-1">
-        <div className="space-y-4">
-          <div className="flex items-center gap-x-2 font-semibold text-foreground">
-            <Target className="h-5 w-5 text-primary" />
-            <h2 className="text-base font-bold">Quick Actions</h2>
-          </div>
-          <div className="space-y-2">
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-              <span>View My Profile</span>
-            </button>
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-              <span>Edit Profile</span>
-            </button>
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span>Find Collaborators</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <DashboardQuickAction
+        profileRoute="/alumni/profile"
+        updateProfileRoute="/alumni/profile/update"
+        featureRoute="/alumni/find-collaborators"
+      />
     </section>
   )
 }

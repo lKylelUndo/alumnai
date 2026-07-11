@@ -15,10 +15,10 @@ const AlumniHeader = () => {
           <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
         </div>
         <div>
-          <Link href={`/alumni/profile`} className="text-[14px] text-primary">Profile</Link>
+          <Link href={`/alumni/profile`} className="text-[14px] text-primary font-bold">Profile</Link>
         </div>
         <div>
-          <Link href={`/alumni/test`} className="text-[14px] text-primary">Collaborators</Link>
+          <Link href={`/alumni/test`} className="text-[14px] text-primary font-bold">Collaborators</Link>
         </div>
       </div>
 
