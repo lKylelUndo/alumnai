@@ -18,7 +18,7 @@ const AlumniHeader = () => {
           <Link href={`/alumni/profile`} className="text-[14px] text-primary font-bold">Profile</Link>
         </div>
         <div>
-          <Link href={`/alumni/test`} className="text-[14px] text-primary font-bold">Collaborators</Link>
+          <Link href={`/alumni/find-collaborators`} className="text-[14px] text-primary font-bold">Collaborators</Link>
         </div>
       </div>
 
