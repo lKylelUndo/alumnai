@@ -20,8 +20,14 @@ export default function ProfilePictureUpload({ value, onChange }: ProfilePicture
       return
     }
 
+    // Instance ni siya sa filereader na browser api
     const reader = new FileReader()
+    
+    // Purpose aning reander.onload is para ma load ang file sa reader and ma convert sa base64
+    // something like this "data:image/png;base64,iVBORw0K..."
     reader.onload = () => { onChange(reader.result as string) }
+
+    // Purpose aning reander.readAsDataURL is para ma read ang file as data url
     reader.readAsDataURL(file)
   }
 

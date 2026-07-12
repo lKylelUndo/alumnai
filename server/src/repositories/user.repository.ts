@@ -20,6 +20,9 @@ export class UserRepository {
     return await prisma.user.findUnique({
       where: {
         email,
+      },
+      include: {
+        profile: true,
       }
     });
   }

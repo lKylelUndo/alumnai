@@ -118,7 +118,7 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
       </Field>
 
       <Controller
-        name="socialLinks"
+        name="socialLink"
         control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>

@@ -25,10 +25,12 @@ export class ProfileRepository {
   }
 
   async update(data: UpdateProfileInputTypes) {
-    const { userId, ...restData } = data;
+    const { userId, graduationYear, coreSkills, ...restData } = data;
+
+    console.log("rest",restData)
     return await prisma.profile.upsert({
       where: { userId },
-      update: data,
+      update: restData,
       create: {
         userId,
         ...restData,

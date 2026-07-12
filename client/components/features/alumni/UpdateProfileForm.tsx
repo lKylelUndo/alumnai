@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -16,6 +16,7 @@ import { useAuthContext } from "@/context/AuthContext"
 import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
 import { profileService } from "@/services/profile.service"
+import { useRouter } from "next/navigation"
 
 const UpdateProfileForm = () => {
   const { user } = useAuthContext()
@@ -23,22 +24,42 @@ const UpdateProfileForm = () => {
   const [techTags, setTechTags] = useState<string[]>([])
   const [savedSkills, setSavedSkills] = useState<SavedSkill[]>([])
 
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       userId:           user?.id || "",
-      profilePicture:   "",
-      yearLevel:        "",
-      graduationYear:   "",
-      fullName:         "",
-      work_field:       "",
-      coreSkills:       [],
-      socialLinks:      "",
-      companyName:      "",
-      current_position: "",
-      certifications:   [],
+      profilePicture:   user?.profile?.profilePicture || "",
+      yearLevel:        user?.profile?.yearLevel || "",
+      graduationYear:   user?.profile?.graduationYear || "",
+      fullName:         user?.profile?.fullName || "",
+      work_field:       user?.profile?.work_field || "",
+      coreSkills:       user?.profile?.coreSkills || [],
+      socialLink:      user?.profile?.socialLink || "",
+      companyName:      user?.profile?.companyName || "",
+      current_position: user?.profile?.current_position || "",
+      certifications:   user?.profile?.certifications || [],
     },
   })
+
+  // Re-populate the form once AuthContext finishes loading user from the DB
+  useEffect(() => {
+    if (!user) return
+    form.reset({
+      userId:           user.id || "",
+      profilePicture:   user.profile?.profilePicture || "",
+      yearLevel:        user.profile?.yearLevel || "",
+      graduationYear:   user.profile?.graduationYear || "",
+      fullName:         user.profile?.fullName || "",
+      work_field:       user.profile?.work_field || "",
+      coreSkills:       user.profile?.coreSkills || [],
+      socialLink:      user.profile?.socialLink || "",
+      companyName:      user.profile?.companyName || "",
+      current_position: user.profile?.current_position || "",
+      certifications:   user.profile?.certifications || [],
+    })
+  }, [user])
 
   const handleDialogSave: HandleDialogSave = (data) => {
     setTechTags(data.techTags)
@@ -72,6 +93,8 @@ const UpdateProfileForm = () => {
       
       console.log("Profile update response:", profileUpdateResponse)
       // console.log("Skill update response:", skillUpdateResponse)
+
+      router.back();
       
     } catch (error) {
       console.error(error)

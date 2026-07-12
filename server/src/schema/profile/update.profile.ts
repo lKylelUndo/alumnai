@@ -10,7 +10,7 @@ export const updateProfileSchema = z
       yearLevel: z.string().optional(),
       fullName: z.string().optional(),
       work_field: z.string().optional(),
-      socialLinks: z.string().optional(),
+      socialLink: z.string().optional(),
       companyName: z.string().optional(),
       current_position: z.string().optional(),
       certifications: z.array(z.string()).optional(),
