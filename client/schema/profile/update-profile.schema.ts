@@ -3,7 +3,6 @@ import { z } from "zod";
 export const updateProfileSchema = z.object({
   userId: z.string().min(1, "User id is required"),
   profilePicture: z.string().optional(),
-  email: z.string().email().optional(),
   graduationYear: z.string().optional(),
   coreSkills: z.array(z.string()).optional(),
   yearLevel: z.string().optional(),

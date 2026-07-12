@@ -10,7 +10,7 @@ export const AuthResetPasswordService = async (data: ResetPasswordInputTypes) =>
 
   try {
     const hashedToken = hashResetPasswordToken(data.token);
-    const token = await tokenRepository.findToken(hashedToken);
+    const token = await tokenRepository.findResetPasswordToken(hashedToken);
 
     if (!token)
       return { message: "Invalid or expired token", status: "error", code: 400 };
