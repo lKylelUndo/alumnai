@@ -31,7 +31,7 @@ export async function RefreshTokenService(refreshToken: string) {
     }
 
     // 4. Token Rotation: Consume the old token and generate a new pair
-    await tokenRepository.consumeToken(dbToken.id);
+    await tokenRepository.consumeToken(dbToken.token);
 
     // generate new token pair
      const accessToken = signAccessToken(user.id, user.email, user.role);
