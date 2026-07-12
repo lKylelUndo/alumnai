@@ -21,12 +21,14 @@ interface User {
     userId?: string
     profilePicture?: string | null
     yearLevel?: string | null
+    graduatedYear?: string | null
     fullName?: string | null
     work_field?: string | null
     companyName?: string | null
-    socialLinks?: any
+    socialLink?: string
     current_position?: string | null
-    certifications?: any
+    certifications?: string[]
+    coreSkills?: string[]
   } | null
 }
 

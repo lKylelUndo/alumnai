@@ -79,16 +79,16 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
       />
 
       <Controller
-        name="graduationYear"
+        name="graduatedYear"
         control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="update-profile-graduationyear" className="font-semibold text-primary">
+            <FieldLabel htmlFor="update-profile-graduatedyear" className="font-semibold text-primary">
               Graduation Year
             </FieldLabel>
             <Input
               {...field}
-              id="update-profile-graduationyear"
+              id="update-profile-graduatedyear"
               aria-invalid={fieldState.invalid}
               placeholder="2023"
               autoComplete="off"
@@ -118,7 +118,7 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
       </Field>
 
       <Controller
-        name="socialLinks"
+        name="socialLink"
         control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
