@@ -37,8 +37,6 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
         )}
       />
 
-     
-
       <Controller
         name="companyName"
         control={control}
