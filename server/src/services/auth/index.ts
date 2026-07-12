@@ -4,3 +4,4 @@ export { AuthForgetPasswordRequestService } from "@/services/auth/auth.forget.pa
 export { AuthResetPasswordService } from "@/services/auth/reset.password.token.service";
 export { AuthVerifyResetPasswordTokenService } from "@/services/auth/verify.reset.password.token.service";
 export { GetMeService } from "@/services/auth/get.me.service";
+export { RefreshTokenService } from "@/services/auth/refresh.token.service";

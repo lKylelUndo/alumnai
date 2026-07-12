@@ -15,6 +15,8 @@ import { useAuthContext } from "@/context/AuthContext"
 
 import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
+import { skillService } from "@/services/skill.service"
+import { profileService } from "@/services/profile.service"
 
 const UpdateProfileForm = () => {
   const { user } = useAuthContext()
@@ -26,7 +28,6 @@ const UpdateProfileForm = () => {
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       userId:           user?.id || "",
-      email:            user?.email || "",
       profilePicture:   "",
       yearLevel:        "",
       graduationYear:   "",
@@ -62,10 +63,20 @@ const UpdateProfileForm = () => {
     }
   }
 
-  function onSubmit(data: z.infer<typeof updateProfileSchema>) {
+  async function onSubmit(data: z.infer<typeof updateProfileSchema>) {
     console.log("submit")
     console.log("Profile update payload:", data)
     console.log("Skills to submit separately:", savedSkills)
+    try {
+      const profileUpdateResponse = await profileService.updateProfile(data)
+      // const skillUpdateResponse = await skillService.addSkill(data)
+      
+      console.log("Profile update response:", profileUpdateResponse)
+      // console.log("Skill update response:", skillUpdateResponse)
+      
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

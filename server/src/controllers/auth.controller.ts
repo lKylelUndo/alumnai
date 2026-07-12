@@ -6,6 +6,7 @@ import {
   AuthResetPasswordService,
   AuthVerifyResetPasswordTokenService,
   GetMeService,
+  RefreshTokenService,
 } from "@/services/auth";
 import { ENV } from "@/config/env";
 import { ms } from "@/lib/jwt";
@@ -71,6 +72,16 @@ class AuthController {
   public verifyResetPasswordToken = async (req: Request, res: Response) => {
     const { token } = req.body ?? {};
     const response = await AuthVerifyResetPasswordTokenService({token})
+    return res.status(response.code).json(response);
+  }
+
+  public refreshToken = async (req: Request, res: Response) => {
+    const refreshToken = req.body?.refreshToken || req.cookies?.refreshToken;
+    const response = await RefreshTokenService(refreshToken)
+
+    if (response.code === 200 && response.data?.tokens)
+      this.setAuthCookies(res, response.data.tokens)
+
     return res.status(response.code).json(response);
   }
 

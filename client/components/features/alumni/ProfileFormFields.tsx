@@ -38,27 +38,6 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
       />
 
       <Controller
-        name="email"
-        control={control}
-        render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="update-profile-email" className="font-semibold text-primary">
-              Email
-            </FieldLabel>
-            <Input
-              {...field}
-              id="update-profile-email"
-              aria-invalid={fieldState.invalid}
-              placeholder="you@example.com"
-              autoComplete="off"
-              type="email"
-            />
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-          </Field>
-        )}
-      />
-
-      <Controller
         name="companyName"
         control={control}
         render={({ field, fieldState }) => (
