@@ -15,7 +15,6 @@ import { useAuthContext } from "@/context/AuthContext"
 
 import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
-import { skillService } from "@/services/skill.service"
 import { profileService } from "@/services/profile.service"
 
 const UpdateProfileForm = () => {

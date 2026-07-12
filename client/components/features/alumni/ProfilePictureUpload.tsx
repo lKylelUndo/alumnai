@@ -14,10 +14,14 @@ export default function ProfilePictureUpload({ value, onChange }: ProfilePicture
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      onChange(reader.result as string)
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+      alert("Image must be under 5MB")
+      return
     }
+
+    const reader = new FileReader()
+    reader.onload = () => { onChange(reader.result as string) }
     reader.readAsDataURL(file)
   }
 
