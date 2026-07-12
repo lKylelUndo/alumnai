@@ -1,11 +1,9 @@
-"use client";
 import AlumniRecognition from "./AlumniRecognition"
 import Certifications from "@/components/common/Certifications"
 import AlumniProfileHeader from "./AlumniProfileHeader"
 import AlumniProfileAbout from "./AlumniProfileAbout"
 
 const AlumniProfile = () => {
-
   return (
     <div className="mx-auto mt-4 w-full max-w-[1200px] p-4 md:p-8">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

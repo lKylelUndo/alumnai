@@ -1,3 +1,4 @@
+"use client";
 import ProfileActions from "@/components/common/ProfileActions"
 import { Card } from "@/components/ui/card"
 import { Briefcase, GraduationCap, LinkIcon, Mail, User } from "lucide-react"

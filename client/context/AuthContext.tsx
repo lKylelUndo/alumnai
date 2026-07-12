@@ -21,7 +21,7 @@ interface User {
     userId?: string
     profilePicture?: string | null
     yearLevel?: string | null
-    graduationYear?: string | null
+    graduatedYear?: string | null
     fullName?: string | null
     work_field?: string | null
     companyName?: string | null

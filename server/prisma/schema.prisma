@@ -37,7 +37,7 @@ model Profile {
   socialLink       String?
   companyName      String?
   current_position String?
-  graduationYear   String?
+  graduatedYear   String?
   certifications   Json?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
