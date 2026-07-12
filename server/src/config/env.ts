@@ -11,8 +11,12 @@ export const ENV = {
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
   BACKEND_URL: process.env.BACKEND_URL || 'http://localhost:8000',
   GEMINI_KEY: process.env.GEMINI_KEY || "",
+
+  CLOUD_NAME: process.env.CLOUD_NAME || "",
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
+  CLOUDINARY_SECRET_KEY: process.env.CLOUDINARY_SECRET_KEY || "",
   
-  SMTP: {
+  SMTP: { 
     HOST: process.env.SMTP_HOST,
     PORT: parseInt(process.env.SMTP_PORT || '587', 10),
     USER: process.env.SMTP_USER,

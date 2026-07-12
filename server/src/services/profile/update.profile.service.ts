@@ -1,10 +1,16 @@
 import { ProfileRepository } from "@/repositories/profile.repository";
 import { UpdateProfileInputTypes } from "@/schema/profile";
+import { uploadImage } from "@/lib/cloudinary";
 
 export const UpdateProfileService = async (data: UpdateProfileInputTypes) => {
   const profileRepository = new ProfileRepository();
 
   try {
+    if (data.profilePicture) {
+      const uploadResult = await uploadImage(data.profilePicture);
+      data.profilePicture = uploadResult.secure_url;
+    }
+
     const profile = await profileRepository.update(data);
 
     if (!profile)
