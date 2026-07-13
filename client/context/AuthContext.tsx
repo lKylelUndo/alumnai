@@ -20,6 +20,7 @@ interface User {
     id?: string
     userId?: string
     profilePicture?: string | null
+    aboutMe?: string | null
     yearLevel?: string | null
     graduatedYear?: string | null
     fullName?: string | null
