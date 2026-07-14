@@ -18,7 +18,6 @@ export const certificationRowSchema = z.object({
 export type CertificationRow = z.infer<typeof certificationRowSchema>
 
 export const addTechOrToolsSchema = z.object({
-  type: z.enum(["HARD_SKILL", "CORE_SKILL", "SOFT_SKILL"]),
   name: z.string().min(1, "Tech/Tool name is required"),
   level: z.string().min(1, "Proficiency level is required"),
   description: z.string().optional(),
@@ -28,11 +27,11 @@ export const addTechOrToolsSchema = z.object({
 export type AddTechOrToolsFormValues = z.infer<typeof addTechOrToolsSchema>
 
 export interface SkillPayload {
-  profileId: string
+  profileId?: string
   name: string
-  level: number
+  level?: number
   description?: string
-  type: "HARD_SKILL" | "CORE_SKILL" | "SOFT_SKILL"
+  type: "HARD_SKILL" | "SOFT_SKILL"
 }
 
 export interface CertificationPayload {

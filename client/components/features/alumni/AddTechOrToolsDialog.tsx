@@ -101,36 +101,39 @@ export default function AddTechOrToolsDialog({open, onOpenChange, techTags, core
   }
 
   const onSubmit = (values: AddTechOrToolsFormValues) => {
-    // const levelNumber = parseInt(values.level, 10)
-    // const newTags = [
-    //   ...new Set([
-    //     ...tags,
-    //     values.name,
-    //     ...(values.others ? [values.others] : []),
-    //   ]),
-    // ]
+    const newTags = [
+      ...new Set([
+        ...tags,
+        values.name,
+      ]),
+    ]
 
-    // onSave({
-    //   skill: {
-    //     name: values.name,
-    //     level: levelNumber,
-    //     description: values.description,
-    //     type: "HARD_SKILL",
-    //   },
-    //   certifications: (values.certifications ?? [])
-    //     .filter((c) => c.name || c.issuer || c.fileBase64)
-    //     .map((c) => ({
-    //       name: c.name ?? "",
-    //       issuer: c.issuer ?? "",
-    //       fileBase64: c.fileBase64,
-    //       fileName: c.fileName,
-    //     })),
-    //   techTags: newTags,
-    //   coreSkills: coreSkillsTags,
-    // })
+     onSave({
+        // hard skill — the named tech/tool with level
+        skill: {
+            name: values.name,
+            level: parseFloat(values.level),
+            description: values.description,
+            type: "HARD_SKILL",  // ← always HARD_SKILL for tech/tools
+        },
 
-    // form.reset()
-    // onOpenChange(false)
+        // soft skills — everything in coreSkillsTags
+        coreSkills: coreSkillsTags,
+
+        certifications: (values.certifications ?? [])
+            .filter((c) => c.name || c.issuer || c.fileBase64)
+            .map((c) => ({
+                name: c.name ?? "",
+                issuer: c.issuer ?? "",
+                fileBase64: c.fileBase64,
+                fileName: c.fileName,
+            })),
+
+        techTags: newTags,
+    })
+
+    form.reset()
+    onOpenChange(false)
   }
 
   const handleCancel = () => {
@@ -438,8 +441,6 @@ export default function AddTechOrToolsDialog({open, onOpenChange, techTags, core
           </div>
         </form>
       </DialogContent>
-    </Dialog>
-
-    
+    </Dialog>  
   )
 }
