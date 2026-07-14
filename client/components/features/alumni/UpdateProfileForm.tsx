@@ -17,6 +17,7 @@ import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
 import { profileService } from "@/services/profile.service"
 import { useRouter } from "next/navigation"
+import { skillService } from "@/services/skill.service"
 
 const UpdateProfileForm = () => {
   const { user } = useAuthContext()
@@ -26,6 +27,7 @@ const UpdateProfileForm = () => {
 
   const router = useRouter();
 
+  // this is responsible sa profile update
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
@@ -85,13 +87,14 @@ const UpdateProfileForm = () => {
     }
   }
 
+  // Submit function
   async function onSubmit(data: z.infer<typeof updateProfileSchema>) {
     console.log("submit")
     console.log("Profile update payload:", data)
     console.log("Skills to submit separately:", savedSkills)
     try {
       const profileUpdateResponse = await profileService.updateProfile(data)
-      // const skillUpdateResponse = await skillService.addSkill(data)
+      //const skillUpdateResponse = await skillService.addSkills(savedSkills)
       
       console.log("Profile update response:", profileUpdateResponse)
       // console.log("Skill update response:", skillUpdateResponse)
