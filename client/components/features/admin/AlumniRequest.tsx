@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./DataTable"
+import { DataTable } from "@/components/common/DataTable"
 
 export type AlumniRequest = {
   studentId: string
@@ -46,7 +46,16 @@ const AlumniRequest = async () => {
   const data = await getData()
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <div className="mb-4">
+        <h2 className="text-lg font-bold text-primary">
+          Alumni Status Request
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          Alumni Status Request Verification Review and approve alumni status
+          upgrade requests
+        </p>
+      </div>
+      <DataTable columns={columns} data={data} filterColumn="studentId" filterPlaceholder="Search by Student Id..." />
     </div>
   )
 }

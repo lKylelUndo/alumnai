@@ -1,16 +1,12 @@
-import { AdminService } from "@/services/admin/admin.service";
+import { VerifyUserService } from "@/services/admin";
 import type { Request, Response } from "express";
 
 class AdminController {
-  private adminService = new AdminService();
-
-  public getUnverifiedUsers = async (req: Request, res: Response) => {
-
-  }
+  public getUnverifiedUsers = async (req: Request, res: Response) => {};
 
   public verifyUser = async (req: Request, res: Response) => {
     const { id } = req.body ?? {};
-    const response = await this.adminService.verify(id);
+    const response = await VerifyUserService(id);
     return res.status(response.code).json(response);
   };
 

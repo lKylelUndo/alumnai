@@ -21,6 +21,9 @@ export class UserRepository {
       where: {
         email,
       },
+      include: {
+        profile: true,
+      }
     });
   }
 
@@ -28,7 +31,7 @@ export class UserRepository {
     return await prisma.user.findUnique({
       where: {
         id,
-      },
+      }
     });
   }
 
@@ -42,10 +45,10 @@ export class UserRepository {
     });
   }
 
-   async resetPassword(id: string, password: string) {
+  async resetPassword(id: string, password: string) {
     return await prisma.user.update({
       where: { id },
-      data: { password }
-    })
+      data: { password },
+    });
   }
 }

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Mentor } from "@/types/profile";
+import { Mentor } from "@/lib/types/profile";
 
 interface Props {
   mentor: Mentor;

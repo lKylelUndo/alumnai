@@ -1,5 +1,6 @@
+import { DataTable } from "@/components/common/DataTable"
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./DataTable"
+
 
 export type VerifyStudents = {
   studentId: string
@@ -36,6 +37,72 @@ async function getData(): Promise<VerifyStudents[]> {
       status: "pending",
       email: "m@example.com",
     },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
+      {
+      studentId: "728ed52f",
+      name: "Arnel Pineda",
+      status: "pending",
+      email: "m@example.com",
+    },
     // ...
   ]
 }
@@ -44,7 +111,13 @@ const VerifyStudents = async () => {
   const data = await getData()
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <div className="mb-4">
+        <h2 className="text-lg font-bold text-primary">Verify Students</h2>
+        <p className="text-xs text-muted-foreground">
+          Approve or reject student verification requests
+        </p>
+      </div>
+      <DataTable columns={columns} data={data} filterColumn="studentId" filterPlaceholder="Search by Student Id" />
     </div>
   )
 }
