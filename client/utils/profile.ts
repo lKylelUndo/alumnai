@@ -39,11 +39,7 @@ export const getProfileFormDefaultValues = (user: User | null) => ({
  * This overwrites/updates the hard skill if it matches by name, filters out older core/soft
  * skills, and appends the new list of core skills as SOFT_SKILL payloads.
  */
-export function mergeSavedSkills(
-  prevSkills: SavedSkill[],
-  newHardSkill: SavedSkill,
-  newCoreSkills: string[]
-): SavedSkill[] {
+export function mergeSavedSkills(prevSkills: SavedSkill[], newHardSkill: SavedSkill, newCoreSkills: string[]): SavedSkill[] {
   // Filter out previous soft skills because newCoreSkills represents the complete list of core skills
   const hardSkills = prevSkills.filter((s) => s.type === "HARD_SKILL")
 
@@ -69,11 +65,7 @@ export function mergeSavedSkills(
 /**
  * Submits all saved skills to the database by attaching the profileId and calling the addSkill function.
  */
-export async function saveProfileSkills(
-  savedSkills: SavedSkill[],
-  profileId: string,
-  addSkillFn: (skill: AddSkillInput) => Promise<any>
-): Promise<void> {
+export async function saveProfileSkills(savedSkills: SavedSkill[], profileId: string, addSkillFn: (skill: AddSkillInput) => Promise<any>): Promise<void> {
   if (savedSkills.length === 0) return
 
   const skillsToSubmit = savedSkills.map((skill) => ({

@@ -63,10 +63,10 @@ const UpdateProfileForm = () => {
       const profileUpdateResponse = await profileService.updateProfile(data)
       console.log("Profile update response:", profileUpdateResponse)
 
-      const profileId = user?.profile?.id
-      if (profileId) {
-        await saveProfileSkills(savedSkills, profileId, skillService.addSkill)
-      }
+      // const profileId = user?.profile?.id
+      // if (profileId) {
+      //   await saveProfileSkills(savedSkills, profileId, skillService.addSkill)
+      // }
 
       router.back();
       
