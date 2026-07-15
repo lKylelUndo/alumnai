@@ -8,7 +8,7 @@ export default function Header() {
         <div className="mx-16 flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-2 md:pl-6">
             <Image
-              src={"/logo/alumnailogo.png"}
+              src={"/logo/logoalumnai.png"}
               width={100}
               height={100}
               alt="Logo"
