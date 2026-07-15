@@ -18,9 +18,9 @@ export default function AuthLayout({
         <main className="grid lg:grid-cols-2 flex-1">
           
           {/* Image Size To Be Adjusted ^ */}
-          <div className="hidden lg:block relative">
+          <div className="lg:block relative">
             <Image
-              src="/images/walapakayhanap.png"
+              src="/images/login.png"
               alt="Auth Background"
               fill
               className="object-cover"
