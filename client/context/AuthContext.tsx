@@ -86,10 +86,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (data: LoginInputTypes) => {
-    try {
+    try {   
       const response = await authService.login(data)
-
-      console.log("Response", response)
 
       if (response.code === 200) {
         const userData = response.data.user
@@ -108,8 +106,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log("Failed to login")
         throw new Error("Invalid credentials")
       }
-    } catch (error) {
-      throw error
+    } catch (error: any) {
+      console.error("Login Error:", error.response)
+      throw error;
     }
   }
 
@@ -122,8 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log("Failed to signup")
         throw new Error("Invalid credentials")
       }
-    } catch (error) {
-      throw error
+    } catch (error: any) {
+      console.error("Signup Error:", error.response)
+      throw error;
     }
   }
 

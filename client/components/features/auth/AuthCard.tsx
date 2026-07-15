@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { Brain } from "lucide-react";
-import { roboto_slab } from "@/lib/fonts";
 
 interface AuthCardProps {
   title: string;

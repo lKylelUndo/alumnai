@@ -12,7 +12,7 @@ import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
 
 export default function RegisterForm() {
-  const {signup} = useAuthContext();
+  const { signup } = useAuthContext();
   
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -25,7 +25,22 @@ export default function RegisterForm() {
   })
 
   async function onSubmit(data: z.infer<typeof signupSchema>) {
-    await signup(data);
+    try {
+      await signup(data);
+    } catch (error: any) {
+      console.error("Signup form error:", error.response)
+      // const serverErrors = error.response.data;
+
+      // serverErrors.forEach((error: any) => {
+      //   console.log(error)
+      // });
+      // form.setError("studentIdNumber", {
+      //   type: "server",
+      //   message:
+      //     error.response?.data?.message ??
+      //     "Something went wrong",
+      // });
+    }
   }
 
   return (

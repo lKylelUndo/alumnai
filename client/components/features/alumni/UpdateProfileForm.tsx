@@ -29,13 +29,13 @@ const UpdateProfileForm = () => {
 
   const router = useRouter();
 
-  // this is responsible sa profile update
+  // this form is responsible sa profile update
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: getProfileFormDefaultValues(user as User),
   })
 
-  // Re-populate the form once AuthContext finishes loading user from the DB
+  // butngan og initial values ang form once finished loading na ang user authcontext from the DB
   useEffect(() => {
     if (!user) return
     form.reset(getProfileFormDefaultValues(user as User))
