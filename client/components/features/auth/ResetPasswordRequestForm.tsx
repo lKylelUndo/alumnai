@@ -1,13 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import AuthCard from "./AuthCard"
-import {
-  Field,
-  FieldLabel,
-  FieldGroup,
-  FieldError,
-} from "@/components/ui/field"
+import { Field, FieldLabel, FieldGroup, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { resetPasswordRequestSchema } from "@/schema/auth"
 import { zodResolver } from "@hookform/resolvers/zod"

@@ -24,6 +24,7 @@ export default function AuthLayout({
               alt="Auth Background"
               fill
               className="object-cover"
+              sizes="(min-width: 768px) 50vw"
               priority
             />
   
