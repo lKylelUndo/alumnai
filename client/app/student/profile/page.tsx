@@ -3,7 +3,7 @@ import StudentProfilePage from "@/components/features/profile/student/StudentPro
 export default function ProfilePage() {
   return (
     <>
-    <StudentProfilePage />
+      <StudentProfilePage />
     </>
   );
 }

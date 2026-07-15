@@ -1,6 +1,5 @@
-"use client"
 import { Handshake, Mail, Users, Target, Briefcase } from "lucide-react"
-import Link from "next/link";
+import Link from "next/link"
 
 const StudentStatCards = () => {
   return (
@@ -32,7 +31,7 @@ const StudentStatCards = () => {
             </div>
             <div className="space-y-1">
               <h2 className="text-xl font-semibold text-primary">
-                Pending Invites
+                Pending Collaboration Invites
               </h2>
               <div className="flex items-baseline gap-x-2">
                 <span className="text-3xl font-bold text-foreground">2</span>
@@ -49,7 +48,7 @@ const StudentStatCards = () => {
             </div>
             <div className="space-y-1">
               <h2 className="text-xl font-semibold text-primary">
-                Active Mentorships
+                Your Active Mentors
               </h2>
               <div className="flex items-baseline gap-x-2">
                 <span className="text-3xl font-bold text-foreground">12</span>
@@ -67,12 +66,13 @@ const StudentStatCards = () => {
             <h2 className="text-base font-bold">Quick Actions</h2>
           </div>
           <div className="space-y-2">
-
-              <Link href="/student/profile"
-              className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
+            <Link
+              href="/student/profile"
+              className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted"
+            >
               <Briefcase className="h-4 w-4 text-muted-foreground" />
               <span>View My Profile</span>
-              </Link>
+            </Link>
 
             <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
               <Briefcase className="h-4 w-4 text-muted-foreground" />
@@ -82,7 +82,6 @@ const StudentStatCards = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
               <span>Find Collaborators</span>
             </button>
-
           </div>
         </div>
       </div>
