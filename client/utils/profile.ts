@@ -38,19 +38,33 @@ export const getProfileFormDefaultValues = (user: User | null) => ({
  * Merges a newly saved hard skill and core skills list into the existing savedSkills list.
  * This overwrites/updates the hard skill if it matches by name, filters out older core/soft
  * skills, and appends the new list of core skills as SOFT_SKILL payloads.
+ * Also merges otherSkills (non-tech HARD_SKILLs) with no proficiency level.
  */
-export function mergeSavedSkills(prevSkills: SavedSkill[], newHardSkill: SavedSkill, newCoreSkills: string[]): SavedSkill[] {
-  // Filter out previous soft skills because newCoreSkills represents the complete list of core skills
-  const hardSkills = prevSkills.filter((s) => s.type === "HARD_SKILL")
+export function mergeSavedSkills(
+  prevSkills: SavedSkill[],
+  newHardSkill: SavedSkill,
+  newCoreSkills: string[],
+  newOtherSkills: string[]
+): SavedSkill[] {
+  // Separate existing tech hard skills from other hard skills by checking if level is set
+  const techHardSkills = prevSkills.filter((s) => s.type === "HARD_SKILL" && s.level !== undefined)
+  const prevOtherHardSkills = prevSkills.filter((s) => s.type === "HARD_SKILL" && s.level === undefined)
 
-  // Update or add the new hard skill (newHardSkill)
-  const existsIndex = hardSkills.findIndex((s) => s.name === newHardSkill.name)
-  let updatedHardSkills = [...hardSkills]
+  // Update or add the new tech hard skill (newHardSkill)
+  const existsIndex = techHardSkills.findIndex((s) => s.name === newHardSkill.name)
+  let updatedTechSkills = [...techHardSkills]
   if (existsIndex >= 0) {
-    updatedHardSkills[existsIndex] = newHardSkill
+    updatedTechSkills[existsIndex] = newHardSkill
   } else {
-    updatedHardSkills.push(newHardSkill)
+    updatedTechSkills.push(newHardSkill)
   }
+
+  // Build the new otherSkills list as HARD_SKILL payloads (no level)
+  const updatedOtherSkills = newOtherSkills.map((skillName) => ({
+    name: skillName,
+    type: "HARD_SKILL" as const,
+    description: "",
+  }))
 
   // Map the new core skills list to SOFT_SKILL payloads
   const newSoftSkills = newCoreSkills.map((skillName) => ({
@@ -59,7 +73,7 @@ export function mergeSavedSkills(prevSkills: SavedSkill[], newHardSkill: SavedSk
     description: "",
   }))
 
-  return [...updatedHardSkills, ...newSoftSkills]
+  return [...updatedTechSkills, ...updatedOtherSkills, ...newSoftSkills]
 }
 
 /**

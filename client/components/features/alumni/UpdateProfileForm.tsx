@@ -25,6 +25,7 @@ const UpdateProfileForm = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [techTags, setTechTags] = useState<string[]>([])
   const [savedSkills, setSavedSkills] = useState<SavedSkill[]>([])
+  const [otherSkills, setOtherSkills] = useState<string[]>([])
 
   const router = useRouter();
 
@@ -42,9 +43,10 @@ const UpdateProfileForm = () => {
 
   const handleDialogSave: HandleDialogSave = (data) => {
     setTechTags(data.techTags)
+    setOtherSkills(data.otherSkills)
     form.setValue("coreSkills", data.coreSkills)
 
-    setSavedSkills((prev) => mergeSavedSkills(prev, data.skill, data.coreSkills))
+    setSavedSkills((prev) => mergeSavedSkills(prev, data.skill, data.coreSkills, data.otherSkills))
 
     if (data.certifications.length > 0) {
       form.setValue(
@@ -131,6 +133,7 @@ const UpdateProfileForm = () => {
         onOpenChange={setDialogOpen}
         techTags={techTags}
         coreSkills={form.watch("coreSkills") || []}
+        otherSkills={otherSkills}
         onSave={handleDialogSave}
       />
     </div>

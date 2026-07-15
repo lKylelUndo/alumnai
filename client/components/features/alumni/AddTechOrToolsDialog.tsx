@@ -12,12 +12,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
 import {addTechOrToolsSchema,PROFICIENCY_OPTIONS,type AddTechOrToolsFormValues,type AddTechOrToolsDialogProps } from "@/schema/skill"
 
-export default function AddTechOrToolsDialog({open, onOpenChange, techTags, coreSkills, onSave }: AddTechOrToolsDialogProps) {
+export default function AddTechOrToolsDialog({open, onOpenChange, techTags, coreSkills, otherSkills: otherSkillsProp, onSave }: AddTechOrToolsDialogProps) {
   const [tags, setTags] = useState<string[]>(techTags)
   const [tagInput, setTagInput] = useState("")
 
   const [coreSkillsTags, setCoreSkillsTags] = useState<string[]>(coreSkills)
   const [coreSkillsInput, setCoreSkillsInput] = useState("")
+
+  const [otherSkillsTags, setOtherSkillsTags] = useState<string[]>(otherSkillsProp ?? [])
+  const [otherSkillsInput, setOtherSkillsInput] = useState("")
 
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -45,10 +48,12 @@ export default function AddTechOrToolsDialog({open, onOpenChange, techTags, core
     if (open) {
       setTags(techTags)
       setCoreSkillsTags(coreSkills)
+      setOtherSkillsTags(otherSkillsProp ?? [])
       setTagInput("")
       setCoreSkillsInput("")
+      setOtherSkillsInput("")
     }
-  }, [open, techTags, coreSkills])
+  }, [open, techTags, coreSkills, otherSkillsProp])
 
   const addTag = () => {
     const trimmed = tagInput.trim()
@@ -71,6 +76,17 @@ export default function AddTechOrToolsDialog({open, onOpenChange, techTags, core
 
   const removeCoreSkillTag = (tag: string) =>
     setCoreSkillsTags((prev) => prev.filter((t) => t !== tag))
+
+  const addOtherSkillTag = () => {
+    const trimmed = otherSkillsInput.trim()
+    if (trimmed && !otherSkillsTags.includes(trimmed)) {
+      setOtherSkillsTags((prev) => [...prev, trimmed])
+    }
+    setOtherSkillsInput("")
+  }
+
+  const removeOtherSkillTag = (tag: string) =>
+    setOtherSkillsTags((prev) => prev.filter((t) => t !== tag))
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -119,6 +135,9 @@ export default function AddTechOrToolsDialog({open, onOpenChange, techTags, core
 
         // soft skills — everything in coreSkillsTags
         coreSkills: coreSkillsTags,
+
+        // other hard skills — non-tech abilities (networking, sound setup, etc.)
+        otherSkills: otherSkillsTags,
 
         certifications: (values.certifications ?? [])
             .filter((c) => c.name || c.issuer || c.fileBase64)
@@ -221,6 +240,87 @@ export default function AddTechOrToolsDialog({open, onOpenChange, techTags, core
                     onClick={() =>
                       document
                         .getElementById("dialog-coreskills-tag-input")
+                        ?.focus()
+                    }
+                    className="flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1 text-xs text-muted-foreground transition hover:border-primary hover:text-primary"
+                  >
+                    <PlusIcon size={10} />
+                  </button>
+                </div>
+              )}
+            </Field>
+
+            {/* ── Other Skills ─────────────────────────────────── */}
+            <Field>
+              <FieldLabel
+                htmlFor="dialog-otherskills-tag-input"
+                className="text-sm font-semibold text-primary"
+              >
+                Other Skills
+                <span className="ml-1.5 font-normal text-muted-foreground text-xs">
+                  (e.g. Networking, Sound System Setup, Photography)
+                </span>
+              </FieldLabel>
+              <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0 text-muted-foreground"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+                <input
+                  id="dialog-otherskills-tag-input"
+                  value={otherSkillsInput}
+                  onChange={(e) => setOtherSkillsInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      addOtherSkillTag()
+                    }
+                  }}
+                  placeholder="Type and press Enter to add other skill…"
+                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                />
+                <button
+                  type="button"
+                  onClick={addOtherSkillTag}
+                  className="flex h-6 w-6 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
+                >
+                  <PlusIcon size={13} />
+                </button>
+              </div>
+
+              {otherSkillsTags.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {otherSkillsTags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeOtherSkillTag(tag)}
+                        className="text-muted-foreground transition hover:text-destructive"
+                      >
+                        <XIcon size={10} />
+                      </button>
+                    </span>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      document
+                        .getElementById("dialog-otherskills-tag-input")
                         ?.focus()
                     }
                     className="flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1 text-xs text-muted-foreground transition hover:border-primary hover:text-primary"
