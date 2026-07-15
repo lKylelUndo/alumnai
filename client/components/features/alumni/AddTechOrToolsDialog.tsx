@@ -5,18 +5,18 @@ import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusIcon, XIcon, PaperclipIcon, Trash2Icon } from "lucide-react"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
-import { addTechOrToolsSchema, PROFICIENCY_OPTIONS, type AddTechOrToolsFormValues, type AddTechOrToolsDialogProps } from "@/schema/skill"
+import {addTechOrToolsSchema,PROFICIENCY_OPTIONS,type AddTechOrToolsFormValues,type AddTechOrToolsDialogProps } from "@/schema/skill"
 
-export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, coreSkills, onSave }: AddTechOrToolsDialogProps) {
-  const [tags, setTags]         = useState<string[]>(techTags)
+export default function AddTechOrToolsDialog({open, onOpenChange, techTags, coreSkills, onSave }: AddTechOrToolsDialogProps) {
+  const [tags, setTags] = useState<string[]>(techTags)
   const [tagInput, setTagInput] = useState("")
-  
-  const [coreSkillsTags, setCoreSkillsTags]   = useState<string[]>(coreSkills)
+
+  const [coreSkillsTags, setCoreSkillsTags] = useState<string[]>(coreSkills)
   const [coreSkillsInput, setCoreSkillsInput] = useState("")
 
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([])
@@ -24,20 +24,22 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
   const form = useForm<AddTechOrToolsFormValues>({
     resolver: zodResolver(addTechOrToolsSchema),
     defaultValues: {
-      name:           "",
-      level:          "",
-      description:    "",
-      others:         "",
+      name: "",
+      level: "",
+      description: "",
       certifications: [{ name: "", issuer: "", fileBase64: "", fileName: "" }],
     },
   })
 
-  const { fields, append, remove, update } = useFieldArray({ 
-    control: form.control, 
-    name: "certifications" 
+  const { fields, append, remove, update } = useFieldArray({
+    control: form.control,
+    name: "certifications",
   })
 
-  const watchedCerts = useWatch({ control: form.control, name: "certifications" })
+  const watchedCerts = useWatch({
+    control: form.control,
+    name: "certifications",
+  })
 
   useEffect(() => {
     if (open) {
@@ -56,7 +58,8 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
     setTagInput("")
   }
 
-  const removeTag = (tag: string) => setTags((prev) => prev.filter((t) => t !== tag))
+  const removeTag = (tag: string) =>
+    setTags((prev) => prev.filter((t) => t !== tag))
 
   const addCoreSkillTag = () => {
     const trimmed = coreSkillsInput.trim()
@@ -66,9 +69,13 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
     setCoreSkillsInput("")
   }
 
-  const removeCoreSkillTag = (tag: string) => setCoreSkillsTags((prev) => prev.filter((t) => t !== tag))
+  const removeCoreSkillTag = (tag: string) =>
+    setCoreSkillsTags((prev) => prev.filter((t) => t !== tag))
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
@@ -76,7 +83,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
       update(index, {
         ...(form.getValues(`certifications.${index}`) ?? {}),
         fileBase64: reader.result as string,
-        fileName:   file.name,
+        fileName: file.name,
       })
     }
     reader.readAsDataURL(file)
@@ -86,7 +93,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
     update(index, {
       ...(form.getValues(`certifications.${index}`) ?? {}),
       fileBase64: "",
-      fileName:   "",
+      fileName: "",
     })
     if (fileInputRefs.current[index]) {
       fileInputRefs.current[index]!.value = ""
@@ -94,30 +101,35 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
   }
 
   const onSubmit = (values: AddTechOrToolsFormValues) => {
-    const levelNumber = parseInt(values.level, 10)
-    const newTags = [...new Set([
-      ...tags,
-      values.name,
-      ...(values.others ? [values.others] : []),
-    ])]
+    const newTags = [
+      ...new Set([
+        ...tags,
+        values.name,
+      ]),
+    ]
 
-    onSave({
-      skill: {
-        name:        values.name,
-        level:       levelNumber,
-        description: values.description,
-        type:        "HARD_SKILL",
-      },
-      certifications: (values.certifications ?? [])
-        .filter((c) => c.name || c.issuer || c.fileBase64)
-        .map((c) => ({
-          name:       c.name    ?? "",
-          issuer:     c.issuer  ?? "",
-          fileBase64: c.fileBase64,
-          fileName:   c.fileName,
-        })),
-      techTags: newTags,
-      coreSkills: coreSkillsTags,
+     onSave({
+        // hard skill — the named tech/tool with level
+        skill: {
+            name: values.name,
+            level: parseFloat(values.level),
+            description: values.description,
+            type: "HARD_SKILL",  // ← always HARD_SKILL for tech/tools
+        },
+
+        // soft skills — everything in coreSkillsTags
+        coreSkills: coreSkillsTags,
+
+        certifications: (values.certifications ?? [])
+            .filter((c) => c.name || c.issuer || c.fileBase64)
+            .map((c) => ({
+                name: c.name ?? "",
+                issuer: c.issuer ?? "",
+                fileBase64: c.fileBase64,
+                fileName: c.fileName,
+            })),
+
+        techTags: newTags,
     })
 
     form.reset()
@@ -132,90 +144,21 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="lg:max-w-[800px] max-w-2xl gap-0 overflow-y-auto p-0"
+        className="max-w-2xl gap-0 overflow-y-auto p-0 lg:max-w-[800px]"
         style={{ maxHeight: "90vh" }}
         showCloseButton={false}
       >
-        <DialogHeader className="border-b px-6 pt-6 pb-4">
-          <DialogTitle className="text-xl font-bold text-primary">
-            Add Tech or Tools
-          </DialogTitle>
+        <DialogHeader className="border-b px-4 pt-6 pb-4">
+          <h1 className="text-xl font-bold text-primary">Add Tech or Tools</h1>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-5 px-6 py-5">
             <Field>
-              <FieldLabel htmlFor="dialog-tech-tag-input" className="text-sm font-semibold text-primary">
-                Tech or Tools
-              </FieldLabel>
-              <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="shrink-0 text-muted-foreground"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.35-4.35" />
-                </svg>
-                <input
-                  id="dialog-tech-tag-input"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault()
-                      addTag()
-                    }
-                  }}
-                  placeholder="Type and press Enter to add…"
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-                />
-                <button
-                  type="button"
-                  onClick={addTag}
-                  className="flex h-6 w-6 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
-                >
-                  <PlusIcon size={13} />
-                </button>
-              </div>
-
-              {tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium"
-                    >
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(tag)}
-                        className="text-muted-foreground transition hover:text-destructive"
-                      >
-                        <XIcon size={10} />
-                      </button>
-                    </span>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById("dialog-tech-tag-input")?.focus()}
-                    className="flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1 text-xs text-muted-foreground transition hover:border-primary hover:text-primary"
-                  >
-                    <PlusIcon size={10} />
-                  </button>
-                </div>
-              )}
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="dialog-coreskills-tag-input" className="text-sm font-semibold text-primary">
+              <FieldLabel
+                htmlFor="dialog-coreskills-tag-input"
+                className="text-sm font-semibold text-primary"
+              >
                 Core Skills
               </FieldLabel>
               <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
@@ -275,7 +218,11 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
                   ))}
                   <button
                     type="button"
-                    onClick={() => document.getElementById("dialog-coreskills-tag-input")?.focus()}
+                    onClick={() =>
+                      document
+                        .getElementById("dialog-coreskills-tag-input")
+                        ?.focus()
+                    }
                     className="flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1 text-xs text-muted-foreground transition hover:border-primary hover:text-primary"
                   >
                     <PlusIcon size={10} />
@@ -290,7 +237,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="dialog-skill-name" className="text-sm font-semibold text-primary">
+                    <FieldLabel
+                      htmlFor="dialog-skill-name"
+                      className="text-sm font-semibold text-primary"
+                    >
                       Tech/Tool Name
                     </FieldLabel>
                     <Input
@@ -315,7 +265,11 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
                       Proficiency Level
                     </FieldLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="dialog-skill-level" className="w-40" aria-invalid={fieldState.invalid}>
+                      <SelectTrigger
+                        id="dialog-skill-level"
+                        className="w-40"
+                        aria-invalid={fieldState.invalid}
+                      >
                         <SelectValue placeholder="Select…" />
                       </SelectTrigger>
                       <SelectContent position="popper">
@@ -344,7 +298,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
                 control={form.control}
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel htmlFor="dialog-skill-desc" className="text-sm font-semibold text-primary">
+                    <FieldLabel
+                      htmlFor="dialog-skill-desc"
+                      className="text-sm font-semibold text-primary"
+                    >
                       Short Skill Description
                     </FieldLabel>
                     <Input
@@ -358,28 +315,13 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
               />
             </div>
 
-            <Controller
-              name="others"
-              control={form.control}
-              render={({ field }) => (
-                <Field>
-                  <FieldLabel htmlFor="dialog-skill-others" className="text-sm font-semibold text-primary">
-                    Others <span className="font-normal text-muted-foreground">(Optional)</span>
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="dialog-skill-others"
-                    placeholder="e.g. Figma"
-                    autoComplete="off"
-                  />
-                </Field>
-              )}
-            />
-
             <div className="space-y-3">
               <div className="grid grid-cols-3 gap-3">
                 <span className="text-sm font-semibold text-primary">
-                  Certification <span className="font-normal text-muted-foreground">(Optional)</span>
+                  Certification{" "}
+                  <span className="font-normal text-muted-foreground">
+                    (Optional)
+                  </span>
                 </span>
                 <span className="text-sm font-semibold text-primary">
                   Certificate Issuer
@@ -392,7 +334,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
               {fields.map((certField, index) => {
                 const currentFileName = watchedCerts?.[index]?.fileName ?? ""
                 return (
-                  <div key={certField.id} className="grid grid-cols-3 items-center gap-3">
+                  <div
+                    key={certField.id}
+                    className="grid grid-cols-3 items-center gap-3"
+                  >
                     <Controller
                       name={`certifications.${index}.name`}
                       control={form.control}
@@ -420,7 +365,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
                     <div className="flex items-center gap-2">
                       {currentFileName ? (
                         <div className="flex flex-1 items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm">
-                          <PaperclipIcon size={13} className="shrink-0 text-muted-foreground" />
+                          <PaperclipIcon
+                            size={13}
+                            className="shrink-0 text-muted-foreground"
+                          />
                           <span className="flex-1 truncate text-xs">
                             {currentFileName}
                           </span>
@@ -440,7 +388,9 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
                           </span>
                           <PlusIcon size={13} className="shrink-0" />
                           <input
-                            ref={(el) => { fileInputRefs.current[index] = el }}
+                            ref={(el) => {
+                              fileInputRefs.current[index] = el
+                            }}
                             type="file"
                             accept=".pdf,.png,.jpg,.jpeg"
                             className="sr-only"
@@ -465,7 +415,9 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
 
               <button
                 type="button"
-                onClick={() => append({ name: "", issuer: "", fileBase64: "", fileName: "" })}
+                onClick={() =>
+                  append({ name: "", issuer: "", fileBase64: "", fileName: "" })
+                }
                 className="flex items-center gap-1.5 text-xs text-primary transition hover:underline"
               >
                 <PlusIcon size={12} />
@@ -474,16 +426,21 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, techTags, cor
             </div>
           </div>
 
-          <DialogFooter className="gap-3 px-6 py-4">
-            <Button type="button" variant="outline" className="flex-1" onClick={handleCancel}>
+          <div className="flex items-center gap-3 px-6 py-4">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
             <Button type="submit" className="flex-1">
               Save
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
-    </Dialog>
+    </Dialog>  
   )
 }

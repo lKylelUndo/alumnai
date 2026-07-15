@@ -17,6 +17,8 @@ import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
 import { profileService } from "@/services/profile.service"
 import { useRouter } from "next/navigation"
+import { skillService } from "@/services/skill.service"
+import { getProfileFormDefaultValues, mergeSavedSkills, saveProfileSkills, User } from "@/utils/profile"
 
 const UpdateProfileForm = () => {
   const { user } = useAuthContext()
@@ -26,54 +28,23 @@ const UpdateProfileForm = () => {
 
   const router = useRouter();
 
+  // this is responsible sa profile update
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
-    defaultValues: {
-      userId:           user?.id || "",
-      profilePicture:   user?.profile?.profilePicture || "",
-      yearLevel:        user?.profile?.yearLevel || "",
-      graduatedYear:   user?.profile?.graduatedYear || "",
-      fullName:         user?.profile?.fullName || "",
-      work_field:       user?.profile?.work_field || "",
-      coreSkills:       user?.profile?.coreSkills || [],
-      socialLink:      user?.profile?.socialLink || "",
-      companyName:      user?.profile?.companyName || "",
-      current_position: user?.profile?.current_position || "",
-      certifications:   user?.profile?.certifications || [],
-    },
+    defaultValues: getProfileFormDefaultValues(user as User),
   })
 
   // Re-populate the form once AuthContext finishes loading user from the DB
   useEffect(() => {
     if (!user) return
-    form.reset({
-      userId:           user.id || "",
-      profilePicture:   user.profile?.profilePicture || "",
-      yearLevel:        user.profile?.yearLevel || "",
-      graduatedYear:   user.profile?.graduatedYear || "",
-      fullName:         user.profile?.fullName || "",
-      work_field:       user.profile?.work_field || "",
-      coreSkills:       user.profile?.coreSkills || [],
-      socialLink:      user.profile?.socialLink || "",
-      companyName:      user.profile?.companyName || "",
-      current_position: user.profile?.current_position || "",
-      certifications:   user.profile?.certifications || [],
-    })
+    form.reset(getProfileFormDefaultValues(user as User))
   }, [user])
 
   const handleDialogSave: HandleDialogSave = (data) => {
     setTechTags(data.techTags)
     form.setValue("coreSkills", data.coreSkills)
 
-    setSavedSkills((prev) => {
-      const exists = prev.findIndex((s) => s.name === data.skill.name)
-      if (exists >= 0) {
-        const updated = [...prev]
-        updated[exists] = data.skill
-        return updated
-      }
-      return [...prev, data.skill]
-    })
+    setSavedSkills((prev) => mergeSavedSkills(prev, data.skill, data.coreSkills))
 
     if (data.certifications.length > 0) {
       form.setValue(
@@ -83,16 +54,19 @@ const UpdateProfileForm = () => {
     }
   }
 
+  // Submit function
   async function onSubmit(data: z.infer<typeof updateProfileSchema>) {
     console.log("submit")
     console.log("Profile update payload:", data)
     console.log("Skills to submit separately:", savedSkills)
     try {
       const profileUpdateResponse = await profileService.updateProfile(data)
-      // const skillUpdateResponse = await skillService.addSkill(data)
-      
       console.log("Profile update response:", profileUpdateResponse)
-      // console.log("Skill update response:", skillUpdateResponse)
+
+      // const profileId = user?.profile?.id
+      // if (profileId) {
+      //   await saveProfileSkills(savedSkills, profileId, skillService.addSkill)
+      // }
 
       router.back();
       

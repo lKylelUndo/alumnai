@@ -5,6 +5,7 @@ export const updateProfileSchema = z
     body: z.object({
       userId: z.string().min(1, "User id is required"),
       profilePicture: z.string().optional(),
+      aboutMe: z.string().optional(),
       graduatedYear: z.string().optional(),
       coreSkills: z.array(z.string()).optional(),
       yearLevel: z.string().optional(),

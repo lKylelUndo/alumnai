@@ -3,8 +3,8 @@ import type { Request, Response } from "express";
 
 class ProfileController {
     public updateProfile = async (req: Request, res: Response) => {
-        const { userId, profilePicture, yearLevel, fullName, work_field, socialLink, companyName, current_position, graduatedYear, certifications } = req.body ?? {}
-        const response = await UpdateProfileService({ userId, profilePicture, yearLevel, fullName, work_field, socialLink, companyName, current_position, graduatedYear, certifications })
+        const { userId, profilePicture, yearLevel, fullName, aboutMe, work_field, socialLink, companyName, current_position, graduatedYear, certifications } = req.body ?? {}
+        const response = await UpdateProfileService({ userId, profilePicture, yearLevel, fullName, aboutMe, work_field, socialLink, companyName, current_position, graduatedYear, certifications })
         return res.status(response.code).json(response);
     }
 
