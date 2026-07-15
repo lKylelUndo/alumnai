@@ -93,17 +93,10 @@ const UpdateProfileForm = () => {
         </CardHeader>
 
         <CardContent>
-          <ProfilePictureUpload
-            value={form.watch("profilePicture")}
-            onChange={(base64) => form.setValue("profilePicture", base64)}
-          />
+          <ProfilePictureUpload />
 
           <form id="form-rhf-updateprofileform" onSubmit={form.handleSubmit(onSubmit)}>
-            <ProfileFormFields
-              control={form.control}
-              techTags={techTags}
-              onOpenDialog={() => setDialogOpen(true)}
-            />
+            <ProfileFormFields control={form.control} />
           </form>
         </CardContent>
 

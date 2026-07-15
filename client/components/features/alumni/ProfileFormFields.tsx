@@ -14,7 +14,7 @@ interface ProfileFormFieldsProps {
   onOpenDialog: () => void
 }
 
-export default function ProfileFormFields({ control, techTags, onOpenDialog }: ProfileFormFieldsProps) {
+export default function ProfileFormFields({ control }: ProfileFormFieldsProps) {
   return (
     <FieldGroup className="grid lg:grid-cols-2">
       <Controller
@@ -121,7 +121,7 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
         )}
       />
 
-      <Field>
+      {/* <Field>
         <FieldLabel className="font-semibold text-primary">Tech or Tools</FieldLabel>
         <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring">
           <span className="flex-1 truncate text-muted-foreground">
@@ -137,7 +137,7 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
             <PlusIcon size={14} />
           </button>
         </div>
-      </Field>
+      </Field> */}
 
       <Controller
         name="socialLink"
