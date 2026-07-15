@@ -6,11 +6,11 @@ export default function FeaturesSection() {
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-slate-900">
+          <h2 className="lg:text-4xl text-3xl font-bold text-slate-900">
             Powerful Features
           </h2>
 
-          <p className="mt-4 text-slate-600">
+          <p className="mt-4 lg:text-base text-[14px] text-slate-600">
             alumnAI combines AI technology with institutional
             verification to create meaningful connections
           </p>
