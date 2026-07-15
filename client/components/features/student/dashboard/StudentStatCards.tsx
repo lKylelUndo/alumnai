@@ -1,5 +1,5 @@
 "use client"
-import { Handshake, Mail, Users, Target, Briefcase } from "lucide-react"
+import { Handshake, Mail, Users, Target, Briefcase, SquareUserRound } from "lucide-react"
 import Link from "next/link";
 
 const StudentStatCards = () => {
@@ -8,7 +8,7 @@ const StudentStatCards = () => {
       {/* Stats Cards Section */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:col-span-3">
         {/* Active Collaborators */}
-        <div className="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs transition-all hover:shadow-sm">
+        <div className="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-md transition-all hover:shadow-sm">
           <div className="space-y-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400">
               <Handshake className="h-5 w-5" />
@@ -70,16 +70,16 @@ const StudentStatCards = () => {
 
               <Link href="/student/profile"
               className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
+              <SquareUserRound className="h-4 w-4 text-icon" />
               <span>View My Profile</span>
               </Link>
 
             <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
+              <Briefcase className="h-4 w-4 text-icon" />
               <span>Edit Profile</span>
             </button>
             <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <Users className="h-4 w-4 text-icon" />
               <span>Find Collaborators</span>
             </button>
 

@@ -1,6 +1,5 @@
 import authController from "@/controllers/auth.controller";
 import authMiddleware from "@/middlewares/auth-middleware";
-import { loginRateLimiter } from "@/middlewares/rateLimiter";
 import { validateSchema } from "@/middlewares/validate-schema";
 import { forgetPasswordRequestSchema, loginSchema, refreshTokenSchema, resetPasswordSchema, signUpSchema, verifyResetPasswordTokenSchema } from "@/schema/auth";
 import { Router } from "express";
@@ -8,7 +7,7 @@ import { Router } from "express";
 const router = Router();
 
 router.post("/v1/signup", validateSchema(signUpSchema), authController.signup);
-router.post("/v1/login", validateSchema(loginSchema), loginRateLimiter, authController.login);
+router.post("/v1/login", validateSchema(loginSchema), authController.login);
 router.post("/v1/logout", authMiddleware.execute, authController.logout);
 
 // Request link for forget password

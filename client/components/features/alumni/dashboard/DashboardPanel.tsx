@@ -1,5 +1,3 @@
-"use client"
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TrendingUp, Users } from "lucide-react"
 import YourMentees from "./YourMentees"
@@ -8,8 +6,7 @@ import ManageMentorships from "./ManageMentorships"
 
 const DashboardPanel = () => {
   return (
-    <>
-    <section className="mt-10">
+    <section className="mt-10 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full">
         <TabsList variant="none" className="flex justify-between w-full">
           <TabsTrigger value="your-mentees">
@@ -44,7 +41,7 @@ const DashboardPanel = () => {
         </TabsContent>
       </Tabs>
     </section>
-    </>
+    
   )
 }
 

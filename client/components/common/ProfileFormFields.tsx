@@ -6,6 +6,7 @@ import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field"
 import { updateProfileSchema } from "@/schema/profile"
+import { Textarea } from "@/components/ui/textarea"
 
 interface ProfileFormFieldsProps {
   control: Control<z.infer<typeof updateProfileSchema>>
@@ -93,6 +94,27 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
               placeholder="2023"
               autoComplete="off"
               type="text"
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+
+      <Controller
+        name="aboutMe"
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid} className="col-span-2">
+            <FieldLabel htmlFor="update-profile-about-me" className="font-semibold text-primary">
+              About Me
+            </FieldLabel>
+            <Textarea
+              {...field}
+              id="update-profile-about-me"
+              aria-invalid={fieldState.invalid}
+              placeholder="Tell us about yourself"
+              autoComplete="off"
+              rows={4}
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>

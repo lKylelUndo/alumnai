@@ -18,7 +18,7 @@ const AlumniBanner = () => {
         />
 
         <div>
-          <h1 className="text-2xl font-semibold text-primary lg:text-4xl">
+          <h1 className="text-2xl font-semibold text-primary lg:text-3xl">
             Welcome back, {user?.profile?.fullName || user?.email || "Alumni"}
           </h1>
           <p className="text-[14px] text-muted-foreground md:text-[16px]">

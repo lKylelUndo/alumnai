@@ -13,8 +13,8 @@ const StudentBanner = () => {
         />
 
         <div>
-          <h1 className="text-2xl font-semibold text-primary lg:text-4xl">
-            Welcome back, {"Rose"}
+          <h1 className="text-2xl font-semibold text-primary lg:text-3xl">
+            Welcome back, {"Student"}
           </h1>
           <p className="text-[14px] text-muted-foreground md:text-[16px]">
             Track your growth, connect with mentors, and improve your career readiness.

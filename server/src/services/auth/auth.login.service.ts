@@ -12,13 +12,13 @@ export const AuthLoginService = async (data: LoginInputTypes) => {
     const user = await userRepository.findByEmail(data.email);
 
     if (!user)
-      return { status: "error", code: 400, message: "This user is not yet signed up" };
+      return { status: "error", code: 400, path: "email", message: "This user is not yet signed up" };
 
     if (!user?.isAccountVerified)
-      return { status: "error", code: 400, message: "This account is not yet verified" };
+      return { status: "error", code: 400, path: "email", message: "This account is not yet verified" };
 
     if ((await decryptPassword(data.password, user.password)) === false)
-      return { status: "error", code: 400, message: "Password incorrect" };
+      return { status: "error", code: 400, path: "password", message: "Password incorrect" };
 
     const accessToken = signAccessToken(user.id, user.email, user.role);
     const refreshToken = signRefreshToken(user.id, user.email, user.role);

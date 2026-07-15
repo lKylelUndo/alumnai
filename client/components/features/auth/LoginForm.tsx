@@ -22,9 +22,19 @@ export default function LoginForm() {
   })
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
-    // Do something with the form values.
-    console.log("submit", data)
-    await login(data);
+    try {
+      await login(data)
+    } catch (error: any) {
+      const serverError = error?.response?.data
+      console.error("Login form error:", serverError)
+
+      if (serverError?.path && serverError?.message) {
+        form.setError(serverError.path, { type: "server", message: serverError.message })
+      } else {
+        // Fallback: set a generic root error
+        form.setError("root", { type: "server", message: serverError?.message ?? "Something went wrong" })
+      }    
+    }
   }
 
   return (
@@ -44,7 +54,6 @@ export default function LoginForm() {
                   {...field}
                   id="form-rhf-email"
                   aria-invalid={fieldState.invalid}
-                  autoComplete="off"
                   type="email"
                   required
                 />

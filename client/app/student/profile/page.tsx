@@ -1,9 +1,10 @@
-import StudentProfilePage from "@/components/features/profile/student/StudentProfilePage";
+import StudentProfile from "@/components/features/student/profile/StudentProfile";
 
-export default function ProfilePage() {
+export default function StudentProfilePage() {
   return (
     <>
-    <StudentProfilePage />
+    <StudentProfile />
     </>
   );
 }
+

@@ -36,6 +36,7 @@ model Profile {
   work_field       String?
   socialLink       String?
   companyName      String?
+  aboutMe          String?
   current_position String?
   graduatedYear   String?
   certifications   Json?

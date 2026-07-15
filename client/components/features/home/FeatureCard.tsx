@@ -1,34 +1,25 @@
-import Image from "next/image";
+import { Card, CardDescription, CardHeader } from "@/components/ui/card"
+import Image from "next/image"
 
 interface FeatureCardProps {
-  title: string;
-  description: string;
-  icon: string;
+  title: string
+  description: string
+  icon: string
 }
 
-export default function FeatureCard({
-  title,
-  description,
-  icon,
-}: FeatureCardProps) {
+export default function FeatureCard({ title, description, icon }: FeatureCardProps) {
   return (
-    <div className="bg-white border rounded-xl p-6 shadow-sm hover:shadow-md transition">
-      <div className="flex justify-center mb-4">
-        <Image
-          src={icon}
-          alt={title}
-          width={50}
-          height={50}
-        />
-      </div>
-
-      <h3 className="text-center font-semibold text-lg text-slate-800">
+    <Card className="p-6 border border-[#A4B1CC] hover:translate-y-0.5 transition-transform duration-300">
+      <CardHeader className="mb-4 flex justify-center">
+        <Image src={icon} alt={title} width={50} height={50} loading="eager" />
+      </CardHeader>
+      <CardHeader className="text-center text-lg font-semibold text-slate-800">
         {title}
-      </h3>
+      </CardHeader>
 
-      <p className="text-center text-slate-600 mt-3">
+      <CardDescription className="mt-3 text-center text-slate-600">
         {description}
-      </p>
-    </div>
-  );
+      </CardDescription>
+    </Card>
+  )
 }
