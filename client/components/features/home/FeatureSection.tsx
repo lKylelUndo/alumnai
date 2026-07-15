@@ -1,49 +1,5 @@
 import FeatureCard from "./FeatureCard";
-
-const features = [
-  {
-    title: "AI-Powered Skill Indexing",
-    description:
-      "Analyze GitHub repositories using GitHub REST API and Gemini AI to generate verified skill profiles.",
-    icon: "/icons/ai-indexing.png",
-  },
-  {
-    title: "Skill Gap Analysis",
-    description:
-      "Compare student skills with alumni trends to generate personalized learning recommendations.",
-    icon: "/icons/skill-gap.png",
-  },
-  {
-    title: "Intelligent Talent Matching",
-    description:
-      "Natural language search powered by AI to find perfect student-alumni collaborations.",
-    icon: "/icons/matching.png",
-  },
-  {
-    title: "Curriculum Analytics",
-    description:
-      "Data-driven insights into alumni skill trends to support curriculum enhancement.",
-    icon: "/icons/analytics.png",
-  },
-  {
-    title: "Mentorship Recognition",
-    description:
-      "Recognizes outstanding mentorship performance based on student feedback.",
-    icon: "/icons/recognition.png",
-  },
-  {
-    title: "School-Verified System",
-    description:
-      "Institutional verification ensures credibility and trust within the academic ecosystem.",
-    icon: "/icons/verified.png",
-  },
-  {
-    title: "Mentorship System",
-    description:
-      "Structured mentorship requests and collaboration invitations between students and alumni.",
-    icon: "/icons/mentorship.png",
-  },
-];
+import { features } from "@/constants/feature";
 
 export default function FeaturesSection() {
   return (
