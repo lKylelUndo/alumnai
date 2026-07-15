@@ -46,6 +46,7 @@ export interface AddTechOrToolsSaveData {
   certifications: CertificationPayload[]
   techTags: string[]
   coreSkills: string[]
+  otherSkills: string[]
 }
 
 export interface AddTechOrToolsDialogProps {
@@ -53,5 +54,6 @@ export interface AddTechOrToolsDialogProps {
   onOpenChange: (open: boolean) => void
   techTags: string[]
   coreSkills: string[]
+  otherSkills: string[]
   onSave: (data: AddTechOrToolsSaveData) => void
 }

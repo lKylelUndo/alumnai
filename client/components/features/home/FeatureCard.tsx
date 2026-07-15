@@ -9,9 +9,9 @@ interface FeatureCardProps {
 
 export default function FeatureCard({ title, description, icon }: FeatureCardProps) {
   return (
-    <Card className="p-6">
+    <Card className="p-6 border border-[#A4B1CC] hover:translate-y-0.5 transition-transform duration-300">
       <CardHeader className="mb-4 flex justify-center">
-        <Image src={icon} alt={title} width={50} height={50} />
+        <Image src={icon} alt={title} width={50} height={50} loading="eager" />
       </CardHeader>
       <CardHeader className="text-center text-lg font-semibold text-slate-800">
         {title}

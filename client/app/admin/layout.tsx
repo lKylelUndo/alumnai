@@ -18,6 +18,9 @@ export default function AdminDashboardLayout({ children }: { children: ReactNode
         <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
             <AdminBanner />
             {children}
+            <footer className="text-primary text-center border border-white">
+              <p>Copyright © {new Date().getFullYear()}  Alumnai. All rights reserved.</p>
+            </footer>
         </main>
     </AuthGuard>
   )
