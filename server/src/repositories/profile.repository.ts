@@ -25,13 +25,32 @@ export class ProfileRepository {
   }
 
   async update(data: UpdateProfileInputTypes) {
-    const { userId, ...restData } = data;
+    const { userId, graduationYear, coreSkills, ...restData } = data;
+
     return await prisma.profile.upsert({
       where: { userId },
-      update: data,
+      update: restData,
       create: {
         userId,
         ...restData,
+      },
+    });
+  }
+
+  async matchSkill(skills: string[]) {
+    return await prisma.profile.findMany({
+      where: {
+        skills: {
+          some: {
+            name: {
+              in: skills,
+            },
+          },
+        },
+      },
+      include: {
+        skills: true,
+        user: true,
       },
     });
   }

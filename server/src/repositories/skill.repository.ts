@@ -13,4 +13,8 @@ export class SkillRepository {
         where: { id }
     })
   }
+
+  async find() {
+    
+  }
 }

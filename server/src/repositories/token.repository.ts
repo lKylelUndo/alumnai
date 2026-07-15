@@ -24,7 +24,7 @@ export class TokenRepository {
         })
     }
 
-    async findToken(token: string) {
+    async findResetPasswordToken(token: string) {
         return prisma.token.findFirst({
             where: {
                 token,
@@ -32,6 +32,18 @@ export class TokenRepository {
                 expiresAt:   { gt: new Date() },   //  6:10 pm > 6:15 pm dapat less than sa new time huhu
                 consumedAt:  null,                 // not already used
                 revokedAt:   null,                 // not revoked
+            }
+        })
+    }
+
+    async findActiveRefreshToken(token: string) {
+        return prisma.token.findFirst({
+            where: {
+                token,
+                type: TokenType.REFRESH,
+                expiresAt:   { gt: new Date() },   
+                consumedAt:  null,                
+                revokedAt:   null,                
             }
         })
     }

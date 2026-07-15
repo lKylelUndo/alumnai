@@ -12,7 +12,12 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use((req, res, next) => {
+  if (req.path === '/api/profile/v1/update-profile') {
+    return next();
+  }
+  express.json()(req, res, next);
+});
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 

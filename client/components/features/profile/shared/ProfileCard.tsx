@@ -4,7 +4,7 @@ import StudentBadge from "./StudentBadge";
 import ContactInfo from "./ContactInfo";
 import ProfileActions from "./ProfileActions";
 
-import { Profile } from "@/types/profile";
+import { Profile } from "@/lib/types/profile";
 
 interface Props {
   profile: Profile;

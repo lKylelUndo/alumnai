@@ -1,17 +1,24 @@
-import AlumniBanner from "@/components/features/dashboard/alumni/AlumniBanner";
-import AlumniHeader from "@/components/features/dashboard/alumni/AlumniHeader";
+import type { Metadata } from "next";
+import AlumniHeader from "@/components/features/alumni/dashboard/AlumniHeader";
+import { AuthGuard } from "@/components/features/auth/AuthGuard";
+import type { ReactNode } from "react";
 
-export default function AlumniDashboardLayout({ children }: { children: React.ReactNode }) {
+export const metadata: Metadata = {
+    title: "Alumnai CPC - Alumni Dashboard",
+    description: "Alumni dashboard contains all your alumni information.",
+}
+
+export default function AlumniDashboardLayout({ children }: { children: ReactNode }) {
     return (
+        // <AuthGuard mode="ALUMNI">
         <>
-        <title>Alumnai CPC - Alumni Dashboard</title>
-        <header className="lg:max-w-300 md:max-w-200 mx-auto">
-            <AlumniHeader />
-        </header>
-        <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
-            <AlumniBanner />
-            {children}
-        </main>
+            <header className="px-2">
+                <AlumniHeader />
+            </header>
+            <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
+                {children}
+            </main>
         </>
+        // </AuthGuard>
     )
 }

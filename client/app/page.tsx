@@ -23,9 +23,9 @@ export default function Page() {
 
   return (
     <>
-    <Header />
-    <LandingPage />
-    <Footer />
+      <Header />
+      <LandingPage />
+      <Footer />
     </>
   )
 }

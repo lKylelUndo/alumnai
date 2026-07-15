@@ -1,25 +1,31 @@
 import type { Request, Response } from "express";
-import { AuthService } from "@/services/auth/auth.service";
+import {
+  AuthSignupService,
+  AuthLoginService,
+  AuthForgetPasswordRequestService,
+  AuthResetPasswordService,
+  AuthVerifyResetPasswordTokenService,
+  GetMeService,
+  RefreshTokenService,
+} from "@/services/auth";
 import { ENV } from "@/config/env";
 import { ms } from "@/lib/jwt";
 
 class AuthController {
-  private authService = new AuthService();
-
   private setAuthCookies = async (res: Response, tokens: { accessToken: string, refreshToken: string}) => {
     const isProduction = ENV.NODE_ENV === "production";
     const domain = isProduction ? "/" : undefined;
 
     res.cookie("accessToken", tokens.accessToken, {
       httpOnly: true,
-      secure: isProduction, // right now its false cuz its development era
+      secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       maxAge: ms(15, "minutes")
     })
 
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: isProduction, // right now its false cuz its development era
+      secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       maxAge: ms(7, "days")
     })
@@ -27,13 +33,13 @@ class AuthController {
 
   public signup = async (req: Request, res: Response) => {
     const { studentIdNumber, email, password } = req.body ?? {};
-    const response = await this.authService.signup({studentIdNumber, email, password})
+    const response = await AuthSignupService({studentIdNumber, email, password})
     return res.status(response.code).json(response);
   };
 
   public login = async (req: Request, res: Response) => {
     const { email, password } = req.body ?? {};
-    const response = await this.authService.login({email, password});
+    const response = await AuthLoginService({email, password});
 
     if (response.code === 200 && response.data?.tokens)
       this.setAuthCookies(res, response.data.tokens)
@@ -53,21 +59,38 @@ class AuthController {
 
   public forgetPassword = async (req: Request, res: Response) => {
     const { email } = req.body ?? {};
-    const response = await this.authService.forgetPasswordRequest({email});
+    const response = await AuthForgetPasswordRequestService({email});
     return res.status(response.code).json(response);
   }
 
   public resetPassword = async (req: Request, res: Response) => {
     const { newPassword, token, userId } = req.body ?? {};
-    const response = await this.authService.resetPassword({newPassword, token, userId})
+    const response = await AuthResetPasswordService({newPassword, token, userId})
     return res.status(response.code).json(response);
   }
 
   public verifyResetPasswordToken = async (req: Request, res: Response) => {
     const { token } = req.body ?? {};
-    const response = await this.authService.verifyResetPasswordToken({token})
+    const response = await AuthVerifyResetPasswordTokenService({token})
     return res.status(response.code).json(response);
   }
+
+  public refreshToken = async (req: Request, res: Response) => {
+    const refreshToken = req.body?.refreshToken || req.cookies?.refreshToken;
+    const response = await RefreshTokenService(refreshToken)
+
+    if (response.code === 200 && response.data?.tokens)
+      this.setAuthCookies(res, response.data.tokens)
+
+    return res.status(response.code).json(response);
+  }
+
+  // Get Current User Session
+  public me = async (req: Request, res: Response) => {
+    const { userId } = req.user!;
+    const result = await GetMeService(userId);
+    return res.status(result.code).json(result);
+  };
 }
 
 export default new AuthController();

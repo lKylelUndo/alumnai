@@ -1,5 +1,5 @@
+import { DataTable } from "@/components/common/DataTable"
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./DataTable"
 
 export type UserManagement = {
   user: string
@@ -44,7 +44,13 @@ const ManagerUsers = async () => {
   const data = await getData()
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <div className="mb-4">
+        <h2 className="text-lg font-bold text-primary">User Management</h2>
+        <p className="text-xs text-muted-foreground">
+          Review and manage user accounts and roles
+        </p>
+      </div>
+      <DataTable columns={columns} data={data} filterColumn="user" filterPlaceholder="Search by user..." />
     </div>
   )
 }
