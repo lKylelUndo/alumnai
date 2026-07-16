@@ -1,11 +1,6 @@
-<<<<<<< HEAD:client/components/features/student/dashboard/StudentStatCards.tsx
 "use client"
 import { Handshake, Mail, Users, Target, Briefcase, SquareUserRound } from "lucide-react"
 import Link from "next/link";
-=======
-import { Handshake, Mail, Users, Target, Briefcase } from "lucide-react"
-import Link from "next/link"
->>>>>>> b2a76732409201d14775a7159f4ec0b8dfaa2903:client/components/features/student/StudentStatCards.tsx
 
 const StudentStatCards = () => {
   return (
@@ -72,18 +67,10 @@ const StudentStatCards = () => {
             <h2 className="text-base font-bold">Quick Actions</h2>
           </div>
           <div className="space-y-2">
-<<<<<<< HEAD:client/components/features/student/dashboard/StudentStatCards.tsx
 
               <Link href="/student/profile"
               className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
               <SquareUserRound className="h-4 w-4 text-icon" />
-=======
-            <Link
-              href="/student/profile"
-              className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted"
-            >
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
->>>>>>> b2a76732409201d14775a7159f4ec0b8dfaa2903:client/components/features/student/StudentStatCards.tsx
               <span>View My Profile</span>
             </Link>
 
