@@ -7,14 +7,18 @@ import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field"
 import { updateProfileSchema } from "@/schema/profile"
 import { Textarea } from "@/components/ui/textarea"
+import { AddSkillInput } from "@/schema/skill"
 
 interface ProfileFormFieldsProps {
   control: Control<z.infer<typeof updateProfileSchema>>
-  techTags: string[]
+  skills: AddSkillInput[]
   onOpenDialog: () => void
 }
 
-export default function ProfileFormFields({ control, techTags, onOpenDialog }: ProfileFormFieldsProps) {
+export default function ProfileFormFields({ control, skills, onOpenDialog }: ProfileFormFieldsProps) {
+   // split skills by type for display purposes ikaw og ganahan ka i apil softskills
+  const hardSkills = skills.filter((s) => s.type === "HARD_SKILL")
+
   return (
     <FieldGroup className="grid lg:grid-cols-2">
       <Controller
@@ -125,7 +129,9 @@ export default function ProfileFormFields({ control, techTags, onOpenDialog }: P
         <FieldLabel className="font-semibold text-primary">Tech or Tools</FieldLabel>
         <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring">
           <span className="flex-1 truncate text-muted-foreground">
-            {techTags.length > 0 ? techTags.join(", ") : "C#, React, PHP, jQuery"}
+              {hardSkills.length > 0
+              ? hardSkills.map((s) => s.name).join(", ")
+              : "C#, React, PHP, jQuery"}
           </span>
           <button
             type="button"

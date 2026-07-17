@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { addSkillSchema } from "../skill"
 
 export const updateProfileSchema = z
   .object({
@@ -6,7 +7,7 @@ export const updateProfileSchema = z
     profilePicture: z.string().optional(),
     aboutMe: z.string().optional(),
     graduatedYear: z.string().optional(),
-    coreSkills: z.array(z.string()).optional(),
+    skills: z.array(addSkillSchema).optional(),
     yearLevel: z.string().optional(),
     fullName: z.string().optional(),
     work_field: z.string().optional(),
