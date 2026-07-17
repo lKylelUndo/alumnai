@@ -25,7 +25,7 @@ const StudentProfileHeader = () => {
                 <GraduationCap className="h-4 w-4" />
                 Student
               </span>
-              <span className="inline-flex items-center rounded-full border border-[#00B050] bg-white px-3 py-1 text-xs font-medium text-[#00B050]">
+              <span className="inline-flex items-center rounded-full border border-[#A4B1CC] bg-white px-3 py-1 text-xs font-medium text-[#097969]">
                 Available for Mentoring
               </span>
             </div>

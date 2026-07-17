@@ -9,13 +9,13 @@ const ProfileActions = () => {
       <Button
         onClick={() => window.print()}
         variant="ghost"
-        className="download-btn h-auto p-0 font-semibold text-[#1A216D] hover:bg-transparent"
+        className="download-btn px-0 font-semibold text-[#1A216D] hover:bg-transparent"
       >
         <Download className="mr-2 h-4 w-4" />
         Download Profile
       </Button>
-      <Link href={"/alumni/profile/update"}>
-        <Button className="mt-4 rounded-full bg-[#1877F2] px-6 text-white hover:bg-[#1877F2]/90 md:mt-0">
+      <Link href={"/student/profile/update"}>
+        <Button className="mt-4 rounded-full bg-[#1877F2] px-4 text-white hover:bg-[#1877F2]/90 md:mt-0">
           <Edit3 className="mr-2 h-4 w-4" />
           Update Profile
         </Button>

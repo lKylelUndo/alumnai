@@ -80,7 +80,7 @@ const ManageMentorships = () => {
     <div className="py-4">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-primary">
-          Manage Mentorship request
+          Manage Mentorship Request
         </h2>
         <p className="text-xs text-muted-foreground">
           Students who are requesting for your mentorship

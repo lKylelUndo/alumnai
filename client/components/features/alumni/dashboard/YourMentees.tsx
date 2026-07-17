@@ -64,7 +64,7 @@ function MenteeCard({ row }: { row: Row<Mentee> }) {
         </button>
         <button
           id={`end-collab-mentee-${mentee.id}`}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-500 transition-all duration-200 hover:border-red-400 hover:bg-red-500 hover:text-white active:scale-95"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#793A3A] bg-white px-3 py-1.5 text-xs font-semibold text-[#793A3A] transition-all duration-200 hover:border-red-400 hover:bg-red-500 hover:text-white active:scale-95"
         >
           <XCircle className="h-3.5 w-3.5" />
           End Collaboration

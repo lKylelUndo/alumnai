@@ -1,7 +1,7 @@
 "use client";
 import ProfileActions from "@/components/common/ProfileActions"
 import { Card } from "@/components/ui/card"
-import { Briefcase, GraduationCap, LinkIcon, Mail, User } from "lucide-react"
+import { Briefcase, GraduationCap, LinkIcon, Mail } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
 import Image from "next/image"
 
@@ -25,7 +25,7 @@ const AlumniProfileHeader = () => {
                 <GraduationCap className="h-4 w-4" />
                 Alumni
               </span>
-              <span className="inline-flex items-center rounded-full border border-[#00B050] bg-white px-3 py-1 text-xs font-medium text-[#00B050]">
+              <span className="inline-flex items-center rounded-full border border-[#A4B1CC] bg-white px-3 py-1 text-xs font-medium text-[#097969]">
                 Available for Mentoring
               </span>
             </div>

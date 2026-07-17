@@ -74,14 +74,18 @@ const StudentStatCards = () => {
               <span>View My Profile</span>
             </Link>
 
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
+    
+              <Link href="/student/profile"
+              className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
               <Briefcase className="h-4 w-4 text-icon" />
               <span>Edit Profile</span>
-            </button>
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
+              </Link>
+
+            <Link href="/student/find-mentors"
+            className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
               <Users className="h-4 w-4 text-icon" />
               <span>Find Collaborators</span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
