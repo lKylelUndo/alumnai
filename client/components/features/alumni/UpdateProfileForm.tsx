@@ -41,22 +41,23 @@ const UpdateProfileForm = () => {
     form.reset(getProfileFormDefaultValues(user as User))
   }, [user])
 
-  const handleDialogSave: HandleDialogSave = (data) => {
-    setTechTags(data.techTags)
-    setOtherSkills(data.otherSkills)
-    form.setValue("coreSkills", data.coreSkills)
+  // const handleDialogSave: HandleDialogSave = (data) => {
+  //   setTechTags(data.techTags)
+  //   setOtherSkills(data.otherSkills)
+  //   form.setValue("coreSkills", data.coreSkills)
 
-    setSavedSkills((prev) => mergeSavedSkills(prev, data.skill, data.coreSkills, data.otherSkills))
+  //   setSavedSkills((prev) => mergeSavedSkills(prev, data.skill, data.coreSkills, data.otherSkills))
 
-    if (data.certifications.length > 0) {
-      form.setValue(
-        "certifications",
-        data.certifications.map((c) => c.name).filter(Boolean)
-      )
-    }
-  }
+  //   if (data.certifications.length > 0) {
+  //     form.setValue(
+  //       "certifications",
+  //       data.certifications.map((c) => c.name).filter(Boolean)
+  //     )
+  //   }
+  // }
 
   // Submit function
+  
   async function onSubmit(data: z.infer<typeof updateProfileSchema>) {
     console.log("submit")
     console.log("Profile update payload:", data)
