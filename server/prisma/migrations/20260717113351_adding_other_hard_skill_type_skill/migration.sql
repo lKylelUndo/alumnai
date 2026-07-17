@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "SkillType" ADD VALUE 'OTHER_HARD_SKILL';

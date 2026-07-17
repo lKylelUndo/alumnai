@@ -16,16 +16,17 @@ import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
 import { profileService } from "@/services/profile.service"
 import { useRouter } from "next/navigation"
-import { skillService } from "@/services/skill.service"
-import { getProfileFormDefaultValues, mergeSavedSkills, saveProfileSkills, User } from "@/utils/profile"
+//import { skillService } from "@/services/skill.service"
+import { getProfileFormDefaultValues, User } from "@/utils/profile"
 import { addSkillSchema } from "@/schema/skill"
+import { authService } from "@/services/auth.service"
 
 const UpdateProfileForm = () => {
-  const { user } = useAuthContext()
+  const { user, setUser } = useAuthContext()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [skills, setSkills] = useState<z.infer<typeof addSkillSchema>[]>([])
 
-  const router = useRouter();
+  const router = useRouter()
 
   // this form is responsible sa profile update
   const form = useForm<z.infer<typeof updateProfileSchema>>({
@@ -39,27 +40,60 @@ const UpdateProfileForm = () => {
     form.reset(getProfileFormDefaultValues(user as User))
   }, [user])
 
-  // const handleDialogSave: HandleDialogSave = (data) => {
-  //   setTechTags(data.techTags)
-  //   setOtherSkills(data.otherSkills)
-  //   form.setValue("coreSkills", data.coreSkills)
+  const handleDialogSave = (data: {
+    skill: Omit<z.infer<typeof addSkillSchema>, "profileId">
+    softSkillTags: string[]
+    otherHardSkillTags: string[]
+    certifications: Array<{
+      name: string
+      issuer: string
+      fileBase64?: string
+      fileName?: string
+    }>
+  }) => {
+    const profileId = user?.profile?.id ?? ""
 
-  //   setSavedSkills((prev) => mergeSavedSkills(prev, data.skill, data.coreSkills, data.otherSkills))
+    setSkills((prev) => {
+      const hardSkills = prev.filter((s) => s.type === "HARD_SKILL")
 
-  //   if (data.certifications.length > 0) {
-  //     form.setValue(
-  //       "certifications",
-  //       data.certifications.map((c) => c.name).filter(Boolean)
-  //     )
-  //   }
-  // }
+      const existsIndex = hardSkills.findIndex(
+        (s) => s.name === data.skill.name
+      )
+      const updatedHardSkills = [...hardSkills]
+      const newHardSkill = { ...data.skill, profileId }
 
+      if (existsIndex >= 0) updatedHardSkills[existsIndex] = newHardSkill
+      else updatedHardSkills.push(newHardSkill)
+
+      const softSkills = data.softSkillTags.map((name) => ({
+        profileId,
+        name,
+        type: "SOFT_SKILL" as const,
+      }))
+
+      const otherHardSkills = data.otherHardSkillTags.map((name) => ({
+        profileId,
+        name,
+        type: "OTHER_HARD_SKILL" as const,
+      }))
+
+      const result = [...updatedHardSkills, ...softSkills, ...otherHardSkills]
+      console.log("🔥 New skills computed:", result)
+      return result
+    })
+
+    if (data.certifications.length > 0) {
+      form.setValue(
+        "certifications",
+        data.certifications.map((c) => c.name).filter(Boolean)
+      )
+    }
+  }
   // Submit function
-  
   async function onSubmit(data: z.infer<typeof updateProfileSchema>) {
     console.log("submit")
     console.log("Profile update payload:", data)
-    console.log("Skills to submit separately:", setSkills)
+    console.log("Skills to submit separately:", skills)
     try {
       const profileUpdateResponse = await profileService.updateProfile(data)
       console.log("Profile update response:", profileUpdateResponse)
@@ -69,8 +103,14 @@ const UpdateProfileForm = () => {
       //   await saveProfileSkills(savedSkills, profileId, skillService.addSkill)
       // }
 
-      router.back();
-      
+      // refetch full fresh user data from backend
+      const meResponse = await authService.getMe()
+      if (meResponse.code === 200) {
+          setUser(meResponse.data.user)
+          localStorage.setItem("user", JSON.stringify(meResponse.data.user))
+      }
+
+      router.push("/alumni/profile")
     } catch (error) {
       console.error(error)
     }
@@ -88,18 +128,23 @@ const UpdateProfileForm = () => {
       <Card className="mt-8 w-full">
         <CardHeader>
           <CardTitle>Profile Information</CardTitle>
-          <CardDescription>All changes will be reviewed from the school dean</CardDescription>
+          <CardDescription>
+            All changes will be reviewed from the school dean
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <ProfilePictureUpload 
-            value={form.watch("profilePicture")} 
-            onChange={(base64) => form.setValue("profilePicture", base64)} 
+          <ProfilePictureUpload
+            value={form.watch("profilePicture")}
+            onChange={(base64) => form.setValue("profilePicture", base64)}
           />
 
-          <form id="form-rhf-updateprofileform" onSubmit={form.handleSubmit(onSubmit)}>
-            <ProfileFormFields 
-              control={form.control} 
+          <form
+            id="form-rhf-updateprofileform"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <ProfileFormFields
+              control={form.control}
               skills={skills}
               onOpenDialog={() => setDialogOpen(true)}
             />
@@ -119,7 +164,11 @@ const UpdateProfileForm = () => {
             >
               Cancel
             </Button>
-            <Button type="submit" form="form-rhf-updateprofileform" className="flex-1">
+            <Button
+              type="submit"
+              form="form-rhf-updateprofileform"
+              className="flex-1"
+            >
               Update
             </Button>
           </Field>

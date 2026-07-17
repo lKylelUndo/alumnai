@@ -140,6 +140,7 @@ enum RoleType {
 enum SkillType {
   SOFT_SKILL
   HARD_SKILL
+  OTHER_HARD_SKILL
 }
 
 enum TokenType {

@@ -2,13 +2,7 @@
 import { LoginInputTypes, SignupInputTypes } from "@/schema/auth"
 import { authService } from "@/services/auth.service"
 import { useRouter } from "next/navigation"
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react"
+import { createContext, ReactNode, useContext, useEffect, useState } from "react"
 
 interface User {
   id: string
@@ -37,6 +31,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
+  setUser: (user: User | null) => void
   login: (data: LoginInputTypes) => Promise<void>
   signup: (data: SignupInputTypes) => Promise<void>
   logout: () => Promise<void>
@@ -145,6 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isLoading,
         isAuthenticated: !!user,
+        setUser,
         login,
         signup,
         logout,

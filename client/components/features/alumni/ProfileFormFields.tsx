@@ -16,9 +16,8 @@ interface ProfileFormFieldsProps {
 }
 
 export default function ProfileFormFields({ control, skills, onOpenDialog }: ProfileFormFieldsProps) {
-   // split skills by type for display purposes
+   // split skills by type for display purposes ikaw og ganahan ka i apil softskills
   const hardSkills = skills.filter((s) => s.type === "HARD_SKILL")
-  const softSkills = skills.filter((s) => s.type === "SOFT_SKILL")
 
   return (
     <FieldGroup className="grid lg:grid-cols-2">
@@ -145,20 +144,6 @@ export default function ProfileFormFields({ control, skills, onOpenDialog }: Pro
           </button>
         </div>
       </Field>
-
-      {/* optionally show soft skills too */}
-      {softSkills.length > 0 && (
-        <Field>
-          <FieldLabel className="font-semibold text-primary">Soft Skills</FieldLabel>
-          <div className="flex flex-wrap gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm">
-            {softSkills.map((s) => (
-              <span key={s.name} className="rounded-full bg-muted px-2 py-1 text-xs">
-                {s.name}
-              </span>
-            ))}
-          </div>
-        </Field>
-      )}
 
       <Controller
         name="socialLink"

@@ -1,7 +1,7 @@
 "use client";
 import ProfileActions from "@/components/common/ProfileActions"
 import { Card } from "@/components/ui/card"
-import { Briefcase, GraduationCap, LinkIcon, Mail, User } from "lucide-react"
+import { Briefcase, GraduationCap, LinkIcon, Mail } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
 import Image from "next/image"
 

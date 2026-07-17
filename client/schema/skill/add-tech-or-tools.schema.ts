@@ -31,7 +31,7 @@ export interface SkillPayload {
   name: string
   level?: number
   description?: string
-  type: "HARD_SKILL" | "SOFT_SKILL"
+  type: "HARD_SKILL" | "SOFT_SKILL" | "OTHER_HARD_SKILL"
 }
 
 export interface CertificationPayload {
