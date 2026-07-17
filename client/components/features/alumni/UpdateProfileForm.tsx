@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field } from "@/components/ui/field"
 import { updateProfileSchema } from "@/schema/profile"
-import type { SavedSkill, HandleDialogSave } from "@/schema/profile"
 import AddTechOrToolsDialog from "@/components/features/alumni/AddTechOrToolsDialog"
 import { useAuthContext } from "@/context/AuthContext"
 
@@ -19,13 +18,12 @@ import { profileService } from "@/services/profile.service"
 import { useRouter } from "next/navigation"
 import { skillService } from "@/services/skill.service"
 import { getProfileFormDefaultValues, mergeSavedSkills, saveProfileSkills, User } from "@/utils/profile"
+import { addSkillSchema } from "@/schema/skill"
 
 const UpdateProfileForm = () => {
   const { user } = useAuthContext()
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [techTags, setTechTags] = useState<string[]>([])
-  const [savedSkills, setSavedSkills] = useState<SavedSkill[]>([])
-  const [otherSkills, setOtherSkills] = useState<string[]>([])
+  const [skills, setSkills] = useState<z.infer<typeof addSkillSchema>[]>([])
 
   const router = useRouter();
 
