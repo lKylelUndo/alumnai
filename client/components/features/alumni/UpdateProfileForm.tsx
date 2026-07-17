@@ -59,7 +59,7 @@ const UpdateProfileForm = () => {
   async function onSubmit(data: z.infer<typeof updateProfileSchema>) {
     console.log("submit")
     console.log("Profile update payload:", data)
-    console.log("Skills to submit separately:", savedSkills)
+    console.log("Skills to submit separately:", setSkills)
     try {
       const profileUpdateResponse = await profileService.updateProfile(data)
       console.log("Profile update response:", profileUpdateResponse)
@@ -92,10 +92,17 @@ const UpdateProfileForm = () => {
         </CardHeader>
 
         <CardContent>
-          <ProfilePictureUpload />
+          <ProfilePictureUpload 
+            value={form.watch("profilePicture")} 
+            onChange={(base64) => form.setValue("profilePicture", base64)} 
+          />
 
           <form id="form-rhf-updateprofileform" onSubmit={form.handleSubmit(onSubmit)}>
-            <ProfileFormFields control={form.control} />
+            <ProfileFormFields 
+              control={form.control} 
+              skills={skills}
+              onOpenDialog={() => setDialogOpen(true)}
+            />
           </form>
         </CardContent>
 
@@ -107,8 +114,7 @@ const UpdateProfileForm = () => {
               className="flex-1"
               onClick={() => {
                 form.reset()
-                setTechTags([])
-                setSavedSkills([])
+                setSkills([])
               }}
             >
               Cancel
@@ -123,9 +129,7 @@ const UpdateProfileForm = () => {
       <AddTechOrToolsDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        techTags={techTags}
-        coreSkills={form.watch("coreSkills") || []}
-        otherSkills={otherSkills}
+        skills={skills}
         onSave={handleDialogSave}
       />
     </div>
