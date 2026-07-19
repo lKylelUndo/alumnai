@@ -9,3 +9,12 @@ export const addSkillSchema = z.object({
 });
 
 export type AddSkillInput = z.infer<typeof addSkillSchema>;
+
+export type Skill = {
+  id: string;
+  profileId: string;
+  type: "SOFT_SKILL" | "HARD_SKILL" | "OTHER_HARD_SKILL";
+  name: string;
+  level: number;
+  description: string;
+};

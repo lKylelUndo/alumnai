@@ -16,10 +16,10 @@ import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
 import { profileService } from "@/services/profile.service"
 import { useRouter } from "next/navigation"
-//import { skillService } from "@/services/skill.service"
 import { getProfileFormDefaultValues, User } from "@/utils/profile"
 import { addSkillSchema } from "@/schema/skill"
 import { authService } from "@/services/auth.service"
+import { skillService } from "@/services/skill.service"
 
 const UpdateProfileForm = () => {
   const { user, setUser } = useAuthContext()
@@ -98,11 +98,18 @@ const UpdateProfileForm = () => {
       const profileUpdateResponse = await profileService.updateProfile(data)
       console.log("Profile update response:", profileUpdateResponse)
 
-      // const profileId = user?.profile?.id
-      // if (profileId) {
-      //   await saveProfileSkills(savedSkills, profileId, skillService.addSkill)
-      // }
+      const profileId = user?.profile?.id
+      const savedSkills = skills.map((skill) => ({
+        ...skill,
+        profileId: profileId || "",
+      }))
 
+      const addSkillResponses = await Promise.all(
+        savedSkills.map((skill) => skillService.addSkill(skill))
+      )
+
+      console.log("🚀 ~ onSubmit ~ addSkillResponse:", addSkillResponses)
+    
       // refetch full fresh user data from backend
       const meResponse = await authService.getMe()
       if (meResponse.code === 200) {

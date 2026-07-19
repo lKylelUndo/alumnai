@@ -6,7 +6,11 @@ export const GetMeService = async (userId: string) => {
       where: { id: userId },
       select: {
         id: true,
-        profile: true,
+        profile: {
+          include: {
+            skills: true,
+          },
+        },
         student_id_number: true,
         email: true,
         role: true,

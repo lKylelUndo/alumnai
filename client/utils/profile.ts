@@ -1,3 +1,4 @@
+import { Skill } from "@/schema/skill"
 
 export type User = {
   id: string,
@@ -8,11 +9,11 @@ export type User = {
     fullName: string
     aboutMe: string
     work_field: string
-    coreSkills: string[]
     socialLink: string
     companyName: string
     current_position: string
     certifications: string[]
+    skills: Skill[]
   }
 }
 
@@ -25,9 +26,9 @@ export const getProfileFormDefaultValues = (user: User | null) => ({
   fullName: user?.profile?.fullName || "",
   aboutMe: user?.profile?.aboutMe || "",
   work_field: user?.profile?.work_field || "",
-  coreSkills: user?.profile?.coreSkills || [],
   socialLink: user?.profile?.socialLink || "",
   companyName: user?.profile?.companyName || "",
   current_position: user?.profile?.current_position || "",
   certifications: user?.profile?.certifications || [],
+  skills: user?.profile?.skills || [],
 })
