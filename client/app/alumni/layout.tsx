@@ -19,7 +19,7 @@ export default function AlumniDashboardLayout({ children }: { children: ReactNod
                 <footer className="text-primary text-center border border-white">
                     <p>Copyright © {new Date().getFullYear()}  Alumnai. All rights reserved.</p>
                 </footer>
-            </main>
-        </AuthGuard>
+            </main>   
+       </AuthGuard>
     )
 }
