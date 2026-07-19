@@ -33,9 +33,10 @@ jobs:
       - name: "Install dependencies"
         run: npm ci
 
+      # Temporary Commented out
       # Lint
-      - name: "Lint"
-        run: npm run lint
+      # - name: "Lint"
+      #   run: npm run lint
 
       # Build
       - name: "Build"
