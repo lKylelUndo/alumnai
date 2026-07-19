@@ -1,0 +1,83 @@
+name: "CI Pipeline"
+
+on:
+  push:
+    branches: [main, master, development]
+
+  pull_request:
+    branches: [main, master, development]
+
+jobs:
+  client:
+    name: "Client CI"
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      # Check out the code from the repository
+      - name: "Check out code"
+        uses: actions/checkout@v4
+
+      # Setup Node.js environment
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      # Install dependencies
+      - name: "Install dependencies"
+        run: npm ci
+
+      # Lint
+      - name: "Lint"
+        run: npm run lint
+
+      # Build
+      - name: "Build"
+        run: npm run build
+
+      # Optional: Test (uncomment if you have tests)
+      # - name: "Test"
+      #   run: npm run test
+
+  server:
+    name: "Server CI"
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      # Check out the code from the repository
+      - name: "Check out code"
+        uses: actions/checkout@v4
+
+      # Setup Node.js environment
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      # Install dependencies
+      - name: "Install dependencies"
+        run: npm ci
+
+      # Prisma
+      - name: "Generate Prisma Client"
+        run: npm prisma db:generate
+
+      # Build
+      - name: "Build Express API"
+        run: npm run build
+
+      # Optional: Test (uncomment if you have tests)
+      # - name: "Test"
+      #   run: npm run test
