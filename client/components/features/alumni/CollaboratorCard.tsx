@@ -14,12 +14,11 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
     .toUpperCase()
 
   const visibleSkills = collaborator.skills.slice(0, VISIBLE_SKILLS)
-  const extraCount = collaborator.skills.length - VISIBLE_SKILLS
 
   return (
     <div className="group relative rounded-2xl border border-[#E2E6F3] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#1A216D]/30 hover:shadow-lg hover:shadow-[#1A216D]/10">
       {/* Hover accent top line */}
-      <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl bg-gradient-to-r from-[#1A216D] to-[#4F5EBD] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl duration-300 group-hover:opacity-100" />
 
       <div className="flex items-start justify-between">
         {/* Avatar + Info */}
