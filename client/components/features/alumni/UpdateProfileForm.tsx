@@ -41,7 +41,7 @@ const UpdateProfileForm = () => {
   }, [user])
 
   const handleDialogSave = (data: {
-    skill: Omit<z.infer<typeof addSkillSchema>, "profileId">
+    skill: Omit<z.infer<typeof addSkillSchema>, "profileId"> | null
     softSkillTags: string[]
     otherHardSkillTags: string[]
     certifications: Array<{
@@ -54,16 +54,18 @@ const UpdateProfileForm = () => {
     const profileId = user?.profile?.id ?? ""
 
     setSkills((prev) => {
+      // Only update hard skills if the user actually entered a skill name
       const hardSkills = prev.filter((s) => s.type === "HARD_SKILL")
+      let updatedHardSkills = [...hardSkills]
 
-      const existsIndex = hardSkills.findIndex(
-        (s) => s.name === data.skill.name
-      )
-      const updatedHardSkills = [...hardSkills]
-      const newHardSkill = { ...data.skill, profileId }
-
-      if (existsIndex >= 0) updatedHardSkills[existsIndex] = newHardSkill
-      else updatedHardSkills.push(newHardSkill)
+      if (data.skill) {
+        const existsIndex = hardSkills.findIndex(
+          (s) => s.name === data.skill!.name
+        )
+        const newHardSkill = { ...data.skill, profileId }
+        if (existsIndex >= 0) updatedHardSkills[existsIndex] = newHardSkill
+        else updatedHardSkills.push(newHardSkill)
+      }
 
       const softSkills = data.softSkillTags.map((name) => ({
         profileId,

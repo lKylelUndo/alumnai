@@ -20,7 +20,7 @@ interface AddTechOrToolsDialogProps {
   onOpenChange: (open: boolean) => void
   skills: Skill[]
   onSave: (data: {
-    skill: Omit<Skill, "profileId">
+    skill: Omit<Skill, "profileId"> | null
     softSkillTags: string[]
     otherHardSkillTags: string[]
     certifications: Array<{
@@ -129,13 +129,17 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
   const onSubmit = (values: AddTechOrToolsFormValues) => {
     console.log("🔥 Dialog submitting:", { softSkillTags, otherHardSkillTags })
 
+    const hasSkillName = values.name && values.name.trim().length > 0
+
     onSave({
-      skill: {
-        name: values.name!,
-        level: values.level ? parseFloat(values.level) : undefined,
-        description: values.description,
-        type: "HARD_SKILL",
-      },
+      skill: hasSkillName
+        ? {
+            name: values.name!.trim(),
+            level: values.level ? parseFloat(values.level) : undefined,
+            description: values.description,
+            type: "HARD_SKILL",
+          }
+        : null,
       softSkillTags,
       otherHardSkillTags,
       certifications: (values.certifications ?? [])
