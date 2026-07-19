@@ -72,7 +72,7 @@ jobs:
 
       # Prisma
       - name: "Generate Prisma Client"
-        run: npm prisma db:generate
+        run: npm run db:generate
 
       # Build
       - name: "Build Express API"
