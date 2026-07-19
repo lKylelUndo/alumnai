@@ -28,8 +28,8 @@ model User {
 }
 
 model Profile {
-  id               String   @id @default(uuid())
-  userId           String   @unique
+  id               String          @id @default(uuid())
+  userId           String          @unique
   profilePicture   String?
   yearLevel        String?
   fullName         String?
@@ -38,12 +38,23 @@ model Profile {
   companyName      String?
   aboutMe          String?
   current_position String?
-  graduatedYear   String?
-  certifications   Json?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  graduatedYear    String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   skills           Skill[]
+  certifications   Certification[]
+}
+
+model Certification {
+  id        String   @id @default(uuid())
+  profileId String
+  name      String
+  issuer    String
+  fileUrl   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model Skill {

@@ -12,7 +12,13 @@ export type User = {
     socialLink: string
     companyName: string
     current_position: string
-    certifications: string[]
+    certifications: Array<{
+      id: string
+      profileId: string
+      name: string
+      issuer: string
+      fileUrl: string
+    }>
     skills: Skill[]
   }
 }

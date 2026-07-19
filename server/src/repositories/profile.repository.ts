@@ -11,7 +11,12 @@ export class ProfileRepository {
     if (cached) return JSON.parse(cached);
 
     // fallback to db
-    const profiles = await prisma.profile.findMany();
+    const profiles = await prisma.profile.findMany({
+      include: {
+        skills: true,
+        certifications: true,
+      },
+    });
 
     await redis.set(cacheKey, JSON.stringify(profiles), "PX", 1000 * 60 * 5);
 
@@ -21,12 +26,17 @@ export class ProfileRepository {
   async findById(userId: string) {
     return await prisma.profile.findUnique({
       where: { userId },
+      include: {
+        skills: true,
+        certifications: true,
+      },
     });
   }
 
   async update(data: UpdateProfileInputTypes) {
-    const { userId, coreSkills, ...restData } = data;
-
+    const { userId, certifications, ...restData } = data;
+    
+    // upsert the profile
     return await prisma.profile.upsert({
       where: { userId },
       update: restData,
