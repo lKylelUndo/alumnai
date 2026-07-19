@@ -8,9 +8,8 @@ import { PlusIcon, XIcon, PaperclipIcon, Trash2Icon } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
-import { addTechOrToolsSchema, PROFICIENCY_OPTIONS, type AddTechOrToolsFormValues } from "@/schema/skill"
+import { addTechOrToolsSchema, type AddTechOrToolsFormValues } from "@/schema/skill"
 import { addSkillSchema } from "@/schema/skill"
 import { z } from "zod"
 
@@ -21,7 +20,7 @@ interface AddTechOrToolsDialogProps {
   onOpenChange: (open: boolean) => void
   skills: Skill[]
   onSave: (data: {
-    skill: Omit<Skill, "profileId">
+    skill: Omit<Skill, "profileId"> | null
     softSkillTags: string[]
     otherHardSkillTags: string[]
     certifications: Array<{
@@ -130,13 +129,17 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
   const onSubmit = (values: AddTechOrToolsFormValues) => {
     console.log("🔥 Dialog submitting:", { softSkillTags, otherHardSkillTags })
 
+    const hasSkillName = values.name && values.name.trim().length > 0
+
     onSave({
-      skill: {
-        name: values.name,
-        level: values.level ? parseFloat(values.level) : undefined,
-        description: values.description,
-        type: "HARD_SKILL",
-      },
+      skill: hasSkillName
+        ? {
+            name: values.name!.trim(),
+            level: values.level ? parseFloat(values.level) : undefined,
+            description: values.description,
+            type: "HARD_SKILL",
+          }
+        : null,
       softSkillTags,
       otherHardSkillTags,
       certifications: (values.certifications ?? [])
@@ -222,6 +225,73 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
               )}
             </Field>
 
+            {/* Hard skill (tech/tool) */}
+            <div className="grid grid-cols-[1fr_auto_2fr] items-start gap-3">
+              <Controller
+                name="name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel
+                      htmlFor="dialog-skill-name"
+                      className="text-sm font-semibold text-primary"
+                    >
+                      Tech/Tool Name
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      id="dialog-skill-name"
+                      placeholder="e.g. React"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="level"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel className="text-sm font-semibold text-primary">
+                      Proficiency Level
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      type="text"
+                   
+                      id="dialog-skill-level"
+                      placeholder="e.g. 1-5"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel
+                      htmlFor="dialog-skill-desc"
+                      className="text-sm font-semibold text-primary"
+                    >
+                      Short Skill Description
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      id="dialog-skill-desc"
+                      placeholder="e.g. Used in creating Interactive Web Pages"
+                      autoComplete="off"
+                    />
+                  </Field>
+                )}
+              />
+            </div>
+
             {/* Other Hard Skills */}
             <Field>
               <FieldLabel
@@ -275,89 +345,6 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                 </div>
               )}
             </Field>
-
-            {/* Hard skill (tech/tool) */}
-            <div className="grid grid-cols-[1fr_auto_2fr] items-start gap-3">
-              <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel
-                      htmlFor="dialog-skill-name"
-                      className="text-sm font-semibold text-primary"
-                    >
-                      Tech/Tool Name
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="dialog-skill-name"
-                      placeholder="e.g. React"
-                      autoComplete="off"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-              <Controller
-                name="level"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel className="text-sm font-semibold text-primary">
-                      Proficiency Level
-                    </FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger
-                        id="dialog-skill-level"
-                        className="w-40"
-                        aria-invalid={fieldState.invalid}
-                      >
-                        <SelectValue placeholder="Select…" />
-                      </SelectTrigger>
-                      <SelectContent position="popper">
-                        {PROFICIENCY_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>
-                            <span className="flex items-center gap-2">
-                              <span
-                                className="inline-block h-2 w-2 rounded-full"
-                                style={{ backgroundColor: opt.color }}
-                              />
-                              {opt.label}
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-              <Controller
-                name="description"
-                control={form.control}
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel
-                      htmlFor="dialog-skill-desc"
-                      className="text-sm font-semibold text-primary"
-                    >
-                      Short Skill Description
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="dialog-skill-desc"
-                      placeholder="e.g. Used in creating Interactive Web Pages"
-                      autoComplete="off"
-                    />
-                  </Field>
-                )}
-              />
-            </div>
 
             {/* Certifications */}
             <div className="space-y-3">
