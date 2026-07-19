@@ -8,12 +8,164 @@ datasource db {
 }
 
 model User {
-  id                String   @id @default(uuid())
-  email             String?  @unique
-  fullName          String?
-  password          String
-  student_id_number String
-  isEmailVerified   Boolean  @default(false)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                     String          @id @default(uuid())
+  email                  String?         @unique
+  password               String
+  student_id_number      String
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  role                   RoleType        @default(STUDENT)
+  isAccountVerified      Boolean         @default(false)
+  sentCollaborations     Collaboration[] @relation("CollaborationFrom")
+  receivedCollaborations Collaboration[] @relation("CollaborationTo")
+  sentMentorships        Mentorship[]    @relation("MentorshipFrom")
+  receivedMentorships    Mentorship[]    @relation("MentorshipTo")
+  messages               Message[]
+  profile                Profile?
+  sentRecognitions       Recognition[]   @relation("RecognitionFrom")
+  receivedRecognitions   Recognition[]   @relation("RecognitionTo")
+  tokens                 Token[]
+}
+
+model Profile {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  profilePicture   String?
+  yearLevel        String?
+  fullName         String?
+  work_field       String?
+  socialLink       String?
+  companyName      String?
+  aboutMe          String?
+  current_position String?
+  graduatedYear    String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills           Skill[]
+  certifications   Certification[]
+}
+
+model Certification {
+  id        String   @id @default(uuid())
+  profileId String
+  name      String
+  issuer    String
+  fileUrl   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id          String    @id @default(uuid())
+  profileId   String
+  type        SkillType
+  name        String
+  level       Float?
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Token {
+  id         String    @id @default(uuid())
+  type       TokenType
+  token      String    @unique
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  consumedAt DateTime?
+  revokedAt  DateTime?
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Collaboration {
+  id              String        @id @default(uuid())
+  fromAlumniId    String
+  toStudentId     String
+  message_details String
+  status          Status
+  conversationId  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  userId          String?
+  fromAlumni      User          @relation("CollaborationFrom", fields: [fromAlumniId], references: [id])
+  toStudent       User          @relation("CollaborationTo", fields: [toStudentId], references: [id])
+  conversation    Conversation?
+}
+
+model Mentorship {
+  id              String        @id @default(uuid())
+  fromStudentId   String
+  toAlumniId      String
+  message_details String
+  status          Status
+  conversationId  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  conversation    Conversation?
+  fromStudent     User          @relation("MentorshipFrom", fields: [fromStudentId], references: [id])
+  toAlumni        User          @relation("MentorshipTo", fields: [toAlumniId], references: [id])
+}
+
+model Recognition {
+  id            String   @id @default(uuid())
+  fromStudentId String
+  toAlumniId    String
+  message       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  fromStudent   User     @relation("RecognitionFrom", fields: [fromStudentId], references: [id])
+  toAlumni      User     @relation("RecognitionTo", fields: [toAlumniId], references: [id])
+}
+
+model Conversation {
+  id              String           @id @default(uuid())
+  type            ConversationType
+  mentorshipId    String?          @unique
+  collaborationId String?          @unique
+  createdAt       DateTime         @default(now())
+  collaboration   Collaboration?   @relation(fields: [collaborationId], references: [id])
+  mentorship      Mentorship?      @relation(fields: [mentorshipId], references: [id])
+  messages        Message[]
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  senderId       String
+  content        String
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  sender         User         @relation(fields: [senderId], references: [id])
+}
+
+enum RoleType {
+  ALUMNI
+  STUDENT
+  ADMIN
+}
+
+enum SkillType {
+  SOFT_SKILL
+  HARD_SKILL
+  OTHER_HARD_SKILL
+}
+
+enum TokenType {
+  REFRESH
+  RESET_PASSWORD
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum ConversationType {
+  COLLABORATION
+  MENTORSHIP
 }

@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import routes from "@/routes/index"
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { ENV } from '@/config/env';
@@ -11,7 +12,12 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use((req, res, next) => {
+  if (req.path === '/api/profile/v1/update-profile') {
+    return next();
+  }
+  express.json()(req, res, next);
+});
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -26,7 +32,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // --- Routes Folder Prepared ---
-// app.use('/api', routes);
+app.use('/api', routes);
 
 // --- 404 Handler ---
 app.use((req: Request, res: Response) => {
