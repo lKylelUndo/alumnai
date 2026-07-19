@@ -10,18 +10,16 @@ export const metadata: Metadata = {
 
 export default function AlumniDashboardLayout({ children }: { children: ReactNode }) {
     return (
-        //<AuthGuard mode="ALUMNI">
-           <>
-                <header className="px-6">
-                    <AlumniHeader />
-                </header>
-                <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
-                    {children}
-                    <footer className="text-primary text-center border border-white">
-                        <p>Copyright © {new Date().getFullYear()}  Alumnai. All rights reserved.</p>
-                    </footer>
-                </main>
-           </>
-       // </AuthGuard>
+        <AuthGuard mode="ALUMNI">
+            <header className="px-6">
+                <AlumniHeader />
+            </header>
+            <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
+                {children}
+                <footer className="text-primary text-center border border-white">
+                    <p>Copyright © {new Date().getFullYear()}  Alumnai. All rights reserved.</p>
+                </footer>
+            </main>   
+       </AuthGuard>
     )
 }

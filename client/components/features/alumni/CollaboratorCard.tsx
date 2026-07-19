@@ -1,6 +1,7 @@
 import { Row } from "@tanstack/react-table"
 import { Collaborator } from "@/components/features/alumni/FindCollaborators"
 import { Eye } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 const VISIBLE_SKILLS = 2
 
@@ -55,13 +56,14 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
         </div>
 
         {/* View Button */}
-        <button
+        <Button
           id={`view-collaborator-${collaborator.id}`}
-          className="flex items-center gap-1.5 rounded-full border border-[#E2E6F3] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D] hover:text-white active:scale-95"
+          variant={"default"}
+          className="rounded-full"
         >
           <Eye className="h-3.5 w-3.5" />
           View
-        </button>
+        </Button>
       </div>
 
       {/* Skills */}
