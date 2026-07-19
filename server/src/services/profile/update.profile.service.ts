@@ -6,7 +6,7 @@ export const UpdateProfileService = async (data: UpdateProfileInputTypes) => {
   const profileRepository = new ProfileRepository();
 
   try {
-    if (data.profilePicture) {
+    if (data.profilePicture && data.profilePicture.startsWith("data:")) {
       const uploadResult = await uploadImage(data.profilePicture);
       data.profilePicture = uploadResult.secure_url;
     }
