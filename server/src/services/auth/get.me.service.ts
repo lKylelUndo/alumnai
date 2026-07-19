@@ -9,6 +9,7 @@ export const GetMeService = async (userId: string) => {
         profile: {
           include: {
             skills: true,
+            certifications: true,
           },
         },
         student_id_number: true,

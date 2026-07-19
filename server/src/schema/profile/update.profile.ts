@@ -15,10 +15,13 @@ export const updateProfileSchema = z
       current_position: z.string().optional(),
       certifications: z.array(
           z.object({
-            profileId: z.string().min(1, "Profile id is required"),
+            id: z.string().optional(),
+            profileId: z.string().optional(),
             name: z.string().min(1, "Name is required"),
             issuer: z.string().min(1, "Issuer is required"),
             fileUrl: z.string().optional(),
+            fileBase64: z.string().optional(),
+            fileName: z.string().optional(),
           }),
         )
         .optional(),

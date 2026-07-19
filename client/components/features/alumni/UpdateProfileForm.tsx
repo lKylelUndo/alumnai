@@ -85,10 +85,15 @@ const UpdateProfileForm = () => {
     })
 
     if (data.certifications.length > 0) {
-      form.setValue(
-        "certifications",
-        data.certifications.map((c) => c.name).filter(Boolean)
-      )
+      const existingCerts = form.getValues("certifications") || []
+      const newCerts = data.certifications.map((c) => ({
+        profileId,
+        name: c.name,
+        issuer: c.issuer,
+        fileBase64: c.fileBase64,
+        fileName: c.fileName,
+      }))
+      form.setValue("certifications", [...existingCerts, ...newCerts])
     }
   }
   // Submit function

@@ -5,7 +5,7 @@ import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusIcon, XIcon, PaperclipIcon, Trash2Icon } from "lucide-react"
 
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
@@ -169,7 +169,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
         showCloseButton={false}
       >
         <DialogHeader className="border-b px-4 pt-6 pb-4">
-          <h1 className="text-xl font-bold text-primary">Add Tech or Tools</h1>
+          <DialogTitle className="text-xl font-bold text-primary">Add Tech or Tools</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
