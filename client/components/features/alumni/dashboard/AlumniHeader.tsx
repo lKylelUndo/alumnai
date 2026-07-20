@@ -4,9 +4,10 @@ import { roboto_slab } from "@/lib/fonts";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuthContext } from "@/context/AuthContext"
 import Link from "next/link";
+import Image from "next/image";
 
 const AlumniHeader = () => {
-  const { logout } = useAuthContext()
+  const { user, logout } = useAuthContext()
   
   return (
     <nav className="flex justify-between shadow-sm p-1.5 w-full text-primary">
@@ -28,12 +29,13 @@ const AlumniHeader = () => {
       <div className="md:mr-44">
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <div className="h-10 w-10 rounded-full bg-foreground"></div>
+          <Image src={user?.profile?.profilePicture || ""} alt="Profile" width={40} height={40} className="rounded-full" />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="me-8">
           <DropdownMenuGroup>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/alumni/profile`}>Profile</Link></DropdownMenuItem>
             <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

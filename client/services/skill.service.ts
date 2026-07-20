@@ -3,6 +3,7 @@ import { AddSkillInput, RemoveSkillInput } from "@/schema/skill";
 
 export const skillService = {
   addSkill: async (data: AddSkillInput) => {
+    console.log("🚀 ~ addSkill ~ data:", data)
     const response = await axiosInstance.post("/api/skill/v1/add-skill", data);
     return response.data;
   },

@@ -22,7 +22,12 @@ export class UserRepository {
         email,
       },
       include: {
-        profile: true,
+        profile: {
+          include: {
+            skills: true,
+            certifications: true,
+          },
+        },
       }
     });
   }

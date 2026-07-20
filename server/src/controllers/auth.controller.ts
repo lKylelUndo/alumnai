@@ -1,20 +1,12 @@
 import type { Request, Response } from "express";
-import {
-  AuthSignupService,
-  AuthLoginService,
-  AuthForgetPasswordRequestService,
-  AuthResetPasswordService,
-  AuthVerifyResetPasswordTokenService,
-  GetMeService,
-  RefreshTokenService,
-} from "@/services/auth";
+import { AuthSignupService, AuthLoginService, AuthForgetPasswordRequestService, AuthResetPasswordService, AuthVerifyResetPasswordTokenService, GetMeService, RefreshTokenService } from "@/services/auth";
 import { ENV } from "@/config/env";
 import { ms } from "@/lib/jwt";
 
 class AuthController {
   private setAuthCookies = async (res: Response, tokens: { accessToken: string, refreshToken: string}) => {
     const isProduction = ENV.NODE_ENV === "production";
-    const domain = isProduction ? "/" : undefined;
+    //const domain = isProduction ? "/" : undefined;
 
     res.cookie("accessToken", tokens.accessToken, {
       httpOnly: true,

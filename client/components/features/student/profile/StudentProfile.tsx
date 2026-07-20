@@ -3,9 +3,9 @@ import Certifications from "@/components/common/Certifications"
 import StudentProfileHeader from "./StudentProfileHeader"
 import StudentProfileAbout from "./StudentProfileAbout"
 
-const AlumniProfile = () => {
+const StudentProfile = () => {
   return (
-    <div className="mx-auto mt-4 w-full max-w-[1200px] p-4 md:p-8">
+    <div className="mx-auto mt-4 w-full max-w-[1200px] p-4 md:p-8 bg-[#FAF9F6]">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* LEFT COLUMN */}
         <div className="space-y-6 lg:col-span-2">
@@ -29,4 +29,4 @@ const AlumniProfile = () => {
   )
 }
 
-export default AlumniProfile
+export default StudentProfile

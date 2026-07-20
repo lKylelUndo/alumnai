@@ -18,8 +18,8 @@ export const certificationRowSchema = z.object({
 export type CertificationRow = z.infer<typeof certificationRowSchema>
 
 export const addTechOrToolsSchema = z.object({
-  name: z.string().min(1, "Tech/Tool name is required"),
-  level: z.string().min(1, "Proficiency level is required"),
+  name: z.string().optional(),
+  level: z.string().optional(),
   description: z.string().optional(),
   certifications: z.array(certificationRowSchema).optional(),
 })

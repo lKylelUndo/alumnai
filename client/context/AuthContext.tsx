@@ -1,5 +1,6 @@
 "use client"
 import { LoginInputTypes, SignupInputTypes } from "@/schema/auth"
+import { Skill } from "@/schema/skill"
 import { authService } from "@/services/auth.service"
 import { useRouter } from "next/navigation"
 import { createContext, ReactNode, useContext, useEffect, useState } from "react"
@@ -22,8 +23,14 @@ interface User {
     companyName?: string | null
     socialLink?: string
     current_position?: string | null
-    certifications?: string[]
-    coreSkills?: string[]
+    certifications?: Array<{
+      id: string
+      profileId: string
+      name: string
+      issuer: string
+      fileUrl: string
+    }>
+    skills?: Skill[]
   } | null
 }
 

@@ -22,7 +22,7 @@ const StudentProfileAbout = () => {
         <StudentCoreSkills />
 
         {/* Tools & Technology */}
-        <StudentToolsTechnology />
+        <StudentToolsTechnology skills={user?.profile?.skills || []}/>
       </div>
 
       {/* Proficiency Scale */}

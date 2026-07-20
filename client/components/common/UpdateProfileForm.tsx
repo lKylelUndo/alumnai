@@ -17,10 +17,10 @@ import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
 import { profileService } from "@/services/profile.service"
 import { useRouter } from "next/navigation"
-//import { skillService } from "@/services/skill.service"
 import { getProfileFormDefaultValues, User } from "@/utils/profile"
 import { addSkillSchema } from "@/schema/skill"
 import { authService } from "@/services/auth.service"
+import { skillService } from "@/services/skill.service"
 
 const UpdateProfileForm = () => {
   const { user, setUser } = useAuthContext()
@@ -42,7 +42,7 @@ const UpdateProfileForm = () => {
   }, [user])
 
   const handleDialogSave = (data: {
-    skill: Omit<z.infer<typeof addSkillSchema>, "profileId">
+    skill: Omit<z.infer<typeof addSkillSchema>, "profileId"> | null
     softSkillTags: string[]
     otherHardSkillTags: string[]
     certifications: Array<{
@@ -55,16 +55,18 @@ const UpdateProfileForm = () => {
     const profileId = user?.profile?.id ?? ""
 
     setSkills((prev) => {
+      // Only update hard skills if the user actually entered a skill name
       const hardSkills = prev.filter((s) => s.type === "HARD_SKILL")
+      let updatedHardSkills = [...hardSkills]
 
-      const existsIndex = hardSkills.findIndex(
-        (s) => s.name === data.skill.name
-      )
-      const updatedHardSkills = [...hardSkills]
-      const newHardSkill = { ...data.skill, profileId }
-
-      if (existsIndex >= 0) updatedHardSkills[existsIndex] = newHardSkill
-      else updatedHardSkills.push(newHardSkill)
+      if (data.skill) {
+        const existsIndex = hardSkills.findIndex(
+          (s) => s.name === data.skill!.name
+        )
+        const newHardSkill = { ...data.skill, profileId }
+        if (existsIndex >= 0) updatedHardSkills[existsIndex] = newHardSkill
+        else updatedHardSkills.push(newHardSkill)
+      }
 
       const softSkills = data.softSkillTags.map((name) => ({
         profileId,
@@ -84,10 +86,15 @@ const UpdateProfileForm = () => {
     })
 
     if (data.certifications.length > 0) {
-      form.setValue(
-        "certifications",
-        data.certifications.map((c) => c.name).filter(Boolean)
-      )
+      const existingCerts = form.getValues("certifications") || []
+      const newCerts = data.certifications.map((c) => ({
+        profileId,
+        name: c.name,
+        issuer: c.issuer,
+        fileBase64: c.fileBase64,
+        fileName: c.fileName,
+      }))
+      form.setValue("certifications", [...existingCerts, ...newCerts])
     }
   }
   // Submit function
@@ -99,11 +106,18 @@ const UpdateProfileForm = () => {
       const profileUpdateResponse = await profileService.updateProfile(data)
       console.log("Profile update response:", profileUpdateResponse)
 
-      // const profileId = user?.profile?.id
-      // if (profileId) {
-      //   await saveProfileSkills(savedSkills, profileId, skillService.addSkill)
-      // }
+      const profileId = user?.profile?.id
+      const savedSkills = skills.map((skill) => ({
+        ...skill,
+        profileId: profileId || "",
+      }))
 
+      const addSkillResponses = await Promise.all(
+        savedSkills.map((skill) => skillService.addSkill(skill))
+      )
+
+      console.log("🚀 ~ onSubmit ~ addSkillResponse:", addSkillResponses)
+    
       // refetch full fresh user data from backend
       const meResponse = await authService.getMe()
       if (meResponse.code === 200) {

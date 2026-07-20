@@ -19,10 +19,10 @@ const AlumniProfileAbout = () => {
 
       <div className="space-y-6">
         {/* Core Skills */}
-        <AlumniCoreSkills />
+        <AlumniCoreSkills skills={user?.profile?.skills || []} />
 
         {/* Tools & Technology */}
-        <AlumniToolsTechnology />
+        <AlumniToolsTechnology skills={user?.profile?.skills || []} />
       </div>
 
       {/* Proficiency Scale */}
