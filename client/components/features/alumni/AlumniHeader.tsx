@@ -12,8 +12,7 @@ const AlumniHeader = () => {
     <nav className="mt-2 flex justify-between">
       <div className="flex items-center gap-x-10 lg:max-w-[500px] md:max-w-[300px] w-full">
         <div className="flex items-center gap-x-1">
-          <Brain />
-          <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
+          <Image src={"/logo/logoalumnai.png"} alt="Logo" width={100} height={100}/>
         </div>
         <div>
           <Link href={`/alumni/profile`} className="text-[14px] text-primary font-bold">Profile</Link>
