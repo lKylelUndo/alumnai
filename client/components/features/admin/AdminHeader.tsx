@@ -2,6 +2,7 @@
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuthContext } from "@/context/AuthContext"
+import { LogOut } from "lucide-react"
 import Image from "next/image"
 
 const AdminHeader = () => {
@@ -22,11 +23,12 @@ const AdminHeader = () => {
             <Image src="/images/admindashboardicon.png" alt="Admin Profile" width={36} height={36} className="h-full w-full object-cover" />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="me-4 w-48 rounded-xl border border-border shadow-md">
+        <DropdownMenuContent className="me-4 w-48 rounded-xl">
           <DropdownMenuGroup>
             <DropdownMenuLabel className="text-xs font-semibold text-foreground">My Account</DropdownMenuLabel>
             <DropdownMenuItem onClick={logout} className="text-xs font-medium text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 cursor-pointer">
-              Logout
+              <LogOut
+               className="h-3.5 w-3.5 mr-2" /> Logout
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
