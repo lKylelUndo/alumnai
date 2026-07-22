@@ -1,8 +1,7 @@
 "use client"
-import { Brain } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
+import Image from "next/image"
 
 const AdminHeader = () => {
   const { logout } = useAuthContext()
@@ -10,10 +9,7 @@ const AdminHeader = () => {
   return (
     <nav className="mt-2 flex justify-between">
       <div className="flex items-center gap-x-1">
-        <Brain />
-        <Link href="/admin/dashboard">
-          <h1 className="text-xl font-bold text-primary md:text-2xl">alumnai</h1>
-        </Link>
+        <Image src={"/logo/logoalumnai.png"} alt='Logo' width={100} height={100} />
       </div>
 
       <DropdownMenu>

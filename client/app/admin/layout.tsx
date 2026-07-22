@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function AdminDashboardLayout({ children }: { children: ReactNode }) {
   return (
     <AuthGuard mode={"ADMIN"}>
-        <header className="lg:max-w-300 md:max-w-200 mx-auto shadow">
+        <header className="px-6 py-2 shadow">
             <AdminHeader />
         </header>
         <main className="lg:max-w-300 md:max-w-200 min-h-screen mx-auto">
