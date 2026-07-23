@@ -17,7 +17,7 @@ export default function Header() {
           
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 text-sm">
             <Link href="/login" className="font-medium">
               Login
             </Link>

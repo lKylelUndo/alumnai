@@ -4,7 +4,7 @@ export default function HeroSection() {
   return (
     <section className="md:min-h-screen h-[350px] bg-[#EFF4F3]">
       <div className="container mx-auto flex flex-col items-center px-4 lg:max-w-[1060px] lg:flex-row lg:justify-between lg:px-0">
-        <div className="md:mt-10 mt-20 text-center lg:text-left">
+        <div className="md:mt-10 mt-20 text-center lg:text-center">
           <h1 className="text-3xl leading-tight font-bold text-slate-900 sm:text-4xl md:text-5xl lg:text-[55px]">
             Bridge the Gap Between
             <br />

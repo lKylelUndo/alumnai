@@ -99,7 +99,7 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="border-t border-slate-100 pt-6 text-center text-sm text-[#636669]">
-          © {new Date().getFullYear()} alumnAI. All rights reserved.
+          © {new Date().getFullYear()} <span className="font-bold">alumnAI</span>. All rights reserved.
         </div>
       </div>
     </footer>

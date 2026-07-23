@@ -1,4 +1,4 @@
-import { Briefcase, Target, Users } from "lucide-react"
+import { Briefcase, SquareUserRound, Target, Users } from "lucide-react"
 import Link from "next/link";
 
 type DashboardQuickActionTypes = {
@@ -18,7 +18,7 @@ const DashboardQuickAction = ({ profileRoute, updateProfileRoute, featureRoute }
         <div className="flex flex-col gap-y-2">
           <Link href={profileRoute}>
             <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
+              <SquareUserRound className="h-4 w-4 text-muted-foreground" />
               <span>View My Profile</span>
             </button>
           </Link>
@@ -31,7 +31,8 @@ const DashboardQuickAction = ({ profileRoute, updateProfileRoute, featureRoute }
          <Link href={featureRoute}>
             <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
               <Users className="h-4 w-4 text-muted-foreground" />
-              <span>Find Collaborators</span>
+              <span>Find Collaborators</span> 
+              {/* unya ug student saon man */}
             </button>
          </Link>
         </div>

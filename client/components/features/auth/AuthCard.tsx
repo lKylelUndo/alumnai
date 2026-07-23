@@ -16,10 +16,10 @@ export default function AuthCard({ title, subtitle, children }: AuthCardProps) {
         ← Back to Homepage
       </Link>
 
-      <div className="mt-4 border border-[#1A216D] border-2 bg-white p-8 rounded-sm">
+      <div className="mt-4 border border-[#1A216D] border-2 bg-white p-10 rounded-sm">
        <div className="">
 
-          {/* Change to logo once finished */}
+          {/* Change to logo once logo design is finished */}
           <div className="flex items-center justify-center gap-2 md:pl-2 mb-6">
             <Brain size={28} color="#2D7EE2" />
             <Link href="/" className={`${roboto_slab.className} text-md text-[#1A216D] md:text-2xl font-bold`}>
