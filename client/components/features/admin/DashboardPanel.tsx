@@ -5,8 +5,13 @@ import TopMentors from "./TopMentors"
 import AlumniRequest from "./AlumniRequest"
 import UserManagement from "./UserManagement"
 import Analytics from "./Analytics"
+import { adminService } from "@/services/admin.service"
 
-const DashboardPanel = () => {
+const DashboardPanel = async () => {
+  const unverifiedUsers = await adminService.getUnverifiedUsers()
+
+  console.log("Unverified users: ", unverifiedUsers.data)
+
   return (
     <section className="mt-6">
       <Tabs defaultValue="verify-students" className="w-full bg-transparent">
@@ -61,7 +66,7 @@ const DashboardPanel = () => {
         </TabsList>
 
         <TabsContent value="verify-students" className="mt-4 bg-transparent">
-          <VerifyStudents />
+          <VerifyStudents data={unverifiedUsers.data.users} />
         </TabsContent>
 
         <TabsContent value="top-mentors" className="mt-4 bg-transparent">

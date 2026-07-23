@@ -8,7 +8,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/v1/get-unverified-users", authMiddleware.execute, permittedRole([RoleType.DEAN]), adminController.getUnverifiedUsers)
-router.post("/v1/verify-a-user", authMiddleware.execute, permittedRole([RoleType.DEAN]), validateSchema(verifyUserSchema), adminController.verifyUser)
+router.get("/v1/get-unverified-users", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getUnverifiedUsers)
+router.post("/v1/verify-a-user", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(verifyUserSchema), adminController.verifyUser)
 
 export default router;

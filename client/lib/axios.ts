@@ -2,7 +2,69 @@ import axios from "axios";
 
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
-const axiosInstance = axios.create({
+export const axiosServerInstance = axios.create({
+  baseURL: backendURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// ----------------------------
+// Server-Side Token Refresh Interceptor
+// Handles 401 in Server Components / Server Services
+// ----------------------------
+axiosServerInstance.interceptors.response.use(
+  (response) => response,
+  async (error: unknown) => {
+    if (!axios.isAxiosError(error)) return Promise.reject(error);
+
+    const originalRequest = error.config;
+    if (!originalRequest) return Promise.reject(error);
+
+    const retryRequest = originalRequest as typeof originalRequest & { _retry?: boolean };
+    const status = error.response?.status;
+
+    if (status === 401 && !retryRequest._retry) {
+      retryRequest._retry = true;
+
+      try {
+        // Dynamically import next/headers (server-only)
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        const refreshToken = cookieStore.get("refreshToken")?.value;
+
+        if (!refreshToken) {
+          return Promise.reject(error);
+        }
+
+        // Send refreshToken in request body (server can't send cookies automatically)
+        const refreshUrl = `${axiosServerInstance.defaults.baseURL}/api/auth/v1/refresh-token`;
+        const refreshResponse = await axios.post(
+          refreshUrl,
+          { refreshToken },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        // Extract the new accessToken from the response body
+        const newAccessToken = refreshResponse.data?.data?.tokens?.accessToken;
+
+        if (!newAccessToken) return Promise.reject(error);
+
+        // Retry original request with the new accessToken
+        retryRequest.headers = retryRequest.headers ?? {};
+        retryRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        return axiosServerInstance(retryRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export const axiosInstance = axios.create({
   baseURL: backendURL,
   withCredentials: true,
   headers: {
@@ -123,5 +185,3 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export default axiosInstance;

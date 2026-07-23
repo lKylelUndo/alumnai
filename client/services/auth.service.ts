@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import type { LoginInputTypes, SignupInputTypes, ResetPasswordRequestInputTypes, ResetPasswordInputTypes, VerifyResetPasswordTokenInputTypes } from "@/schema/auth";
 
 export const authService = {

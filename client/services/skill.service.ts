@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import { AddSkillInput, RemoveSkillInput } from "@/schema/skill";
 
 export const skillService = {

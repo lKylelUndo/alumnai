@@ -8,6 +8,20 @@ export class AdminRepository {
     });
   }
 
+  async findUnverified() {
+    return await prisma.user.findMany({
+      where: { isAccountVerified: false },
+      select: {
+        id: true,
+        email: true,
+        student_id_number: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async verify(id: string) {
     return await prisma.user.update({
       where: {

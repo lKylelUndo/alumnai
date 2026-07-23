@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import { AcceptMentorshipInviteInput, DeclineMentorshipInviteInput, SendMentorshipInviteInput } from "@/schema/mentorship";
 
 export const mentorshipService = {
