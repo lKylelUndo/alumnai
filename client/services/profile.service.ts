@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import { ViewProfileInput, UpdateProfileInput } from "@/schema/profile";
 
 export const profileService = {

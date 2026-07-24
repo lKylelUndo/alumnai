@@ -15,6 +15,10 @@ export const ENV = {
   CLOUD_NAME: process.env.CLOUD_NAME || "",
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
   CLOUDINARY_SECRET_KEY: process.env.CLOUDINARY_SECRET_KEY || "",
+
+  ADMIN_REDIS_KEY: process.env.ADMIN_REDIS_KEY || "admin:",
+  STUDENT_REDIS_KEY: process.env.STUDENT_REDIS_KEY || "student:",
+  ALUMNI_REDIS_KEY: process.env.ALUMNI_REDIS_KEY || "alumni:",
   
   SMTP: { 
     HOST: process.env.SMTP_HOST,
