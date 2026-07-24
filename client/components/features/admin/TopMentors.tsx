@@ -53,13 +53,7 @@ export const columns: ColumnDef<TopMentors>[] = [
   },
 ]
 
-const mockData: TopMentors[] = [
-  { ranking: 1, name: "Arnel Pineda", mentees: 10 },
-  { ranking: 2, name: "Maria Santos", mentees: 8 },
-  { ranking: 3, name: "Juan Dela Cruz", mentees: 6 },
-]
-
-export default function TopMentors() {
+export default function TopMentors({ data }: { data: TopMentors[] }) {
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -68,7 +62,7 @@ export default function TopMentors() {
           Alumni with the most mentees and contributions
         </p>
       </div>
-      <DataTable columns={columns} data={mockData} filterColumn="name" filterPlaceholder="Search by name..." />
+      <DataTable columns={columns} data={data} filterColumn="name" filterPlaceholder="Search by name..." />
     </div>
   )
 }

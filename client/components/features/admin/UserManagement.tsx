@@ -75,13 +75,7 @@ export const columns: ColumnDef<UserManagement>[] = [
   },
 ]
 
-const mockData: UserManagement[] = [
-  { user: "Bernard Bioco", role: "Student", email: "bernard@example.com", status: "Active" },
-  { user: "Arnel Pineda", role: "Alumni", email: "arnel@example.com", status: "Active" },
-  { user: "Maria Santos", role: "Student", email: "maria@example.com", status: "Active" },
-]
-
-export default function UserManagement() {
+export default function UserManagement({ data }: { data: UserManagement[] }) {
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -90,7 +84,7 @@ export default function UserManagement() {
           Review and manage user accounts and roles
         </p>
       </div>
-      <DataTable columns={columns} data={mockData} filterColumn="user" filterPlaceholder="Search by user..." />
+      <DataTable columns={columns} data={data} filterColumn="user" filterPlaceholder="Search by user..." />
     </div>
   )
 }

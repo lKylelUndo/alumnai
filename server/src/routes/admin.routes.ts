@@ -10,5 +10,9 @@ const router = Router();
 
 router.get("/v1/get-unverified-users", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getUnverifiedUsers)
 router.post("/v1/verify-a-user", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(verifyUserSchema), adminController.verifyUser)
+router.get("/v1/get-top-mentors", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getTopMentors)
+router.get("/v1/get-alumni-request", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getAlumniRequests)
+router.get("/v1/get-user-management", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getAllUsers)
+router.get("/v1/get-analytics", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getSkillAnalytics)
 
 export default router;

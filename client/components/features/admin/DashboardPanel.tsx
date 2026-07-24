@@ -73,19 +73,19 @@ const DashboardPanel = async () => {
         </TabsList>
 
         <TabsContent value="verify-students" className="mt-4 bg-transparent">
-          <VerifyStudents data={unverifiedUsers.data.users} />
+          <VerifyStudents data={unverifiedUsers?.data?.users ?? []} />
         </TabsContent>
 
         <TabsContent value="top-mentors" className="mt-4 bg-transparent">
-          <TopMentors />
+          <TopMentors data={topMentors?.data?.mentors ?? []} />
         </TabsContent>
 
         <TabsContent value="alumni-request" className="mt-4 bg-transparent">
-          <AlumniRequest />
+          <AlumniRequest data={alumniRequest?.data?.requests ?? []} />
         </TabsContent>
 
         <TabsContent value="manage-users" className="mt-4 bg-transparent">
-          <UserManagement />
+          <UserManagement data={allUsers?.data?.users ?? []} />
         </TabsContent>
 
         <TabsContent value="analytics" className="mt-4 bg-transparent">
