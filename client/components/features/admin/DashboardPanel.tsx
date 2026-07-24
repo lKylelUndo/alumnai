@@ -10,7 +10,7 @@ import { adminService } from "@/services/admin.service"
 const DashboardPanel = async () => {
   const unverifiedUsers = await adminService.getUnverifiedUsers()
 
-  console.log("Unverified users: ", unverifiedUsers.data)
+  // console.log("Unverified users: ", unverifiedUsers.data)
 
   return (
     <section className="mt-6">
