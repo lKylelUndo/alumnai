@@ -1,6 +1,7 @@
 import { ENV } from "@/config/env";
 import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
+import { generateSkillAnalytics } from "@/lib/gemini";
 
 export class AdminRepository {
   async findById(id: string) {
@@ -163,21 +164,44 @@ export class AdminRepository {
     const cached = await redis.get(cacheKey);
     if (cached) return JSON.parse(cached);
 
-    // fallback to DB — aggregate skills by name with count
-    const skills = await prisma.skill.groupBy({
-      by: ["name"],
-      _count: { name: true },
-      orderBy: { _count: { name: "desc" } },
-      take: 10,
+    // fallback to DB — fetch skills with profile work fields
+    const skills = await prisma.skill.findMany({
+      include: {
+        profile: {
+          select: {
+            work_field: true,
+            current_position: true,
+          },
+        },
+      },
     });
 
-    const formatted = skills.map((skill) => ({
-      name: skill.name,
-      count: skill._count.name,
-    }));
+    const skillMap = new Map<string, { count: number; fields: Set<string> }>();
 
-    await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5);
+    for (const skill of skills) {
+      const name = skill.name.trim();
+      if (!name) continue;
 
-    return formatted;
+      const existing = skillMap.get(name) || { count: 0, fields: new Set<string>() };
+      existing.count += 1;
+      if (skill.profile?.work_field) existing.fields.add(skill.profile.work_field);
+      if (skill.profile?.current_position) existing.fields.add(skill.profile.current_position);
+      skillMap.set(name, existing);
+    }
+
+    const skillsData = Array.from(skillMap.entries())
+      .map(([name, data]) => ({
+        name,
+        count: data.count,
+        fields: Array.from(data.fields),
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    const analytics = await generateSkillAnalytics(skillsData);
+
+    await redis.set(cacheKey, JSON.stringify(analytics), "PX", 1000 * 60 * 5);
+
+    return analytics;
   }
 }

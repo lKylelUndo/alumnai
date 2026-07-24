@@ -17,8 +17,6 @@ const DashboardPanel = async () => {
     
   ]) 
 
-  // console.log("Unverified users: ", unverifiedUsers.data)
-
   return (
     <section className="mt-6">
       <Tabs defaultValue="verify-students" className="w-full bg-transparent">
@@ -89,7 +87,7 @@ const DashboardPanel = async () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="mt-4 bg-transparent">
-          <Analytics />
+          <Analytics data={skillTrendAnalytics?.data?.skills} />
         </TabsContent>
       </Tabs>
     </section>
