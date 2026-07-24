@@ -13,6 +13,21 @@ export const axiosServerInstance = axios.create({
 // Server-Side Token Refresh Interceptor
 // Handles 401 in Server Components / Server Services
 // ----------------------------
+axiosServerInstance.interceptors.request.use(async (config) => {
+  console.log("Server Request:", config.url);
+
+  const { cookies } = await import("next/headers");
+
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  return config;
+});
+
 axiosServerInstance.interceptors.response.use(
   (response) => response,
   async (error: unknown) => {
