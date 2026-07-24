@@ -88,24 +88,7 @@ export const columns: ColumnDef<AlumniRequest>[] = [
   },
 ]
 
-const mockData: AlumniRequest[] = [
-  {
-    studentId: "728ed52f",
-    name: "Arnel Pineda",
-    status: "pending",
-    documents: "Diploma_Verification.pdf",
-    email: "arnel@example.com",
-  },
-  {
-    studentId: "819fc31a",
-    name: "Maria Santos",
-    status: "success",
-    documents: "Graduation_Cert.pdf",
-    email: "maria@example.com",
-  },
-]
-
-export default function AlumniRequest() {
+export default function AlumniRequest({ data }: { data: AlumniRequest[] }) {
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -114,7 +97,7 @@ export default function AlumniRequest() {
           Review and approve alumni status upgrade requests
         </p>
       </div>
-      <DataTable columns={columns} data={mockData} filterColumn="studentId" filterPlaceholder="Search by Student Id..." />
+      <DataTable columns={columns} data={data} filterColumn="studentId" filterPlaceholder="Search by Student Id..." />
     </div>
   )
 }

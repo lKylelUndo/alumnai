@@ -3,6 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 
 export { extractTechnicalSkills } from "@/lib/gemini/extract.technical.skills"
 export { recommendStudent } from "@/lib/gemini/recommendStudent"
+export { generateSkillAnalytics } from "@/lib/gemini/generateSkillAnalytics"
 
 export const AVAILABLE_GEMINI_MODELS = [
   "gemini-2.5-pro",

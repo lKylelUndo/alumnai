@@ -8,9 +8,14 @@ import Analytics from "./Analytics"
 import { adminService } from "@/services/admin.service"
 
 const DashboardPanel = async () => {
-  const unverifiedUsers = await adminService.getUnverifiedUsers()
-
-  // console.log("Unverified users: ", unverifiedUsers.data)
+  const [unverifiedUsers, topMentors, alumniRequest, allUsers, skillTrendAnalytics] = await Promise.all([
+    adminService.getUnverifiedUsers(),
+    adminService.getTopMentors(),
+    adminService.getAlumniRequest(),
+    adminService.getAllUsers(),
+    adminService.getSkillTrendAnalytics(),
+    
+  ]) 
 
   return (
     <section className="mt-6">
@@ -66,23 +71,23 @@ const DashboardPanel = async () => {
         </TabsList>
 
         <TabsContent value="verify-students" className="mt-4 bg-transparent">
-          <VerifyStudents data={unverifiedUsers.data.users} />
+          <VerifyStudents data={unverifiedUsers?.data?.users ?? []} />
         </TabsContent>
 
         <TabsContent value="top-mentors" className="mt-4 bg-transparent">
-          <TopMentors />
+          <TopMentors data={topMentors?.data?.mentors ?? []} />
         </TabsContent>
 
         <TabsContent value="alumni-request" className="mt-4 bg-transparent">
-          <AlumniRequest />
+          <AlumniRequest data={alumniRequest?.data?.requests ?? []} />
         </TabsContent>
 
         <TabsContent value="manage-users" className="mt-4 bg-transparent">
-          <UserManagement />
+          <UserManagement data={allUsers?.data?.users ?? []} />
         </TabsContent>
 
         <TabsContent value="analytics" className="mt-4 bg-transparent">
-          <Analytics />
+          <Analytics data={skillTrendAnalytics?.data?.skills} />
         </TabsContent>
       </Tabs>
     </section>
