@@ -3,13 +3,15 @@ import { RoleType } from "@/generated/prisma/enums";
 import authMiddleware from "@/middlewares/auth-middleware";
 import { permittedRole } from "@/middlewares/rbac-middleware";
 import { validateSchema } from "@/middlewares/validate-schema";
-import { verifyUserSchema } from "@/schema/admin";
+import { suspendUserSchema, verifyUserSchema } from "@/schema/admin";
+
 import { Router } from "express";
 
 const router = Router();
 
 router.get("/v1/get-unverified-users", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getUnverifiedUsers)
 router.post("/v1/verify-a-user", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(verifyUserSchema), adminController.verifyUser)
+router.put("/v1/suspend-a-user", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(suspendUserSchema), adminController.suspendUser)
 router.get("/v1/get-top-mentors", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getTopMentors)
 router.get("/v1/get-alumni-request", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getAlumniRequests)
 router.get("/v1/get-user-management", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getAllUsers)
