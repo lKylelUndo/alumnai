@@ -7,7 +7,6 @@ export class AdminRepository {
   async findById(id: string) {
     return await prisma.user.findUnique({
       where: { id },
-      select: { isAccountVerified: true, id: true },
     });
   }
 
@@ -203,5 +202,12 @@ export class AdminRepository {
     await redis.set(cacheKey, JSON.stringify(analytics), "PX", 1000 * 60 * 5);
 
     return analytics;
+  }
+
+  async suspend(id: string) {
+    return await prisma.user.update({
+      where: { id },
+      data: { accountStatus: "SUSPENDED" },
+    });
   }
 }
