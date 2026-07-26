@@ -8,13 +8,13 @@ import Analytics from "./Analytics"
 import { adminService } from "@/services/admin.service"
 
 const DashboardPanel = async () => {
-  const [unverifiedUsers, topMentors, alumniRequest, allUsers] = await Promise.all([
-    adminService.getUnverifiedUsers(),
-    adminService.getTopMentors(),
-    adminService.getAlumniRequest(),
-    adminService.getAllUsers(),
-    //adminService.getSkillTrendAnalytics(),
-  ]) 
+ const [unverifiedUsers, topMentors, alumniRequest, allUsers] = await Promise.all([
+  adminService.getUnverifiedUsers().catch(() => ({ data: [] })),
+  adminService.getTopMentors().catch(() => ({ data: [] })),
+  adminService.getAlumniRequest().catch(() => ({ data: [] })),
+  adminService.getAllUsers().catch(() => ({ data: [] })),
+  //adminService.getSkillTrendAnalytics().catch(() => ({ data: null })),
+])
 
   return (
     <section className="mt-6">
@@ -55,7 +55,7 @@ const DashboardPanel = async () => {
             className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs"
           >
             <Users className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Manager Users</span>
+            <span className="hidden sm:inline">Manage Users</span>
             <span className="text-xs sm:hidden">Users</span>
           </TabsTrigger>
 

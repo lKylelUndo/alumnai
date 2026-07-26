@@ -1,4 +1,4 @@
-import { VerifyUserService, GetUnverifiedUsersService, GetTopMentorsService, GetAlumniRequestsService, GetAllUsersService, GetSkillAnalyticsService, SuspendUserService, RejectUserService } from "@/services/admin";
+import { VerifyUserService, GetUnverifiedUsersService, GetTopMentorsService, GetAlumniRequestsService, GetAllUsersService, GetSkillAnalyticsService, SuspendUserService, ActivateUserService, RejectUserService, ApproveAlumniRequestService, RejectAlumniRequestService } from "@/services/admin";
 import type { Request, Response } from "express";
 
 class AdminController {
@@ -39,11 +39,31 @@ class AdminController {
     return res.status(response.code).json(response);
   };
 
+  public activateUser = async (req: Request, res: Response) => {
+    const { id } = req.body ?? {};
+    const response = await ActivateUserService(id);
+    return res.status(response.code).json(response);
+  };
+
   public rejectUser = async (req: Request, res: Response) => {
     const { id } = req.body ?? {};
     const response = await RejectUserService(id);
     return res.status(response.code).json(response);
   };
+
+  public approveAlumniRequest = async (req: Request, res: Response) => {
+    const { studentId } = req.body ?? {};
+    const response = await ApproveAlumniRequestService(studentId);
+    return res.status(response.code).json(response);
+  };
+
+  public rejectAlumniRequest = async (req: Request, res: Response) => {
+    const { studentId } = req.body ?? {};
+    const response = await RejectAlumniRequestService(studentId);
+    return res.status(response.code).json(response);
+  };
 }
 
 export default new AdminController();
+
+
