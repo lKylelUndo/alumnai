@@ -1,8 +1,9 @@
 "use client"
 
 import { DataTable } from "@/components/common/DataTable"
+import { adminService } from "@/services/admin.service"
 import { ColumnDef } from "@tanstack/react-table"
-import { CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
+import { CheckCircle2, XCircle } from "lucide-react"
 
 export type VerifyStudents = {
   student_id_number: string
@@ -56,25 +57,21 @@ export const columns: ColumnDef<VerifyStudents>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex items-center gap-1.5">
         <button
+        onClick={() => adminService.verifyUser(row.getValue("student_id_number") as string)}
           title="Approve"
           className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors"
         >
           <CheckCircle2 className="h-4 w-4" />
         </button>
         <button
+        onClick={() => adminService.rejectUser(row.getValue("student_id_number") as string)}
           title="Reject"
           className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors"
         >
           <XCircle className="h-4 w-4" />
-        </button>
-        <button
-          title="View Details"
-          className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors"
-        >
-          <ArrowUpRight className="h-4 w-4" />
         </button>
       </div>
     ),

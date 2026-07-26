@@ -1,5 +1,4 @@
 import { axiosServerInstance, axiosInstance } from "@/lib/axios"
-import { VerifyUserInput } from "@/schema/admin"
 
 export const adminService = {
   getUnverifiedUsers: async () => {
@@ -7,9 +6,14 @@ export const adminService = {
     return response.data
   },
   
-  verifyUser: async (data: VerifyUserInput) => {
-    const response = await axiosInstance.post("/api/admin/v1/verify-a-user", data)
+  verifyUser: async (id: string) => {
+    const response = await axiosInstance.post("/api/admin/v1/verify-a-user", { id })
     return response.data  
+  },
+
+  rejectUser: async (id: string) => {
+    const response = await axiosInstance.delete("/api/admin/v1/reject-a-user", { data: { id } })
+    return response.data
   },
 
   getTopMentors: async () => {

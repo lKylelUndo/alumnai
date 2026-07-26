@@ -14,7 +14,6 @@ const DashboardPanel = async () => {
     adminService.getAlumniRequest(),
     adminService.getAllUsers(),
     adminService.getSkillTrendAnalytics(),
-    
   ]) 
 
   return (
@@ -87,7 +86,7 @@ const DashboardPanel = async () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="mt-4 bg-transparent">
-          <Analytics data={skillTrendAnalytics?.data?.skills} />
+          {/* <Analytics data={skillTrendAnalytics?.data?.skills} /> */}
         </TabsContent>
       </Tabs>
     </section>
