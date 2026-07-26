@@ -138,6 +138,7 @@ export class AdminRepository {
         email: true,
         role: true,
         isAccountVerified: true,
+        accountStatus: true,
         profile: { select: { fullName: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -148,7 +149,7 @@ export class AdminRepository {
       user: user.profile?.fullName ?? "Unknown",
       email: user.email ?? "",
       role: user.role === "ALUMNI" ? "Alumni" : "Student",
-      status: user.isAccountVerified ? "Active" : "Inactive",
+      status: user.accountStatus === "SUSPENDED" ? "Suspended" : (user.isAccountVerified ? "Active" : "Inactive"),
     }));
 
     await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5);
@@ -205,11 +206,23 @@ export class AdminRepository {
   }
 
   async suspend(id: string) {
-    return await prisma.user.update({
+    const updated = await prisma.user.update({
       where: { id },
       data: { accountStatus: "SUSPENDED" },
     });
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
+    return updated;
   }
+
+  async activate(id: string) {
+    const updated = await prisma.user.update({
+      where: { id },
+      data: { accountStatus: "ACTIVE" },
+    });
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
+    return updated;
+  }
+
 
   async reject(id: string) {
     await prisma.user.delete({
