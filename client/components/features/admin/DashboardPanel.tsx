@@ -8,13 +8,13 @@ import Analytics from "./Analytics"
 import { adminService } from "@/services/admin.service"
 
 const DashboardPanel = async () => {
-  const [unverifiedUsers, topMentors, alumniRequest, allUsers] = await Promise.all([
-    adminService.getUnverifiedUsers(),
-    adminService.getTopMentors(),
-    adminService.getAlumniRequest(),
-    adminService.getAllUsers(),
-    //adminService.getSkillTrendAnalytics(),
-  ]) 
+ const [unverifiedUsers, topMentors, alumniRequest, allUsers] = await Promise.all([
+  adminService.getUnverifiedUsers().catch(() => ({ data: [] })),
+  adminService.getTopMentors().catch(() => ({ data: [] })),
+  adminService.getAlumniRequest().catch(() => ({ data: [] })),
+  adminService.getAllUsers().catch(() => ({ data: [] })),
+  //adminService.getSkillTrendAnalytics().catch(() => ({ data: null })),
+])
 
   return (
     <section className="mt-6">
