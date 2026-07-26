@@ -239,4 +239,50 @@ export class AdminRepository {
 
     return users;
   }
+
+  async approveAlumniRequest(studentId: string) {
+    const user = await prisma.user.findUnique({
+      where: { student_id_number: studentId },
+    });
+
+    if (!user) return null;
+
+    // Update upgrade request status to APPROVED
+    await prisma.alumniUpgradeRequest.updateMany({
+      where: { userId: user.id },
+      data: { status: "APPROVED" },
+    });
+
+    // Update user role to ALUMNI
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { role: "ALUMNI" },
+    });
+
+    // Invalidate Redis caches
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}alumni-requests`);
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
+
+    return updatedUser;
+  }
+
+  async rejectAlumniRequest(studentId: string) {
+    const user = await prisma.user.findUnique({
+      where: { student_id_number: studentId },
+    });
+
+    if (!user) return null;
+
+    // Update upgrade request status to REJECTED
+    await prisma.alumniUpgradeRequest.updateMany({
+      where: { userId: user.id },
+      data: { status: "REJECTED" },
+    });
+
+    // Invalidate Redis cache
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}alumni-requests`);
+
+    return user;
+  }
 }
+

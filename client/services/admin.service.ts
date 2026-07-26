@@ -26,7 +26,18 @@ export const adminService = {
     return response.data
   },
 
+  approveAlumniRequest: async (studentId: string) => {
+    const response = await axiosInstance.put("/api/admin/v1/approve-alumni-request", { studentId })
+    return response.data
+  },
+
+  rejectAlumniRequest: async (studentId: string) => {
+    const response = await axiosInstance.put("/api/admin/v1/reject-alumni-request", { studentId })
+    return response.data
+  },
+
   getAllUsers: async () => {
+
     const response = await axiosServerInstance.get("/api/admin/v1/get-user-management")
     return response.data
   },

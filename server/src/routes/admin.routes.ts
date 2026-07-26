@@ -3,7 +3,7 @@ import { RoleType } from "@/generated/prisma/enums";
 import authMiddleware from "@/middlewares/auth-middleware";
 import { permittedRole } from "@/middlewares/rbac-middleware";
 import { validateSchema } from "@/middlewares/validate-schema";
-import { rejectUserSchema, suspendUserSchema, verifyUserSchema } from "@/schema/admin";
+import { approveAlumniRequestSchema, rejectAlumniRequestSchema, rejectUserSchema, suspendUserSchema, verifyUserSchema } from "@/schema/admin";
 
 import { Router } from "express";
 
@@ -15,7 +15,9 @@ router.delete("/v1/reject-a-user", authMiddleware.execute, permittedRole([RoleTy
 router.put("/v1/suspend-a-user", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(suspendUserSchema), adminController.suspendUser)
 router.get("/v1/get-top-mentors", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getTopMentors)
 router.get("/v1/get-alumni-request", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getAlumniRequests)
+router.put("/v1/approve-alumni-request", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(approveAlumniRequestSchema), adminController.approveAlumniRequest)
+router.put("/v1/reject-alumni-request", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(rejectAlumniRequestSchema), adminController.rejectAlumniRequest)
 router.get("/v1/get-user-management", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getAllUsers)
 router.get("/v1/get-analytics", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getSkillAnalytics)
 
-export default router;
+export default router;
