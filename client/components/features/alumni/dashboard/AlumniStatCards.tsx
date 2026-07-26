@@ -66,6 +66,7 @@ const AlumniStatCards = () => {
         profileRoute="/alumni/profile"
         updateProfileRoute="/alumni/profile/update"
         featureRoute="/alumni/find-collaborators"
+        featureLabel="Find Collaborators"
       />
     </section>
   )

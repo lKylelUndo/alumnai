@@ -43,7 +43,7 @@ export default function FindCollaborators() {
   //const controllerRef = useRef<AbortController | null>(null)
 
   return (
-    <div className="py-4">
+    <div className="py-2">
       <div className="mb-6">
         <h2 className="text-2xl font-extrabold text-[#1A216D]">
           Find Student Collaborators

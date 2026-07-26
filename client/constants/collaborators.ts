@@ -1,4 +1,4 @@
-import { Collaborator } from "@/components/features/alumni/FindCollaborators"
+import { Collaborator } from "@/components/features/alumni/find-collaborators/FindCollaborators"
 
 export const MOCK_COLLABORATORS: Collaborator[] = [
   {

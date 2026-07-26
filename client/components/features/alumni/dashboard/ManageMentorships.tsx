@@ -5,6 +5,8 @@ import { Row } from "@tanstack/react-table"
 import { UserCircle2, MessageSquare } from "lucide-react"
 import { CardDataTable } from "@/components/common/CardDataTable"
 import { dummyMentorshipRequests, MentorshipRequest } from "@/constants/alumni"
+import { useRouter } from "next/navigation";
+
 
 export const columns: ColumnDef<MentorshipRequest>[] = [
   { accessorKey: "name", header: "Name" },
@@ -18,6 +20,9 @@ function MentorshipRequestCard({ row }: { row: Row<MentorshipRequest> }) {
     .join("")
     .slice(0, 2)
     .toUpperCase()
+
+    const router = useRouter();
+
 
   return (
     <div className="group relative rounded-2xl border border-[#E2E6F3] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#1A216D]/30 hover:shadow-lg hover:shadow-[#1A216D]/10">
@@ -59,6 +64,7 @@ function MentorshipRequestCard({ row }: { row: Row<MentorshipRequest> }) {
         <button
           id={`view-profile-request-${request.id}`}
           className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#E2E6F3] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D] hover:text-white active:scale-95"
+          onClick={() => router.push(`/alumni/profile/view/${request.id}`)}
         >
           <UserCircle2 className="h-3.5 w-3.5" />
           View Profile

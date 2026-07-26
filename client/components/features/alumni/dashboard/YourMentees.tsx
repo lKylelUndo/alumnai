@@ -4,6 +4,8 @@ import { Row } from "@tanstack/react-table"
 import { UserCircle2, XCircle } from "lucide-react"
 import { CardDataTable } from "@/components/common/CardDataTable"
 import { dummyMentees, Mentee } from "@/constants/alumni"
+import { useRouter } from "next/navigation";
+
 
 export const columns: ColumnDef<Mentee>[] = [
   { accessorKey: "name", header: "Name" },
@@ -17,6 +19,8 @@ function MenteeCard({ row }: { row: Row<Mentee> }) {
     .join("")
     .slice(0, 2)
     .toUpperCase()
+
+    const router = useRouter();
 
   return (
     <div className="group relative rounded-2xl border border-[#E2E6F3] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#1A216D]/30 hover:shadow-lg hover:shadow-[#1A216D]/10">
@@ -58,7 +62,9 @@ function MenteeCard({ row }: { row: Row<Mentee> }) {
         <button
           id={`view-profile-mentee-${mentee.id}`}
           className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#E2E6F3] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D] hover:text-white active:scale-95"
+          onClick={() => router.push(`/alumni/profile/view/${mentee.id}`)}
         >
+          {/* conditional statements napodddddddd if mentee ba nimo */}
           <UserCircle2 className="h-3.5 w-3.5" />
           View Profile
         </button>

@@ -2,6 +2,8 @@ import { Row } from "@tanstack/react-table"
 import { Collaborator } from "@/components/features/alumni/find-collaborators/FindCollaborators"
 import { Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const VISIBLE_SKILLS = 2
 
@@ -15,6 +17,9 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
     .toUpperCase()
 
   const visibleSkills = collaborator.skills.slice(0, VISIBLE_SKILLS)
+
+  const router = useRouter();
+
 
   return (
     <div className="group relative rounded-2xl border border-[#E2E6F3] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#1A216D]/30 hover:shadow-lg hover:shadow-[#1A216D]/10">
@@ -45,7 +50,7 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
             <p className="text-sm leading-tight font-bold text-[#1A216D]">
               {collaborator.name}
             </p>
-            <p className="mt-0.5 text-xs font-semibold text-[#4F5EBD]">
+            <p className="mt-0.5 pr-3 text-xs font-semibold text-justify text-[#4F5EBD]">
               {collaborator.bio}
             </p>
 
@@ -56,10 +61,11 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
         </div>
 
         {/* View Button */}
-        <Button
+        <Button 
           id={`view-collaborator-${collaborator.id}`}
           variant={"default"}
           className="rounded-full"
+          onClick={() => router.push(`/alumni/profile/view/${collaborator.id}`)}
         >
           <Eye className="h-3.5 w-3.5" />
           View

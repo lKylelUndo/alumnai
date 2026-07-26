@@ -163,6 +163,7 @@ const StudentStatCards = () => {
         profileRoute="/student/profile"
         updateProfileRoute="/alumni/profile/update"
         featureRoute="/student/find-mentors"
+        featureLabel="Find Mentors"
       />
     </section>
   )
