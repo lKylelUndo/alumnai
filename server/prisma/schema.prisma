@@ -25,6 +25,7 @@ model User {
   sentRecognitions       Recognition[]   @relation("RecognitionFrom")
   receivedRecognitions   Recognition[]   @relation("RecognitionTo")
   tokens                 Token[]
+  alumniUpgradeRequests  AlumniUpgradeRequest[]
 }
 
 model Profile {
@@ -168,4 +169,20 @@ enum Status {
 enum ConversationType {
   COLLABORATION
   MENTORSHIP
+}
+
+model AlumniUpgradeRequest {
+  id          String                      @id @default(uuid())
+  userId      String
+  documentUrl String
+  status      AlumniUpgradeRequestStatus  @default(PENDING)
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
+  user        User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum AlumniUpgradeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

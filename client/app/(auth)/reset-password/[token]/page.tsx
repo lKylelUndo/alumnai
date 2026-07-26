@@ -1,5 +1,5 @@
 import ResetPasswordForm from "@/components/features/auth/ForgetPasswordForm"
-import axiosInstance from "@/lib/axios"
+import { axiosInstance } from "@/lib/axios"
 import { notFound } from "next/navigation"
 
 export default async function ResetPasswordPage({ params}: { params: Promise<{ token: string }>}) {

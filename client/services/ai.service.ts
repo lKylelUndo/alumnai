@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import { SmartSearchInput } from "@/schema/ai";
 
 export const aiService = {

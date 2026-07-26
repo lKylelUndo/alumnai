@@ -5,28 +5,18 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
 
 export type VerifyStudents = {
-  studentId: string
-  name: string
+  student_id_number: string
   status?: "pending" | "processing" | "success" | "failed"
   email: string
 }
 
 export const columns: ColumnDef<VerifyStudents>[] = [
   {
-    accessorKey: "studentId",
+    accessorKey: "student_id_number",
     header: "Student ID",
     cell: ({ row }) => (
       <span className="font-mono text-xs font-semibold text-primary">
-        {row.getValue("studentId")}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => (
-      <span className="font-semibold text-foreground text-sm">
-        {row.getValue("name")}
+        {row.getValue("student_id_number")}
       </span>
     ),
   },
@@ -91,15 +81,7 @@ export const columns: ColumnDef<VerifyStudents>[] = [
   },
 ]
 
-const mockData: VerifyStudents[] = [
-  { studentId: "728ed52f", name: "Arnel Pineda", status: "pending", email: "arnel@example.com" },
-  { studentId: "819fc31a", name: "Maria Santos", status: "success", email: "maria@example.com" },
-  { studentId: "931ab24b", name: "Juan Dela Cruz", status: "pending", email: "juan@example.com" },
-  { studentId: "614cd89e", name: "Elena Ramos", status: "success", email: "elena@example.com" },
-  { studentId: "502ef12d", name: "Bernard Bioco", status: "pending", email: "bernard@example.com" },
-]
-
-export default function VerifyStudents() {
+export default function VerifyStudents({ data }: { data: VerifyStudents[] }) {
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -108,7 +90,7 @@ export default function VerifyStudents() {
           Approve or reject student verification requests
         </p>
       </div>
-      <DataTable columns={columns} data={mockData} filterColumn="studentId" filterPlaceholder="Search by Student Id..." />
+      <DataTable columns={columns} data={data} filterColumn="student_id_number" filterPlaceholder="Search by Student Id..." />
     </div>
   )
 }

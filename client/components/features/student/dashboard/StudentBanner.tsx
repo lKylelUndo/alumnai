@@ -18,7 +18,7 @@ const StudentBanner = () => {
         </div>
 
         <div>
-          <h1 className="text-2xl font-semibold text-primary lg:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-primary lg:text-3xl">
             Welcome back, {"Student"}
           </h1>
           <p className="text-xs text-muted-foreground md:text-sm">

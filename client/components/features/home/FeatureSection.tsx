@@ -10,8 +10,8 @@ export default function FeaturesSection() {
             Powerful Features
           </h2>
 
-          <p className="mt-4 lg:text-base text-[14px] text-slate-600">
-            alumnAI combines AI technology with institutional
+          <p className="mt-2 lg:text-base text-sm text-slate-600">
+           <span className="font-medium text-[#1a216d]">alumnAI</span>  combines AI technology with institutional
             verification to create meaningful connections
           </p>
         </div>

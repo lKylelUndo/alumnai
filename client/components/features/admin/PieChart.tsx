@@ -2,7 +2,13 @@
 
 import { Pie, PieChart as RechartsPieChart, Cell, ResponsiveContainer, Tooltip } from "recharts"
 
-const chartData = [
+export type PieChartItem = {
+  name: string
+  value: number
+  color: string
+}
+
+const defaultChartData: PieChartItem[] = [
   { name: "TypeScript", value: 40, color: "#1E64D4" },
   { name: "JavaScript", value: 20, color: "#EAB308" },
   { name: "React", value: 20, color: "#0047CB" },
@@ -10,7 +16,9 @@ const chartData = [
   { name: "C#", value: 10, color: "#EF4444" },
 ]
 
-export function ChartPie() {
+export function ChartPie({ data }: { data?: PieChartItem[] }) {
+  const chartData = data && data.length > 0 ? data : defaultChartData
+
   return (
     <div className="flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 shadow-xs h-full min-h-[420px]">
       <div>
