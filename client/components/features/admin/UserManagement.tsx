@@ -1,14 +1,67 @@
 "use client"
 
 import { DataTable } from "@/components/common/DataTable"
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Row } from "@tanstack/react-table"
 import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
+import { adminService } from "@/services/admin.service"
+import { useRouter } from "next/navigation"
 
 export type UserManagement = {
+  id: string
   user: string
   status?: "Active" | "Inactive" | "Suspended"
   email: string
   role: "Student" | "Alumni"
+}
+
+const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
+  const router = useRouter()
+  const id = row.original.id
+
+  const handleActivate = async () => {
+    const response = await adminService.activateUser(id)
+    if (response.code === 200) {
+      alert("User activated successfully")
+      router.refresh()
+    } else {
+      console.error(response.message || "Failed to activate user")
+    }
+  }
+
+  const handleSuspend = async () => {
+    const response = await adminService.suspendUser(id)
+    if (response.code === 200) {
+      alert("User suspended successfully")
+      router.refresh()
+    } else {
+      console.error(response.message || "Failed to suspend user")
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <button
+        onClick={handleActivate}
+        title="Activate User"
+        className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors"
+      >
+        <UserCheck className="h-4 w-4" />
+      </button>
+      <button
+        onClick={handleSuspend}
+        title="Suspend User"
+        className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors"
+      >
+        <UserX className="h-4 w-4" />
+      </button>
+      <button
+        title="View Details"
+        className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors"
+      >
+        <ArrowUpRight className="h-4 w-4" />
+      </button>
+    </div>
+  )
 }
 
 export const columns: ColumnDef<UserManagement>[] = [
@@ -49,9 +102,16 @@ export const columns: ColumnDef<UserManagement>[] = [
           </span>
         )
       }
+      if (status === "Suspended") {
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-500" /> Suspended
+          </span>
+        )
+      }
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-rose-500" /> {status || "Inactive"}
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> Inactive
         </span>
       )
     },
@@ -59,19 +119,7 @@ export const columns: ColumnDef<UserManagement>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: () => (
-      <div className="flex items-center gap-1.5">
-        <button title="Activate User" className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
-          <UserCheck className="h-4 w-4" />
-        </button>
-        <button title="Suspend User" className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors">
-          <UserX className="h-4 w-4" />
-        </button>
-        <button title="View Details" className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors">
-          <ArrowUpRight className="h-4 w-4" />
-        </button>
-      </div>
-    ),
+    cell: ({ row }) => <ActionCell row={row} />,
   },
 ]
 

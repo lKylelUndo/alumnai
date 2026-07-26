@@ -10,11 +10,11 @@ export class SkillRepository {
 
   async remove(id: string) {
     return await prisma.skill.delete({
-        where: { id }
+      where: { id }
     })
   }
 
   async find() {
-    
+
   }
 }

@@ -1,13 +1,59 @@
 "use client"
 
 import { DataTable } from "@/components/common/DataTable"
-import { ColumnDef } from "@tanstack/react-table"
-import { CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
+import { adminService } from "@/services/admin.service"
+import { ColumnDef, Row } from "@tanstack/react-table"
+import { CheckCircle2, XCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export type VerifyStudents = {
   student_id_number: string
   status?: "pending" | "processing" | "success" | "failed"
   email: string
+}
+
+const ActionCell = ({ row }: { row: Row<VerifyStudents> }) => {
+  const router = useRouter()
+  const studentId = row.getValue("student_id_number") as string
+
+  const handleApprove = async () => {
+    const response = await adminService.verifyUser(studentId)
+    if (response.code === 200) {
+      alert("Student verified successfully")
+      router.refresh()
+    } else {
+      console.error(response.message || "Failed to verify student")
+    }
+  }
+
+  const handleReject = async () => {
+    const response = await adminService.rejectUser(studentId)
+    if (response.code === 200) {
+      alert("Student rejected successfully")
+      router.refresh()
+    } else {
+      console.error(response.message || "Failed to reject student")
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <button
+        onClick={handleApprove}
+        title="Approve Alumni Status"
+        className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors"
+      >
+        <CheckCircle2 className="h-4 w-4" />
+      </button>
+      <button
+        onClick={handleReject}
+        title="Decline Request"
+        className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors"
+      >
+        <XCircle className="h-4 w-4" />
+      </button>
+    </div>
+  )
 }
 
 export const columns: ColumnDef<VerifyStudents>[] = [
@@ -56,29 +102,8 @@ export const columns: ColumnDef<VerifyStudents>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: () => (
-      <div className="flex items-center gap-1.5">
-        <button
-          title="Approve"
-          className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors"
-        >
-          <CheckCircle2 className="h-4 w-4" />
-        </button>
-        <button
-          title="Reject"
-          className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors"
-        >
-          <XCircle className="h-4 w-4" />
-        </button>
-        <button
-          title="View Details"
-          className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors"
-        >
-          <ArrowUpRight className="h-4 w-4" />
-        </button>
-      </div>
-    ),
-  },
+    cell: ({ row }) => <ActionCell row={row} />
+  }
 ]
 
 export default function VerifyStudents({ data }: { data: VerifyStudents[] }) {
