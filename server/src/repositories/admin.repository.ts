@@ -210,4 +210,33 @@ export class AdminRepository {
       data: { accountStatus: "SUSPENDED" },
     });
   }
+
+  async reject(id: string) {
+    await prisma.user.delete({
+      where: { student_id_number: id }
+    });
+
+    const cacheKey = `${ENV.ADMIN_REDIS_KEY}unverified-users`
+
+    // try cache first
+    const cached = await redis.get(cacheKey);
+    if (cached) await redis.del(cacheKey)
+
+    // fallback to DB
+    const users = await prisma.user.findMany({
+      where: { isAccountVerified: false },
+      select: {
+        id: true,
+        email: true,
+        student_id_number: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    await redis.set(cacheKey, JSON.stringify(users), "PX", 1000 * 60 * 5);
+
+    return users;
+  }
 }
