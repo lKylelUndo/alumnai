@@ -18,6 +18,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("antialiased", roboto.className)} >
+      <head>
+        <script src="https://unpkg.com/react-scan/dist/auto.global.js"></script>
+      </head>
       <body>
         <AuthProvider>
           <TooltipProvider>
