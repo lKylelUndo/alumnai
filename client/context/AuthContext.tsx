@@ -87,49 +87,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initializeAuth()
   }, [])
 
-  const login = useCallback( async (data: LoginInputTypes) => {
-    try {   
-      const response = await authService.login(data)
+  const login = useCallback(
+    async (data: LoginInputTypes) => {
+      try {
+        const response = await authService.login(data)
 
-      if (response.code === 200) {
-        const userData = response.data.user
-        setUser(userData)
-        localStorage.setItem("user", JSON.stringify(userData))
+        if (response.code === 200) {
+          const userData = response.data.user
+          setUser(userData)
+          localStorage.setItem("user", JSON.stringify(userData))
 
-        // Trigger Role Base
-        if (userData.role === "STUDENT") {
-          router.push("/student/dashboard")
-        } else if (userData.role === "ALUMNI") {
-          router.push("/alumni/dashboard")
-        } else if (userData.role === "ADMIN") {
-          router.push("/admin/dashboard")
+          // Trigger Role Base
+          if (userData.role === "STUDENT") {
+            router.push("/student/dashboard")
+          } else if (userData.role === "ALUMNI") {
+            router.push("/alumni/dashboard")
+          } else if (userData.role === "ADMIN") {
+            router.push("/admin/dashboard")
+          }
+        } else {
+          console.log("Failed to login")
+          throw new Error("Invalid credentials")
         }
-      } else {
-        console.log("Failed to login")
-        throw new Error("Invalid credentials")
+      } catch (error: any) {
+        console.error("Login Error:", error.response)
+        throw error
       }
-    } catch (error: any) {
-      console.error("Login Error:", error.response)
-      throw error;
-    }
-  }, [router])
+    },
+    [router]
+  )
 
-  const signup = useCallback( async (data: SignupInputTypes) => {
-    try {
-      const response = await authService.signup(data)
-      if (response.code === 200 || response.code === 201) {
-        router.push("/login")
-      } else {
-        console.log("Failed to signup")
-        throw new Error("Invalid credentials")
+  const signup = useCallback(
+    async (data: SignupInputTypes) => {
+      try {
+        const response = await authService.signup(data)
+        if (response.code === 200 || response.code === 201) {
+          router.push("/login")
+        } else {
+          console.log("Failed to signup")
+          throw new Error("Invalid credentials")
+        }
+      } catch (error: any) {
+        console.error("Signup Error:", error.response)
+        throw error
       }
-    } catch (error: any) {
-      console.error("Signup Error:", error.response)
-      throw error;
-    }
-  }, [router])
+    },
+    [router]
+  )
 
-  const logout = useCallback( async () => {
+  const logout = useCallback(async () => {
     try {
       await authService.logout()
     } catch (error) {
@@ -141,23 +147,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [router])
 
-  const value = useMemo(() => ({
-  user,
-  isLoading,
-  isAuthenticated: !!user,
-  setUser,
-  login,
-  signup,
-  logout,
-}), [user, isLoading, login, signup, logout])
-
-  return (
-    <AuthContext.Provider
-      value={value}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      isLoading,
+      isAuthenticated: !!user,
+      setUser,
+      login,
+      signup,
+      logout,
+    }),
+    [user, isLoading, login, signup, logout]
   )
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuthContext() {
