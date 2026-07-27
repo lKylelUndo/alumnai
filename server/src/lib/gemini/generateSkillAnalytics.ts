@@ -99,7 +99,7 @@ Output Rules:
       });
 
       const text = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
-      
+
       // Clean up markdown code blocks if Gemini returns them despite prompt rules
       const cleanedJson = text.replace(/^```(json)?/i, "").replace(/```$/, "").trim();
 
