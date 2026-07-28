@@ -25,7 +25,7 @@ const AlumniHeader = () => {
         </div>
       </div>
 
-      <div className="md:mr-44">
+      <div>
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none">
           <div className="relative h-9 w-9 overflow-hidden rounded-full border-2 border-primary/20 bg-primary text-white flex items-center justify-center font-bold text-sm shadow-xs hover:border-primary transition-all">

@@ -132,7 +132,14 @@ export default function UserManagement({ data }: { data: UserManagement[] }) {
           Review and manage user accounts and roles
         </p>
       </div>
-      <DataTable columns={columns} data={data} filterColumn="user" filterPlaceholder="Search by user..." />
+      <DataTable
+          columns={columns}
+          data={data}
+          filterColumn="user"
+          filterPlaceholder="Search by user..."
+          statusFilterColumn="status"
+          statusOptions={["Active", "Inactive", "Suspended"]}
+        />
     </div>
   )
 }
