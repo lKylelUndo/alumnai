@@ -2,6 +2,8 @@ import axios from "axios"
 
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
 
+// Server Request Axios Instance
+
 export const axiosServerInstance = axios.create({
   baseURL: backendURL,
   headers: {
@@ -28,17 +30,13 @@ axiosServerInstance.interceptors.request.use(async (config) => {
   return config
 })
 
+let isServerRefreshing = false
+let serverRefreshPromise: Promise<string | null> | null = null
+
 axiosServerInstance.interceptors.response.use(
   (response) => response,
   async (error: unknown) => {
     if (!axios.isAxiosError(error)) return Promise.reject(error)
-
-    console.error("========== AXIOS SERVER ERROR ==========")
-    console.error("URL:", error.config?.url)
-    console.error("Method:", error.config?.method)
-    console.error("Status:", error.response?.status)
-    console.error("Response:", error.response?.data)
-    console.error("========================================")
 
     const originalRequest = error.config
     if (!originalRequest) return Promise.reject(error)
@@ -52,27 +50,46 @@ axiosServerInstance.interceptors.response.use(
       retryRequest._retry = true
 
       try {
-        // Dynamically import next/headers (server-only)
-        const { cookies } = await import("next/headers")
-        const cookieStore = await cookies()
-        const refreshToken = cookieStore.get("refreshToken")?.value
+        if (!isServerRefreshing) {
+          isServerRefreshing = true
+          serverRefreshPromise = (async () => {
+            try {
+              const { cookies } = await import("next/headers")
+              const cookieStore = await cookies()
+              const refreshToken = cookieStore.get("refreshToken")?.value
 
-        if (!refreshToken) {
-          return Promise.reject(error)
+              if (!refreshToken) return null
+
+              const refreshUrl = `${axiosServerInstance.defaults.baseURL}/api/auth/v1/refresh-token`
+              const refreshResponse = await axios.post(
+                refreshUrl,
+                { refreshToken },
+                { headers: { "Content-Type": "application/json" } }
+              )
+
+              return refreshResponse.data?.data?.tokens?.accessToken || null
+            } catch (refreshErr) {
+              console.error("========== SERVER TOKEN REFRESH FAILED ==========")
+              if (axios.isAxiosError(refreshErr)) {
+                console.error("Status:", refreshErr.response?.status)
+                console.error("Data:", refreshErr.response?.data)
+              } else {
+                console.error(refreshErr)
+              }
+              console.error("===============================================")
+              return null
+            } finally {
+              isServerRefreshing = false
+              serverRefreshPromise = null
+            }
+          })()
         }
 
-        // Send refreshToken in request body (server can't send cookies automatically)
-        const refreshUrl = `${axiosServerInstance.defaults.baseURL}/api/auth/v1/refresh-token`
-        const refreshResponse = await axios.post(
-          refreshUrl,
-          { refreshToken },
-          { headers: { "Content-Type": "application/json" } }
-        )
+        const newAccessToken = await serverRefreshPromise
 
-        // Extract the new accessToken from the response body
-        const newAccessToken = refreshResponse.data?.data?.tokens?.accessToken
-
-        if (!newAccessToken) return Promise.reject(error)
+        if (!newAccessToken) {
+          return Promise.reject(error)
+        }
 
         // Retry original request with the new accessToken
         retryRequest.headers = retryRequest.headers ?? {}
@@ -87,6 +104,8 @@ axiosServerInstance.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+// Client Request Axios Instance
 
 export const axiosInstance = axios.create({
   baseURL: backendURL,
