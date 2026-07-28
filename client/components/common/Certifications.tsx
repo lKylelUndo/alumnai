@@ -1,12 +1,23 @@
 "use client"
 
-import { FileBadge, Download } from "lucide-react"
+import { useState } from "react"
+import { FileBadge, Download, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card } from "../ui/card"
 import { useAuthContext } from "@/context/AuthContext"
+
+const ITEMS_PER_PAGE = 2
 
 const Certifications = () => {
   const { user } = useAuthContext()
   const certs = user?.profile?.certifications || []
+  const [currentPage, setCurrentPage] = useState(0)
+
+  const totalPages = Math.ceil(certs.length / ITEMS_PER_PAGE)
+  const startIndex = currentPage * ITEMS_PER_PAGE
+  const paginatedCerts = certs.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+
+  const goToPrevious = () => setCurrentPage((prev) => Math.max(prev - 1, 0))
+  const goToNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
 
   return (
     <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm">
@@ -23,8 +34,8 @@ const Certifications = () => {
       </div>
 
       <div className="space-y-3">
-        {certs.length > 0 ? (
-          certs.map((cert) => (
+        {paginatedCerts.length > 0 ? (
+          paginatedCerts.map((cert) => (
             <div
               key={cert.id}
               className="flex items-center justify-between rounded-lg bg-[#F5F5F5] p-4"
@@ -47,11 +58,36 @@ const Certifications = () => {
             </div>
           ))
         ) : (
-          <p className="text-center py-4 text-xs text-muted-foreground">
+          <p className="py-4 text-center text-xs text-muted-foreground">
             No certifications added yet.
           </p>
         )}
       </div>
+
+      {/* Pagination controls — only show if more than 1 page */}
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
+          <p className="text-xs text-muted-foreground">
+            {startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, certs.length)} of {certs.length}
+          </p>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={goToPrevious}
+              disabled={currentPage === 0}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={goToNext}
+              disabled={currentPage === totalPages - 1}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
     </Card>
   )
 }

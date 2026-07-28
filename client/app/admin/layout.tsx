@@ -11,8 +11,7 @@ export const metadata: Metadata = {
 
 export default function AdminDashboardLayout({ children }: { children: ReactNode }) {
   return (
-    // <AuthGuard mode={"ADMIN"}>
-      <>
+    <AuthGuard mode={"ADMIN"}>
       <header className="bg-card px-6 py-3 shadow">
         <AdminHeader />
       </header>
@@ -23,7 +22,6 @@ export default function AdminDashboardLayout({ children }: { children: ReactNode
           <p>Copyright © {new Date().getFullYear()} Alumnai. All rights reserved.</p>
         </footer>
       </main>
-      </>
-    // </AuthGuard>
+    </AuthGuard>
   )
 }

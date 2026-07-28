@@ -10,8 +10,7 @@ export const metadata: Metadata = {
 
 export default function AlumniDashboardLayout({ children }: { children: ReactNode }) {
   return (
-    // <AuthGuard mode="ALUMNI">
-      <>
+    <AuthGuard mode="ALUMNI"> 
       <header className="bg-card px-6 py-3 shadow">
         <AlumniHeader />
       </header>
@@ -21,7 +20,6 @@ export default function AlumniDashboardLayout({ children }: { children: ReactNod
           <p>Copyright © {new Date().getFullYear()} <span className="font-bold">alumnAI</span>. All rights reserved.</p>
         </footer>
       </main>   
-    </>
-    // </AuthGuard>
+    </AuthGuard>
   )
 }
