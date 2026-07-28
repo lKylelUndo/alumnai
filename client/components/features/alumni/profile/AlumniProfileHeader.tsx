@@ -11,9 +11,7 @@ interface AlumniProfileHeaderProps {
   mode?: ProfileMode;
 }
 
-const AlumniProfileHeader = ({
-  mode = "edit",
-}: AlumniProfileHeaderProps) => {
+const AlumniProfileHeader = ({ mode = "edit" }: AlumniProfileHeaderProps) => {
   const { user } = useAuthContext();
 
   return (
