@@ -14,7 +14,7 @@ const ProfileActions = () => {
         <Download className="mr-2 h-4 w-4" />
         Download Profile
       </Button>
-      <Link href={"/student/profile/update"}>
+      <Link href={"/alumni/profile/update"}>
         <Button className="mt-4 rounded-full bg-[#1877F2] px-4 text-white hover:bg-[#1877F2]/90 md:mt-0">
           <Edit3 className="mr-2 h-4 w-4" />
           Update Profile
