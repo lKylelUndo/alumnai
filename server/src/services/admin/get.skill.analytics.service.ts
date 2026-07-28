@@ -1,10 +1,10 @@
 import { AdminRepository } from "@/repositories/admin.repository";
 
-export const GetSkillAnalyticsService = async () => {
+export const GetSkillAnalyticsService = async (forceRefresh: boolean = false) => {
   const adminRepository = new AdminRepository();
 
   try {
-    const skills = await adminRepository.findSkillAnalytics();
+    const skills = await adminRepository.findSkillAnalytics(forceRefresh);
 
     return {
       code: 200,

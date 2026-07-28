@@ -157,12 +157,14 @@ export class AdminRepository {
     return formatted;
   }
 
-  async findSkillAnalytics() {
+  async findSkillAnalytics(forceRefresh: boolean = false) {
     const cacheKey = `${ENV.ADMIN_REDIS_KEY}skill-analytics`;
 
-    // try cache first
-    const cached = await redis.get(cacheKey);
-    if (cached) return JSON.parse(cached);
+    // try cache first unless force refresh requested
+    if (!forceRefresh) {
+      const cached = await redis.get(cacheKey);
+      if (cached) return JSON.parse(cached);
+    }
 
     // fallback to DB — fetch skills with profile work fields
     const skills = await prisma.skill.findMany({
@@ -199,10 +201,16 @@ export class AdminRepository {
       .slice(0, 10);
 
     const analytics = await generateSkillAnalytics(skillsData);
+    const analyticsWithTimestamp = {
+      ...analytics,
+      lastUpdated: new Date().toISOString(),
+    };
 
-    await redis.set(cacheKey, JSON.stringify(analytics), "PX", 1000 * 60 * 5);
+    // Cache analytics in Redis for 7 days (7 * 24 * 60 * 60 * 1000 ms)
+    const SEVEN_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 7;
+    await redis.set(cacheKey, JSON.stringify(analyticsWithTimestamp), "PX", SEVEN_DAYS_IN_MS);
 
-    return analytics;
+    return analyticsWithTimestamp;
   }
 
   async suspend(id: string) {

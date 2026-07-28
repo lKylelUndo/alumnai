@@ -1,11 +1,31 @@
 import { SkillRepository } from "@/repositories/skill.repository";
 import { AddSkillInputTypes } from "@/schema/skill";
+import { prisma } from "@/lib/prisma";
 
-export const AddSkillService = async (data: AddSkillInputTypes) => {
+export const AddSkillService = async (data: AddSkillInputTypes, userId?: string) => {
   const skillRepository = new SkillRepository();
 
   try {
-    const response = await skillRepository.add(data);
+    let targetProfileId = data.profileId;
+
+    if (!targetProfileId && userId) {
+      const profile = await prisma.profile.upsert({
+        where: { userId },
+        update: {},
+        create: { userId },
+      });
+      targetProfileId = profile.id;
+    }
+
+    if (!targetProfileId) {
+      return { status: "error", code: 400, message: "Profile ID could not be determined" };
+    }
+
+    const response = await skillRepository.add({
+      ...data,
+      profileId: targetProfileId,
+    });
+
     if (!response)
       return { status: "error", code: 400, message: "Unable to add skill" };
 

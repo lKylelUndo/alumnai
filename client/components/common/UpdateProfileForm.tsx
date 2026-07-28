@@ -105,10 +105,10 @@ const UpdateProfileForm = () => {
       const profileUpdateResponse = await profileService.updateProfile(data)
       console.log("Profile update response:", profileUpdateResponse)
 
-      const profileId = user?.profile?.id
+      const profileId = profileUpdateResponse?.data?.profile?.id || user?.profile?.id || ""
       const savedSkills = skills.map((skill) => ({
         ...skill,
-        profileId: profileId || "",
+        profileId,
       }))
 
       const addSkillResponses = await Promise.all(

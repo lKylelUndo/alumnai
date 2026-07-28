@@ -8,6 +8,7 @@ import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field
 import { updateProfileSchema } from "@/schema/profile"
 import { Textarea } from "@/components/ui/textarea"
 import { AddSkillInput } from "@/schema/skill"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ProfileFormFieldsProps {
   control: Control<z.infer<typeof updateProfileSchema>>
@@ -78,6 +79,39 @@ export default function ProfileFormFields({ control, skills, onOpenDialog }: Pro
               placeholder="Junior Frontend Developer"
               autoComplete="off"
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+
+      <Controller
+        name="work_field"
+        control={control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="update-profile-workfield" className="font-semibold text-primary">
+              Specialization / IT Field
+            </FieldLabel>
+            <Select
+              value={field.value || ""}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger id="update-profile-workfield" className="w-full">
+                <SelectValue placeholder="Select your IT Field" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Frontend Development">Frontend Development</SelectItem>
+                <SelectItem value="Backend Development">Backend Development</SelectItem>
+                <SelectItem value="Full Stack Development">Full Stack Development</SelectItem>
+                <SelectItem value="DevOps & Infrastructure">DevOps & Infrastructure</SelectItem>
+                <SelectItem value="Networking & Systems">Networking & Systems</SelectItem>
+                <SelectItem value="Data Science & AI/ML">Data Science & AI/ML</SelectItem>
+                <SelectItem value="Mobile Development">Mobile Development</SelectItem>
+                <SelectItem value="Cybersecurity">Cybersecurity</SelectItem>
+                <SelectItem value="UI/UX Design">UI/UX Design</SelectItem>
+                <SelectItem value="Other IT Field">Other IT Field</SelectItem>
+              </SelectContent>
+            </Select>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}

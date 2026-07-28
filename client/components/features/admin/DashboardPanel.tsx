@@ -8,12 +8,12 @@ import Analytics from "./Analytics"
 import { adminService } from "@/services/admin.service"
 
 const DashboardPanel = async () => {
-  const [unverifiedUsers, topMentors, alumniRequest, allUsers] = await Promise.all([
+  const [unverifiedUsers, topMentors, alumniRequest, allUsers, skillTrendAnalytics] = await Promise.all([
     adminService.getUnverifiedUsers(),
     adminService.getTopMentors(),
     adminService.getAlumniRequest(),
     adminService.getAllUsers(),
-    //adminService.getSkillTrendAnalytics(),
+    adminService.getSkillTrendAnalytics(),
   ]) 
 
   return (
@@ -86,7 +86,7 @@ const DashboardPanel = async () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="mt-4 bg-transparent">
-          {/* <Analytics data={skillTrendAnalytics?.data?.skills} /> */}
+          <Analytics data={skillTrendAnalytics?.data?.skills} />
         </TabsContent>
       </Tabs>
     </section>
