@@ -4,7 +4,8 @@ import type { Request, Response } from "express";
 class SkillController {
     public add = async (req: Request, res: Response) => {
         const { profileId, type, name, level, description } = req.body ?? {};
-        const response = await AddSkillService({ profileId, type, name, level, description });
+        const userId = (req as any).user?.id;
+        const response = await AddSkillService({ profileId, type, name, level, description }, userId);
         return res.status(response.code).json(response); 
     }
 

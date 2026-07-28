@@ -5,15 +5,18 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable,  getPaginationRo
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   filterColumn: string
   filterPlaceholder: string
+  statusFilterColumn?: string
+  statusOptions?: string[]
 }
 
-export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder, statusFilterColumn, statusOptions }: DataTableProps<TData, TValue>) {
   const [pageSize] = useState(5); // default 10 per page
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const table = useReactTable({
@@ -38,13 +41,33 @@ export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPl
   return (
     <div>
     
-          <div className="flex items-center py-4">
+          <div className="flex items-center gap-2 py-4">
             <Input
               placeholder={filterPlaceholder}
               value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
               onChange={(event) => table.getColumn(filterColumn)?.setFilterValue(event.target.value)}
               className="max-w-sm"
             />
+            {statusFilterColumn && statusOptions && (
+              <Select
+                value={(table.getColumn(statusFilterColumn)?.getFilterValue() as string) ?? "all"}
+                onValueChange={(value) =>
+                  table.getColumn(statusFilterColumn)?.setFilterValue(value === "all" ? "" : value)
+                }
+              >
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent className="mt-10">
+                  <SelectItem value="all">All</SelectItem>
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         
         <div className="overflow-hidden rounded-md border">

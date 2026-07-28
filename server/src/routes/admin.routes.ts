@@ -19,7 +19,9 @@ router.get("/v1/get-alumni-request", authMiddleware.execute, permittedRole([Role
 router.put("/v1/approve-alumni-request", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(approveAlumniRequestSchema), adminController.approveAlumniRequest)
 router.put("/v1/reject-alumni-request", authMiddleware.execute, permittedRole([RoleType.ADMIN]), validateSchema(rejectAlumniRequestSchema), adminController.rejectAlumniRequest)
 router.get("/v1/get-user-management", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getAllUsers)
+
+// Skill Analytics
 router.get("/v1/get-analytics", authMiddleware.execute, permittedRole([RoleType.ADMIN]), adminController.getSkillAnalytics)
 
 export default router;
-
+

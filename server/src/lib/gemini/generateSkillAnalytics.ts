@@ -14,6 +14,7 @@ export type SkillAnalyticsResult = {
     bgColor: string;
   }>;
   recommendation: string;
+  lastUpdated?: string;
 };
 
 export async function generateSkillAnalytics(
@@ -21,10 +22,10 @@ export async function generateSkillAnalytics(
 ): Promise<SkillAnalyticsResult> {
   const fallbackResult: SkillAnalyticsResult = {
     pieChart: [
-      { name: "TypeScript", value: 40, color: "#1E64D4" },
-      { name: "JavaScript", value: 20, color: "#EAB308" },
-      { name: "React", value: 20, color: "#0047CB" },
-      { name: "PHP", value: 10, color: "#0EA5E9" },
+      { name: "TypeScript", value: 40, color: "#2563EB" },
+      { name: "JavaScript", value: 20, color: "#F59E0B" },
+      { name: "React", value: 20, color: "#06B6D4" },
+      { name: "PHP", value: 10, color: "#8B5CF6" },
       { name: "C#", value: 10, color: "#EF4444" },
     ],
     topSkills: [
@@ -33,14 +34,14 @@ export async function generateSkillAnalytics(
         skill: "TypeScript",
         percentage: 40,
         abbreviation: "TS",
-        bgColor: "#007ACC",
+        bgColor: "#2563EB",
       },
       {
         field: "Backend Web Development",
         skill: "PHP",
         percentage: 10,
         abbreviation: "PHP",
-        bgColor: "#777BB4",
+        bgColor: "#8B5CF6",
       },
     ],
     recommendation:
@@ -60,7 +61,7 @@ ${JSON.stringify(skillsData, null, 2)}
 Task:
 1. Identify the top 5 most prominent skills. Calculate their percentage distribution relative to total skills.
 2. Determine which IT Field each skill is mostly used in (e.g. "Fullstack Web Development", "Backend Web Development", "Frontend Web Development", "Cloud & DevOps", "Cybersecurity & Networking", "Mobile App Development", "Data Science & AI", "UI/UX Design", "System Administration", etc.).
-3. Choose aesthetic UI brand colors for pie chart cells (hex codes).
+3. Choose vivid, rich, bold, solid, high-contrast tech brand hex colors for pie chart cells (e.g., #2563EB, #F59E0B, #10B981, #EC4899, #8B5CF6, #06B6D4, #EF4444). DO NOT use light, pastel, faded, or thin muted colors — pick strong, solid, vibrant colors that pop on both light and dark UI themes.
 4. Select 2-3 top highlight skills with:
    - "field": the IT Field name
    - "skill": skill name

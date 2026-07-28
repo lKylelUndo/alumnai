@@ -62,7 +62,7 @@ export const UpdateProfileService = async (data: UpdateProfileInputTypes) => {
       }
     }
 
-    return { status: "success", code: 200, message: "Profile updated successfully" };
+    return { status: "success", code: 200, message: "Profile updated successfully", data: { profile } };
   } catch (error) {
     console.error("UpdateProfileService", error);
     return { status: "error", code: 500, message: "Unable to update profile" };

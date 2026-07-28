@@ -29,7 +29,8 @@ class AdminController {
   };
 
   public getSkillAnalytics = async (req: Request, res: Response) => {
-    const response = await GetSkillAnalyticsService();
+    const forceRefresh = req.query.refresh === "true";
+    const response = await GetSkillAnalyticsService(forceRefresh);
     return res.status(response.code).json(response);
   };
 

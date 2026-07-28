@@ -9,10 +9,10 @@ export type PieChartItem = {
 }
 
 const defaultChartData: PieChartItem[] = [
-  { name: "TypeScript", value: 40, color: "#1E64D4" },
-  { name: "JavaScript", value: 20, color: "#EAB308" },
-  { name: "React", value: 20, color: "#0047CB" },
-  { name: "PHP", value: 10, color: "#0EA5E9" },
+  { name: "TypeScript", value: 40, color: "#2563EB" },
+  { name: "JavaScript", value: 20, color: "#F59E0B" },
+  { name: "React", value: 20, color: "#06B6D4" },
+  { name: "PHP", value: 10, color: "#8B5CF6" },
   { name: "C#", value: 10, color: "#EF4444" },
 ]
 
