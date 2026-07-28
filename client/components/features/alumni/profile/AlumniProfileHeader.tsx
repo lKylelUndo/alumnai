@@ -5,11 +5,19 @@ import { Briefcase, GraduationCap, LinkIcon, Mail } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
 import Image from "next/image"
 
-const AlumniProfileHeader = () => {
+type ProfileMode = "edit" | "view";
+
+interface AlumniProfileHeaderProps {
+  mode?: ProfileMode;
+}
+
+const AlumniProfileHeader = ({
+  mode = "edit",
+}: AlumniProfileHeaderProps) => {
   const { user } = useAuthContext();
 
   return (
-    <Card className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
+    <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm md:p-8">
       <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
           {/* Avatar */}
@@ -25,7 +33,7 @@ const AlumniProfileHeader = () => {
                 <GraduationCap className="h-4 w-4" />
                 Alumni
               </span>
-              <span className="inline-flex items-center rounded-full border border-[#00B050] bg-white px-3 py-1 text-xs font-medium text-[#00B050]">
+              <span className="inline-flex items-center rounded-full border border-[#A4B1CC] bg-white px-3 py-1 text-xs font-medium text-[#097969]">
                 Available for Mentoring
               </span>
             </div>
@@ -49,11 +57,11 @@ const AlumniProfileHeader = () => {
           </div>
         </div>
 
-        {/* Profile Actions */}
-        <ProfileActions />
+        {/* default kay edit mode, view to view duh */}
+        {mode === "edit" && <ProfileActions />}
       </div>
     </Card>
-  )
-}
+  );
+};
 
 export default AlumniProfileHeader

@@ -9,15 +9,15 @@ export default function Header() {
           <div className="flex items-center gap-2 md:pl-6">
             <Image
               src={"/logo/logoalumnai.png"}
-              width={100}
-              height={100}
+              width={80}
+              height={80}
               alt="Logo"
               priority
             />
           
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 text-sm">
             <Link href="/login" className="font-medium">
               Login
             </Link>

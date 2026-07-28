@@ -1,4 +1,4 @@
-import FindCollaborators from "@/components/features/alumni/FindCollaborators"
+import FindCollaborators from "@/components/features/alumni/find-collaborators/FindCollaborators"
 
 export default function FindCollaboratorsPage() {
     return (

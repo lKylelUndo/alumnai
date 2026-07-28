@@ -18,21 +18,21 @@ export default function AuthLayout({
         <main className="grid lg:grid-cols-2 flex-1">
           
           {/* Image Size To Be Adjusted ^ */}
-          <div className="lg:block relative">
+          <div className="md:w-2/3 lg:block relative bg-[#1A216D]">
             <Image
-              src="/images/login.png"
+              src="/images/login4.jpg"
               alt="Auth Background"
               fill
-              className="object-cover"
+              className="object-cover opacity-65"
               sizes="(min-width: 768px) 50vw"
               priority
             />
   
-            <div className="absolute inset-0 bg-[#1A216D]/55" />
+            {/* <div className="absolute inset-0 " /> */}
           </div>
   
           {/* Form Ari*/}
-          <div className="flex justify-center px-6 py-10">
+          <div className="md:w-2/3  flex justify-center px-6 py-10">
             {children}
           </div>
   

@@ -13,11 +13,11 @@ const AlumniStatCards = () => {
               <Handshake className="h-5 w-5" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+              <h2 className="text-sm font-semibold tracking-wider text-primary uppercase">
                 Active Collaborators
               </h2>
               <div className="flex items-baseline gap-x-2">
-                <span className="text-2xl font-bold text-foreground">7</span>
+                <span className="text-3xl font-bold text-foreground">7</span>
                 <span className="text-xs text-muted-foreground">Users</span>
               </div>
             </div>
@@ -31,11 +31,11 @@ const AlumniStatCards = () => {
               <Mail className="h-5 w-5" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+              <h2 className="text-sm font-semibold tracking-wider text-primary uppercase">
                 Pending Requests
               </h2>
               <div className="flex items-baseline gap-x-2">
-                <span className="text-2xl font-bold text-foreground">2</span>
+                <span className="text-3xl font-bold text-foreground">2</span>
                 <span className="text-xs text-muted-foreground">Requests</span>
               </div>
             </div>
@@ -49,11 +49,11 @@ const AlumniStatCards = () => {
               <Users className="h-5 w-5" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+              <h2 className="text-sm font-semibold tracking-wider text-primary uppercase">
                 Active Mentorships
               </h2>
               <div className="flex items-baseline gap-x-2">
-                <span className="text-2xl font-bold text-foreground">12</span>
+                <span className="text-3xl font-bold text-foreground">12</span>
                 <span className="text-xs text-muted-foreground">Mentees</span>
               </div>
             </div>
@@ -66,6 +66,7 @@ const AlumniStatCards = () => {
         profileRoute="/alumni/profile"
         updateProfileRoute="/alumni/profile/update"
         featureRoute="/alumni/find-collaborators"
+        featureLabel="Find Collaborators"
       />
     </section>
   )

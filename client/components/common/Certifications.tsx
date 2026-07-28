@@ -9,14 +9,14 @@ const Certifications = () => {
   const certs = user?.profile?.certifications || []
 
   return (
-    <Card className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="mb-6 flex items-start gap-3">
+    <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm">
+      <div className="mb-2 flex items-start gap-3">
         <div className="rounded-full bg-[#F0F4FF] p-2 text-[#1A216D]">
           <FileBadge className="h-5 w-5" />
         </div>
         <div>
           <h2 className="text-lg font-bold text-[#1A216D]">Certifications</h2>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-0 text-xs text-gray-500">
             Certifications from verified organizations
           </p>
         </div>

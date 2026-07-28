@@ -6,7 +6,7 @@ import {
 import { Skill } from "@/schema/skill"
 import { getProficiencyColor } from "@/utils/skill"
 
-const AlumniToolsTechnology = ({ skills }: { skills: Skill[] }) => {
+const StudentToolsTechnology = ({ skills }: { skills: Skill[] }) => {
   const hardSkills = skills.filter(( skill ) => skill.type === "HARD_SKILL")
   const otherHardSkills = skills.filter(( skill ) => skill.type === "OTHER_HARD_SKILL")
 
@@ -68,4 +68,4 @@ const AlumniToolsTechnology = ({ skills }: { skills: Skill[] }) => {
   )
 }
 
-export default AlumniToolsTechnology
+export default StudentToolsTechnology

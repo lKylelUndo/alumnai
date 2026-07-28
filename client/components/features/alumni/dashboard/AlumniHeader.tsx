@@ -12,16 +12,20 @@ const AlumniHeader = () => {
     <nav className="flex items-center justify-between">
       <div className="flex items-center gap-x-8">
         <Image src="/logo/logoalumnai.png" alt="Logo" width={110} height={40} priority className="h-8 w-auto object-contain" />
-        <div className="hidden sm:flex items-center gap-x-6">
-          <Link href="/alumni/profile" className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+        <div className="hidden sm:flex items-center gap-x-10">
+          <Link href="/alumni/dashboard" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+            Home
+          </Link>
+          <Link href="/alumni/profile" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
             Profile
           </Link>
-          <Link href="/alumni/find-collaborators" className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+          <Link href="/alumni/find-collaborators" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
             Collaborators
           </Link>
         </div>
       </div>
 
+      <div className="md:mr-44">
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none">
           <div className="relative h-9 w-9 overflow-hidden rounded-full border-2 border-primary/20 bg-primary text-white flex items-center justify-center font-bold text-sm shadow-xs hover:border-primary transition-all">
@@ -32,22 +36,24 @@ const AlumniHeader = () => {
             )}
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="me-4 w-48 rounded-xl shadow-md">
+        <DropdownMenuContent className="me-4 w-44 rounded-xl shadow-md">
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-xs font-semibold text-foreground">My Account</DropdownMenuLabel>
-            <DropdownMenuItem asChild className="text-xs cursor-pointer">
+            <DropdownMenuLabel className="text-sm font-semibold text-foreground">My Account</DropdownMenuLabel>
+            <DropdownMenuItem asChild className="text-sm cursor-pointer">
               <Link href="/alumni/profile" className="flex items-center gap-2">
                 <User className="h-3.5 w-3.5 text-primary" /> Profile
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={logout} className="text-xs font-medium text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 cursor-pointer">
-              <LogOut className="h-3.5 w-3.5 mr-2" /> Logout
+            <DropdownMenuItem onClick={logout} className="text-sm font-medium text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 cursor-pointer">
+              <LogOut className="h-3.5 w-3.5 mr-0.5" /> Logout
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </nav>
   )
 }
 
-export default AlumniHeader
+export default AlumniHeader;
+

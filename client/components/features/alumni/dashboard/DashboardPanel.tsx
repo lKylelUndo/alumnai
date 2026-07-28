@@ -53,6 +53,7 @@ const DashboardPanel = () => {
         </TabsContent>
       </Tabs>
     </section>
+    
   )
 }
 
