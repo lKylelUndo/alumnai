@@ -82,7 +82,7 @@ function MenteeCard({ row }: { row: Row<Mentee> }) {
 
 const YourMentees = () => {
   return (
-    <div className="py-4">
+    <div className="p-4 rounded shadow-md">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-primary">Your Mentees</h2>
         <p className="text-xs text-muted-foreground">

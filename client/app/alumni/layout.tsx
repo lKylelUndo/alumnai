@@ -16,7 +16,7 @@ export default function AlumniDashboardLayout({ children }: { children: ReactNod
       </header>
       <main className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 py-6 space-y-6">
         {children}
-        <footer className="mt-12 py-6 text-primary text-center text-xs">
+        <footer className="text-primary text-center text-xs">
           <p>Copyright © {new Date().getFullYear()} <span className="font-bold">alumnAI</span>. All rights reserved.</p>
         </footer>
       </main>   

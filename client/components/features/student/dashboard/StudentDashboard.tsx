@@ -1,5 +1,3 @@
-"use client"
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TrendingUp, Users } from "lucide-react"
 import YourMentees from "@/components/features/alumni/dashboard/YourMentees"
@@ -10,46 +8,53 @@ const DashboardPanel = () => {
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
-        <TabsList variant="none" className="flex justify-between w-full">
-
-          <TabsTrigger value="gap-analysis"
-          className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs">
+        <TabsList variant="none" className="flex w-full justify-between">
+          <TabsTrigger
+            value="gap-analysis"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+          >
             <Users className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Gap Analysis</span>
-            <span className="sm:hidden text-xs">Analysis</span>
-          </TabsTrigger>  
+            <span className="text-xs sm:hidden">Analysis</span>
+          </TabsTrigger>
 
-          <TabsTrigger value="your-collaborations"
-             className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs">
+          <TabsTrigger
+            value="your-collaborations"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+          >
             <Users className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Collaboration Invites</span>
-            <span className="sm:hidden text-xs">Collaborations</span>
+            <span className="text-xs sm:hidden">Collaborations</span>
           </TabsTrigger>
 
-          <TabsTrigger value="your-mentees"
-             className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs">
+          <TabsTrigger
+            value="your-mentees"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+          >
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Your Mentors</span>
-            <span className="sm:hidden text-xs">Mentors</span>
+            <span className="text-xs sm:hidden">Mentors</span>
           </TabsTrigger>
 
-          <TabsTrigger value="manage-mentorships"
-             className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs">
+          <TabsTrigger
+            value="manage-mentorships"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+          >
             <Users className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">My Collaborators</span>
-            <span className="sm:hidden text-xs">Collaborators</span>
+            <span className="text-xs sm:hidden">Collaborators</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="your-mentees">
+        <TabsContent value="your-mentees" className="mt-4">
           <YourMentees />
         </TabsContent>
 
-        <TabsContent value="your-collaborations">
+        <TabsContent value="your-collaborations" className="mt-4">
           <YourCollaborations />
         </TabsContent>
 
-        <TabsContent value="manage-mentorships">
+        <TabsContent value="manage-mentorships" className="mt-4">
           <ManageMentorships />
         </TabsContent>
       </Tabs>

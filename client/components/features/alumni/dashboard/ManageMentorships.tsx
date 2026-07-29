@@ -83,7 +83,7 @@ function MentorshipRequestCard({ row }: { row: Row<MentorshipRequest> }) {
 
 const ManageMentorships = () => {
   return (
-    <div className="py-4">
+    <div className="p-4 rounded shadow-md">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-primary">
           Manage Mentorship Request
@@ -96,9 +96,7 @@ const ManageMentorships = () => {
         columns={columns}
         data={dummyMentorshipRequests}
         pageSize={9}
-        renderCard={(row) => (
-          <MentorshipRequestCard key={row.id} row={row} />
-        )}
+        renderCard={(row) => (<MentorshipRequestCard key={row.id} row={row} />)}
       />
     </div>
   )

@@ -9,34 +9,33 @@ const DashboardPanel = () => {
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
         <TabsList
-          variant="none"
-          className="flex w-full items-center justify-between bg-[#eaf5f6] dark:bg-muted p-1.5 rounded-2xl h-auto gap-1 border-none shadow-none"
+          className="flex h-auto w-full items-center justify-between gap-1 rounded-2xl border-none bg-[#eaf5f6] p-1.5 shadow-none dark:bg-muted"
         >
           <TabsTrigger
             value="your-mentees"
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Your Mentees</span>
-            <span className="sm:hidden text-xs">Mentees</span>
+            <span className="text-xs sm:hidden">Mentees</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="your-collaborations"
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Handshake className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Your Collaborations</span>
-            <span className="sm:hidden text-xs">Collaborations</span>
+            <span className="text-xs sm:hidden">Collaborations</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="manage-mentorships"
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs sm:text-sm font-medium transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:font-semibold data-[state=active]:shadow-xs"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Users className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Manage Mentorships</span>
-            <span className="sm:hidden text-xs">Mentorships</span>
+            <span className="text-xs sm:hidden">Mentorships</span>
           </TabsTrigger>
         </TabsList>
 
@@ -44,7 +43,10 @@ const DashboardPanel = () => {
           <YourMentees />
         </TabsContent>
 
-        <TabsContent value="your-collaborations" className="mt-4 bg-transparent">
+        <TabsContent
+          value="your-collaborations"
+          className="mt-4 bg-transparent"
+        >
           <YourCollaborations />
         </TabsContent>
 
@@ -53,7 +55,6 @@ const DashboardPanel = () => {
         </TabsContent>
       </Tabs>
     </section>
-    
   )
 }
 
