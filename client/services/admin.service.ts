@@ -37,7 +37,7 @@ export const adminService = {
   },
 
   getAllUsers: async () => {
-    const response = await axiosServerInstance.get("/api/admin/v1/get-user-management")
+    const response = await axiosServerInstance.get("/api/admin/v1/get-all-users")
     return response.data
   },
 

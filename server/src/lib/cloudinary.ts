@@ -18,3 +18,24 @@ export const uploadImage = async (base64: string, folder = 'alumnai-profiles') =
         throw error
     }
 }
+
+export const getPublicIdFromUrl = (url: string) => {
+    try {
+        const parts = url.split('/');
+        const folder = parts[parts.length - 2];
+        const lastPart = parts[parts.length - 1];
+        const filename = lastPart.split('.')[0];
+        return `${folder}/${filename}`;
+    } catch {
+        return "";
+    }
+}
+
+export const deleteImage = async (publicId: string) => {
+    if (!publicId) return;
+    try {
+        await cloudinary.uploader.destroy(publicId);
+    } catch (error) {
+        console.log("Delete image error: ", error);
+    }
+}
