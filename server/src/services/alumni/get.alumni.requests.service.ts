@@ -1,10 +1,10 @@
-import { AdminRepository } from "@/repositories/admin.repository";
+import { AlumniRepository } from "@/repositories/alumni.repository";
 
 export const GetAlumniRequestsService = async () => {
-  const adminRepository = new AdminRepository();
+  const alumniRepository = new AlumniRepository();
 
   try {
-    const requests = await adminRepository.findAlumniRequests();
+    const requests = await alumniRepository.findAlumniRequests();
 
     return {
       code: 200,

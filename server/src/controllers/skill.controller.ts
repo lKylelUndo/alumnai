@@ -1,4 +1,4 @@
-import { AddSkillService, RemoveSkillService } from "@/services/skill";
+import { AddSkillService, RemoveSkillService, GetTopAlumniSkillsService } from "@/services/skill";
 import type { Request, Response } from "express";
 
 class SkillController {
@@ -13,6 +13,12 @@ class SkillController {
         const { id } = req.body ?? {};
         const response = await RemoveSkillService(id);
         return res.status(response.code).json(response); 
+    }
+
+    public getTopAlumniSkills = async (req: Request, res: Response) => {
+        const forceRefresh = req.query.refresh === "true";
+        const response = await GetTopAlumniSkillsService(forceRefresh);
+        return res.status(response.code).json(response);
     }
 }
 
