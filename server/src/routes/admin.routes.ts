@@ -19,3 +19,5 @@ router.get("/v1/get-user-management", authMiddleware.execute, permittedRole([Rol
 export default router;
 
 
+
+

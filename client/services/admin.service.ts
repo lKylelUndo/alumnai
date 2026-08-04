@@ -52,8 +52,9 @@ export const adminService = {
   },
 
   getSkillTrendAnalytics: async (refresh = false) => {
-    const url = refresh ? "/api/admin/v1/get-analytics?refresh=true" : "/api/admin/v1/get-analytics"
+    const url = refresh ? "/api/skill/v1/get-top-alumni-skills?refresh=true" : "/api/skill/v1/get-top-alumni-skills"
     const response = await axiosServerInstance.get(url)
     return response.data
   },
 }
+
