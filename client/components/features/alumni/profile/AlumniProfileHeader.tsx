@@ -59,8 +59,7 @@ const AlumniProfileHeader = ({ mode = "edit" }: AlumniProfileHeaderProps) => {
           </div>
         </div>
 
-        {/* default kay edit mode, view to view duh */}
-        {mode === "edit" && <ProfileActions />}
+        <ProfileActions updateProfileURL={"/alumni/profile/update"} />
       </div>
     </Card>
   );

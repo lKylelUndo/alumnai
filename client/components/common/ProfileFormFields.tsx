@@ -11,12 +11,13 @@ import { AddSkillInput } from "@/schema/skill"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ProfileFormFieldsProps {
+  userRole: string
   control: Control<z.infer<typeof updateProfileSchema>>
   skills: AddSkillInput[]
   onOpenDialog: () => void
 }
 
-export default function ProfileFormFields({ control, skills, onOpenDialog }: ProfileFormFieldsProps) {
+export default function ProfileFormFields({ userRole, control, skills, onOpenDialog }: ProfileFormFieldsProps) {
    // split skills by type for display purposes ikaw og ganahan ka i apil softskills
   const hardSkills = skills.filter((s) => s.type === "HARD_SKILL")
 
@@ -185,7 +186,7 @@ export default function ProfileFormFields({ control, skills, onOpenDialog }: Pro
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor="update-profile-linkedin" className="font-semibold text-primary">
-              LinkedIn Profile <span className="font-normal text-muted-foreground">(Optional)</span>
+             {userRole === "ALUMNI" ? "LinkedIn" : "Github"} <span className="font-normal text-muted-foreground">(Optional)</span>
             </FieldLabel>
             <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
               <input

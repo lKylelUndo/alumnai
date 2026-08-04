@@ -5,7 +5,7 @@ import { authService } from "@/services/auth.service"
 import { useRouter } from "next/navigation"
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react"
 
-interface User {
+export interface User {
   id: string
   email: string | null
   student_id_number: string | null

@@ -124,7 +124,7 @@ const UpdateProfileForm = () => {
           localStorage.setItem("user", JSON.stringify(meResponse.data.user))
       }
 
-      router.push("/alumni/profile")
+      router.push(user?.role === "ALUMNI" ? "/alumni/profile" : "/student/profile")
     } catch (error) {
       console.error(error)
     }
@@ -158,6 +158,7 @@ const UpdateProfileForm = () => {
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <ProfileFormFields
+              userRole={user?.role || ""}
               control={form.control}
               skills={skills}
               onOpenDialog={() => setDialogOpen(true)}
