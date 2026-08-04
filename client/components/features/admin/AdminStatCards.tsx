@@ -1,6 +1,23 @@
 import { BookOpen, GraduationCap, Handshake, Users2, TrendingUp } from "lucide-react"
 
-const AdminStatCards = () => {
+export interface AdminDashboardStats {
+  totalStudents?: number;
+  newStudentsThisMonth?: number;
+  verifiedAlumni?: number;
+  newAlumniThisMonth?: number;
+  activeMentorships?: number;
+  newMentorshipsThisMonth?: number;
+  activeCollaborations?: number;
+  newCollaborationsThisMonth?: number;
+}
+
+interface AdminStatCardsProps {
+  data?: AdminDashboardStats | null;
+}
+
+const AdminStatCards = ({ data }: AdminStatCardsProps) => {
+  const formatNumber = (num?: number) => (num ?? 0).toLocaleString();
+
   return (
     <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {/* Card 1: Total Students */}
@@ -11,9 +28,11 @@ const AdminStatCards = () => {
           </div>
           <h2 className="mt-3 text-sm font-semibold text-primary">Total Students</h2>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">1,247</span>
+            <span className="text-2xl font-bold text-foreground">
+              {formatNumber(data?.totalStudents)}
+            </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +2 this month
+              <TrendingUp className="h-3 w-3" /> +{data?.newStudentsThisMonth ?? 0} this month
             </span>
           </div>
         </div>
@@ -28,9 +47,11 @@ const AdminStatCards = () => {
           </div>
           <h2 className="mt-3 text-sm font-semibold text-primary">Verified Alumni</h2>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">345</span>
+            <span className="text-2xl font-bold text-foreground">
+              {formatNumber(data?.verifiedAlumni)}
+            </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +14 this month
+              <TrendingUp className="h-3 w-3" /> +{data?.newAlumniThisMonth ?? 0} this month
             </span>
           </div>
         </div>
@@ -45,9 +66,11 @@ const AdminStatCards = () => {
           </div>
           <h2 className="mt-3 text-sm font-semibold text-primary">Active Mentorships</h2>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">89</span>
+            <span className="text-2xl font-bold text-foreground">
+              {formatNumber(data?.activeMentorships)}
+            </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +2 this month
+              <TrendingUp className="h-3 w-3" /> +{data?.newMentorshipsThisMonth ?? 0} this month
             </span>
           </div>
         </div>
@@ -62,9 +85,11 @@ const AdminStatCards = () => {
           </div>
           <h2 className="mt-3 text-sm font-semibold text-primary">Active Collaborations</h2>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">42</span>
+            <span className="text-2xl font-bold text-foreground">
+              {formatNumber(data?.activeCollaborations)}
+            </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +2 this month
+              <TrendingUp className="h-3 w-3" /> +{data?.newCollaborationsThisMonth ?? 0} this month
             </span>
           </div>
         </div>
@@ -74,4 +99,4 @@ const AdminStatCards = () => {
   )
 }
 
-export default AdminStatCards
+export default AdminStatCards

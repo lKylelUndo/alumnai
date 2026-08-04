@@ -56,5 +56,12 @@ export const adminService = {
     const response = await axiosServerInstance.get(url)
     return response.data
   },
+
+  getDashboardStats: async () => {
+    // All in one API for admin dashboard stats
+    const response = await axiosServerInstance.get("/api/admin/v1/get-stats")
+    return response.data
+  },
 }
+
 
