@@ -158,7 +158,7 @@ const UpdateProfileForm = () => {
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <ProfileFormFields
-              userRole={user.role}
+              userRole={user?.role || ""}
               control={form.control}
               skills={skills}
               onOpenDialog={() => setDialogOpen(true)}

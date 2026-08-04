@@ -11,7 +11,7 @@ import { AddSkillInput } from "@/schema/skill"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ProfileFormFieldsProps {
-  userRole: string | null
+  userRole: string
   control: Control<z.infer<typeof updateProfileSchema>>
   skills: AddSkillInput[]
   onOpenDialog: () => void
