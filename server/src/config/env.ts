@@ -10,6 +10,8 @@ export const ENV = {
   JWT_SECRET: process.env.JWT_SECRET || 'fallback_secret_change_me',
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
   BACKEND_URL: process.env.BACKEND_URL || 'http://localhost:8000',
+  
+  GITHUB_PAT: process.env.GITHUB_PAT || "",
   GEMINI_KEY: process.env.GEMINI_KEY || "",
 
   CLOUD_NAME: process.env.CLOUD_NAME || "",

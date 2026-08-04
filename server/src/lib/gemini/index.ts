@@ -4,6 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 export { extractTechnicalSkills } from "@/lib/gemini/extract.technical.skills"
 export { recommendStudent } from "@/lib/gemini/recommendStudent"
 export { generateSkillAnalytics } from "@/lib/gemini/generateSkillAnalytics"
+export { analyzeGithubSkills } from "@/lib/gemini/analyzeGithubSkills"
 
 export const AVAILABLE_GEMINI_MODELS = [
   "gemini-2.5-pro",
@@ -11,6 +12,9 @@ export const AVAILABLE_GEMINI_MODELS = [
   "gemini-2.5-flash-lite",
   "gemini-2.0-flash",
   "gemini-2.0-flash-lite",
+  "gemini-3.6-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.5-flash"
 ] as const;
 
 export const EMBEDDING_MODEL = "gemini-embedding-2";

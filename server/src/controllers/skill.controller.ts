@@ -1,4 +1,4 @@
-import { AddSkillService, RemoveSkillService, GetTopAlumniSkillsService } from "@/services/skill";
+import { AddSkillService, RemoveSkillService, GetTopAlumniSkillsService, GithubSkillIndexService } from "@/services/skill";
 import type { Request, Response } from "express";
 
 class SkillController {
@@ -18,6 +18,12 @@ class SkillController {
     public getTopAlumniSkills = async (req: Request, res: Response) => {
         const forceRefresh = req.query.refresh === "true";
         const response = await GetTopAlumniSkillsService(forceRefresh);
+        return res.status(response.code).json(response);
+    }
+
+    public githubSkillIndex = async (req: Request, res: Response) => {
+        const { githubURL } = req.body ?? {};
+        const response = await GithubSkillIndexService(githubURL);
         return res.status(response.code).json(response);
     }
 }
