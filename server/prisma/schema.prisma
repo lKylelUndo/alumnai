@@ -179,7 +179,7 @@ enum ConversationType {
 
 model AlumniUpgradeRequest {
   id          String                     @id @default(uuid())
-  userId      String
+  userId      String                     @unique
   documentUrl String
   status      AlumniUpgradeRequestStatus @default(PENDING)
   createdAt   DateTime                   @default(now())

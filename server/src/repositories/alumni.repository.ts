@@ -76,18 +76,16 @@ export class AlumniRepository {
 
     if (!user) return null;
 
-    const pendingRequest = await prisma.alumniUpgradeRequest.findFirst({
-      where: { userId: user.id, status: "PENDING" },
+    const pendingRequest = await prisma.alumniUpgradeRequest.findUnique({
+      where: { userId: user.id },
     });
 
     if (pendingRequest) {
-      await prisma.alumniUpgradeRequest.update({
-        where: { id: pendingRequest.id },
-        data: { status: "REJECTED" },
+      await prisma.alumniUpgradeRequest.delete({
+        where: { userId: user.id },
       });
     }
 
-    // Invalidate Redis cache
     await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
 
     return { user, request: pendingRequest };

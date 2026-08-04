@@ -150,8 +150,6 @@ export default function AlumniRequest({ data }: { data: AlumniRequest[] }) {
         data={data}
         filterColumn="studentId"
         filterPlaceholder="Search by Student Id..."
-        statusFilterColumn="status"
-        statusOptions={["Approved", "Rejected", "Pending"]}
       />
     </div>
   )
