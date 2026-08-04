@@ -1,10 +1,10 @@
-import { AdminRepository } from "@/repositories/admin.repository";
+import { MentorRepository } from "@/repositories/mentor.repository";
 
 export const GetTopMentorsService = async () => {
-  const adminRepository = new AdminRepository();
+  const mentorRepository = new MentorRepository();
 
   try {
-    const mentors = await adminRepository.findTopMentors();
+    const mentors = await mentorRepository.findTopMentors();
 
     return {
       code: 200,

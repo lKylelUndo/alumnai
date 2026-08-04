@@ -1,9 +1,9 @@
-import { AdminRepository } from "@/repositories/admin.repository";
+import { AlumniRepository } from "@/repositories/alumni.repository";
 
 export const ApproveAlumniRequestService = async (studentId: string) => {
-  const adminRepository = new AdminRepository();
+  const alumniRepository = new AlumniRepository();
   try {
-    const result = await adminRepository.approveAlumniRequest(studentId);
+    const result = await alumniRepository.approveAlumniRequest(studentId);
 
     if (!result) {
       return { status: "error", code: 404, message: "User or request not found" };

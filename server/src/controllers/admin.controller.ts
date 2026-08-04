@@ -1,4 +1,4 @@
-import { VerifyUserService, GetUnverifiedUsersService, GetTopMentorsService, GetAlumniRequestsService, GetAllUsersService, GetSkillAnalyticsService, SuspendUserService, ActivateUserService, RejectUserService, ApproveAlumniRequestService, RejectAlumniRequestService } from "@/services/admin";
+import { VerifyUserService, GetUnverifiedUsersService, GetAllUsersService, SuspendUserService, ActivateUserService, RejectUserService } from "@/services/admin";
 import type { Request, Response } from "express";
 
 class AdminController {
@@ -13,24 +13,8 @@ class AdminController {
     return res.status(response.code).json(response);
   };
 
-  public getTopMentors = async (req: Request, res: Response) => {
-    const response = await GetTopMentorsService();
-    return res.status(response.code).json(response);
-  };
-
-  public getAlumniRequests = async (req: Request, res: Response) => {
-    const response = await GetAlumniRequestsService();
-    return res.status(response.code).json(response);
-  };
-
   public getAllUsers = async (req: Request, res: Response) => {
     const response = await GetAllUsersService();
-    return res.status(response.code).json(response);
-  };
-
-  public getSkillAnalytics = async (req: Request, res: Response) => {
-    const forceRefresh = req.query.refresh === "true";
-    const response = await GetSkillAnalyticsService(forceRefresh);
     return res.status(response.code).json(response);
   };
 
@@ -51,20 +35,6 @@ class AdminController {
     const response = await RejectUserService(id);
     return res.status(response.code).json(response);
   };
-
-  public approveAlumniRequest = async (req: Request, res: Response) => {
-    const { studentId } = req.body ?? {};
-    const response = await ApproveAlumniRequestService(studentId);
-    return res.status(response.code).json(response);
-  };
-
-  public rejectAlumniRequest = async (req: Request, res: Response) => {
-    const { studentId } = req.body ?? {};
-    const response = await RejectAlumniRequestService(studentId);
-    return res.status(response.code).json(response);
-  };
 }
 
 export default new AdminController();
-
-
