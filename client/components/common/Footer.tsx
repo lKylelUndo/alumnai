@@ -1,105 +1,79 @@
 import Image from "next/image"
 import Link from "next/link"
 
+const footerLinks = {
+  platform: [
+    { label: "Find Mentors", href: "/login" },
+    { label: "Find Collaborators", href: "/login" },
+    { label: "Skill Analysis", href: "/login" },
+    { label: "Curriculum Insights", href: "/login" },
+  ],
+  connect: [
+    { label: "Email", href: "mailto:info@alumnai.com" },
+    { label: "LinkedIn", href: "https://linkedin.com", external: true },
+    { label: "Facebook", href: "https://facebook.com", external: true },
+  ],
+}
+
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-100 bg-white py-12">
+    <footer className="border-t border-[#1A216D]/8 bg-white py-12">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-8 grid grid-cols-2 gap-8 md:grid-cols-3">
-          {/* Logo Section */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <Image
-                src="/logo/logoalumnai.png"
-                width={250}
-                height={200}
-                alt="Logo"
-              />
-            </div>
-            <p className="max-w-xs text-sm text-slate-500">
-              AI-powered institutional platform that connects computing students
-              with alumni.
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2 lg:col-span-2">
+            <Image
+              src="/logo/logoalumnai.png"
+              width={160}
+              height={64}
+              alt="alumnAI"
+              loading="lazy"
+            />
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
+              AI-powered institutional platform connecting CPC computing students
+              and alumni through verified, evidence-based skill profiles.
             </p>
           </div>
 
-          {/* Pages Section */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-base font-semibold text-slate-900">Pages</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/login"
-                  className="text-sm text-slate-600 transition hover:text-[#2D7EE2]"
-                >
-                  Find Collaborators
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/login"
-                  className="text-sm text-slate-600 transition hover:text-[#2D7EE2]"
-                >
-                  Find Mentors
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/login"
-                  className="text-sm text-slate-600 transition hover:text-[#2D7EE2]"
-                >
-                  Skill Analysis
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/login"
-                  className="text-sm text-slate-600 transition hover:text-[#2D7EE2]"
-                >
-                  Curriculum Insights
-                </Link>
-              </li>
+          <div>
+            <h3 className="text-sm font-semibold text-[#1A216D]">Platform</h3>
+            <ul className="mt-4 space-y-2.5">
+              {footerLinks.platform.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-slate-500 transition-colors hover:text-[#2D7EE2]"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Connect Section */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-base font-semibold text-slate-900">Connect</h3>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="mailto:info@alumnai.com"
-                  className="text-sm text-slate-600 transition hover:text-[#2D7EE2]"
-                >
-                  Email
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-slate-600 transition hover:text-[#2D7EE2]"
-                >
-                  Facebook
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-slate-600 transition hover:text-[#2D7EE2]"
-                >
-                  LinkedIn
-                </a>
-              </li>
+          <div>
+            <h3 className="text-sm font-semibold text-[#1A216D]">Connect</h3>
+            <ul className="mt-4 space-y-2.5">
+              {footerLinks.connect.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    {...(link.external
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className="text-sm text-slate-500 transition-colors hover:text-[#2D7EE2]"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="border-t border-slate-100 pt-6 text-center text-sm text-[#636669]">
-          © {new Date().getFullYear()} <span className="font-bold">alumnAI</span>. All rights reserved.
+        <div className="mt-10 border-t border-[#1A216D]/8 pt-6 text-center text-sm text-slate-500">
+          © {new Date().getFullYear()}{" "}
+          <span className="font-semibold text-[#1A216D]">alumnAI</span>. All
+          rights reserved.
         </div>
       </div>
     </footer>

@@ -1,36 +1,34 @@
 import Image from "next/image"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 export default function Header() {
   return (
-    <>
-      <header className=" bg-[#FFFFFF] p-2 text-[#1A216D] shadow-sm md:p-3">
-        <div className="container flex justify-between">
-          <div className="flex items-center gap-2 md:pl-6">
-            <Image
-              src={"/logo/logoalumnai.png"}
-              width={80}
-              height={80}
-              alt="Logo"
-              priority
-            />
-          
-          </div>
+    <header className="sticky top-0 z-50 border-b border-[#1A216D]/8 bg-white/95 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo/logoalumnai.png"
+            width={100}
+            height={100}
+            alt="alumnAI"
+            priority
+          />
+        </Link>
 
-          <div className="flex items-center gap-6 text-sm">
-            <Link href="/login" className="font-medium">
-              Login
-            </Link>
-
-            <Link
-              href="/register"
-              className="rounded-lg bg-[#2D7EE2] px-4 py-1.5 text-sm text-white transition hover:bg-[#1A216D]"
-            >
-              Get Started
-            </Link>
-          </div>
+        <div className="flex items-center gap-3">
+          <Button
+            asChild
+            variant="ghost"
+            className="hidden text-[#1A216D] sm:inline-flex"
+          >
+            <Link href="/login">Login</Link>
+          </Button>
+          <Button asChild className="bg-[#2D7EE2] hover:bg-[#1A216D]">
+            <Link href="/register">Get Started</Link>
+          </Button>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   )
 }

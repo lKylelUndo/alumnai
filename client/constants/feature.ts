@@ -1,44 +1,61 @@
-export const features = [
+import type { LucideIcon } from "lucide-react"
+import {
+  Award,
+  BarChart3,
+  Brain,
+  GitBranch,
+  Handshake,
+  Search,
+  ShieldCheck,
+} from "lucide-react"
+
+export type Feature = {
+  title: string
+  description: string
+  icon: LucideIcon
+}
+
+export const features: Feature[] = [
   {
     title: "AI-Powered Skill Indexing",
     description:
-      "Analyze GitHub repositories using GitHub REST API and Gemini AI to generate verified skill profiles.",
-    icon: "/images/aifeature.png",
+      "Analyze GitHub repositories using the GitHub REST API and Gemini AI to generate verified skill profiles.",
+    icon: Brain,
   },
   {
     title: "Skill Gap Analysis",
     description:
       "Compare student skills with alumni trends to generate personalized learning recommendations.",
-    icon: "/images/gaps.png",
+    icon: GitBranch,
   },
   {
     title: "Intelligent Talent Matching",
     description:
-      "Natural language search powered by AI to find perfect student-alumni collaborations.",
-    icon: "/images/match.png",
+      "Natural language search powered by AI to find ideal student-alumni collaborations.",
+    icon: Search,
   },
   {
     title: "Curriculum Analytics",
     description:
       "Data-driven insights into alumni skill trends to support curriculum enhancement.",
-    icon: "/images/analytics.png",
+    icon: BarChart3,
   },
   {
     title: "Mentorship Recognition",
     description:
       "Recognizes outstanding mentorship performance based on student feedback.",
-    icon: "/images/recognition.png",
+    icon: Award,
   },
   {
     title: "School-Verified System",
     description:
       "Institutional verification ensures credibility and trust within the academic ecosystem.",
-    icon: "/images/verified.png",
+    icon: ShieldCheck,
   },
   {
     title: "Mentorship & Collaboration",
     description:
       "Structured mentorship requests and collaboration invitations between students and alumni.",
-    icon: "/images/mentorship.png",
+    icon: Handshake,
   },
 ]
