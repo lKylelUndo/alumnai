@@ -12,7 +12,7 @@ const trustPoints = [
 export default function HeroSection() {
   return (
     <section className="overflow-hidden bg-[#F7F8FC]">
-      <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 py-16 sm:py-20 lg:flex-row lg:items-center lg:gap-16 lg:py-28">
+      <div className="mx-auto px-12 flex max-w-7xl flex-col gap-12 px-6 py-16 sm:py-20 lg:flex-row lg:items-center lg:gap-16 lg:py-28">
         <div className="flex-1 text-center lg:text-left">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#1A216D]/10 bg-white px-4 py-1.5 text-xs font-medium text-[#1A216D] shadow-sm sm:text-sm">
             <Sparkles className="size-3.5 shrink-0 text-[#2D7EE2]" aria-hidden />
@@ -68,7 +68,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="flex flex-1 justify-center lg:justify-end">
+        <div className="md:flex hidden flex-1 justify-center lg:justify-end">
           <Image
             src="/images/portalv2.png"
             alt="alumnAI platform connecting students and alumni"
