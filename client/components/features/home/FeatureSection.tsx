@@ -1,30 +1,25 @@
-import FeatureCard from "./FeatureCard";
-import { features } from "@/constants/feature";
+import FeaturesCarousel from "./FeaturesCarousel"
 
 export default function FeaturesSection() {
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center">
-          <h2 className="lg:text-4xl text-3xl font-bold text-slate-900">
-            Powerful Features
+    <section id="features" className="bg-white py-20 sm:py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-wider text-[#2D7EE2]">
+            Platform capabilities
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#1A216D] sm:text-4xl">
+            Everything you need to connect &amp; grow
           </h2>
-
-          <p className="mt-2 lg:text-base text-sm text-slate-600">
-           <span className="font-medium text-[#1a216d]">alumnAI</span>  combines AI technology with institutional
-            verification to create meaningful connections
+          <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
+            <span className="font-semibold text-[#1A216D]">alumnAI</span>{" "}
+            combines AI technology with institutional verification to create
+            meaningful, evidence-based connections.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-          {features.map((feature) => (
-            <FeatureCard
-              key={feature.title}
-              {...feature}
-            />
-          ))}
-        </div>
+        <FeaturesCarousel />
       </div>
     </section>
-  );
+  )
 }
