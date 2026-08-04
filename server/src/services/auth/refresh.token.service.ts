@@ -4,7 +4,11 @@ import { UserRepository } from "@/repositories/user.repository";
 
 export async function RefreshTokenService(refreshToken: string) {
    try {
-    const payload = verifyRefreshToken(refreshToken!);
+    if (!refreshToken) {
+      return { code: 401, status: "error", message: "Refresh token is required" };
+    }
+
+    const payload = verifyRefreshToken(refreshToken);
 
      // 1. Verify JWT signature and type
     if (!payload) {

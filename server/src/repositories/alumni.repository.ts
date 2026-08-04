@@ -50,9 +50,8 @@ export class AlumniRepository {
     });
 
     if (pendingRequest) {
-      await prisma.alumniUpgradeRequest.update({
+      await prisma.alumniUpgradeRequest.delete({
         where: { id: pendingRequest.id },
-        data: { status: "APPROVED" },
       });
     }
 
