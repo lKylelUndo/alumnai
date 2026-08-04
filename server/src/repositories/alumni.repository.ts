@@ -45,11 +45,15 @@ export class AlumniRepository {
 
     if (!user) return null;
 
-    // Update upgrade request status to APPROVED
-    await prisma.alumniUpgradeRequest.updateMany({
-      where: { userId: user.id },
-      data: { status: "APPROVED" },
+    const pendingRequest = await prisma.alumniUpgradeRequest.findFirst({
+      where: { userId: user.id, status: "PENDING" },
     });
+
+    if (pendingRequest) {
+      await prisma.alumniUpgradeRequest.delete({
+        where: { id: pendingRequest.id },
+      });
+    }
 
     // Update user role to ALUMNI
     const updatedUser = await prisma.user.update({
@@ -61,7 +65,7 @@ export class AlumniRepository {
     await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
     await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
 
-    return updatedUser;
+    return { updatedUser, request: pendingRequest };
   }
 
   async rejectAlumniRequest(studentId: string) {
@@ -71,15 +75,38 @@ export class AlumniRepository {
 
     if (!user) return null;
 
-    // Update upgrade request status to REJECTED
-    await prisma.alumniUpgradeRequest.updateMany({
+    const pendingRequest = await prisma.alumniUpgradeRequest.findUnique({
       where: { userId: user.id },
-      data: { status: "REJECTED" },
     });
 
-    // Invalidate Redis cache
+    if (pendingRequest) {
+      await prisma.alumniUpgradeRequest.delete({
+        where: { userId: user.id },
+      });
+    }
+
     await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
 
-    return user;
+    return { user, request: pendingRequest };
+  }
+
+  async findExistingPendingRequest(userId: string) {
+    return await prisma.alumniUpgradeRequest.findFirst({
+      where: { userId, status: "PENDING" },
+    });
+  }
+
+  async createAlumniUpgradeRequest(userId: string, documentUrl: string) {
+    const request = await prisma.alumniUpgradeRequest.create({
+      data: {
+        userId,
+        documentUrl,
+        status: "PENDING",
+      },
+    });
+
+    await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
+    return request;
   }
 }
+

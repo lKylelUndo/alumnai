@@ -88,6 +88,7 @@ export class AdminRepository {
       data: { accountStatus: "SUSPENDED" },
     });
     await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
     return updated;
   }
 
@@ -97,6 +98,7 @@ export class AdminRepository {
       data: { accountStatus: "ACTIVE" },
     });
     await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
     return updated;
   }
 
@@ -110,6 +112,7 @@ export class AdminRepository {
     // try cache first
     const cached = await redis.get(cacheKey);
     if (cached) await redis.del(cacheKey)
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
 
     // fallback to DB
     const users = await prisma.user.findMany({
@@ -128,6 +131,53 @@ export class AdminRepository {
 
     return users;
   }
+
+  async getDashboardStats() {
+    const cacheKey = `${ENV.ADMIN_REDIS_KEY}dashboard-stats`;
+
+    // try cache first
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [
+      totalStudents,
+      newStudentsThisMonth,
+      verifiedAlumni,
+      newAlumniThisMonth,
+      activeMentorships,
+      newMentorshipsThisMonth,
+      activeCollaborations,
+      newCollaborationsThisMonth,
+    ] = await Promise.all([
+      prisma.user.count({ where: { role: "STUDENT" } }),
+      prisma.user.count({ where: { role: "STUDENT", createdAt: { gte: startOfMonth } } }),
+      prisma.user.count({ where: { role: "ALUMNI", isAccountVerified: true } }),
+      prisma.user.count({ where: { role: "ALUMNI", isAccountVerified: true, createdAt: { gte: startOfMonth } } }),
+      prisma.mentorship.count({ where: { status: "ACTIVE" } }),
+      prisma.mentorship.count({ where: { status: "ACTIVE", createdAt: { gte: startOfMonth } } }),
+      prisma.collaboration.count({ where: { status: "ACTIVE" } }),
+      prisma.collaboration.count({ where: { status: "ACTIVE", createdAt: { gte: startOfMonth } } }),
+    ]);
+
+    const stats = {
+      totalStudents,
+      newStudentsThisMonth,
+      verifiedAlumni,
+      newAlumniThisMonth,
+      activeMentorships,
+      newMentorshipsThisMonth,
+      activeCollaborations,
+      newCollaborationsThisMonth,
+    };
+
+    await redis.set(cacheKey, JSON.stringify(stats), "PX", 1000 * 60 * 5);
+
+    return stats;
+  }
 }
+
 
 

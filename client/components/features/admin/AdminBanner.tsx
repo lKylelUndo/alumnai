@@ -1,7 +1,16 @@
 import Image from "next/image"
 import AdminStatCards from "./AdminStatCards"
+import { adminService } from "@/services/admin.service"
 
-const AdminBanner = () => {
+const AdminBanner = async () => {
+  let statsData = null
+  try {
+    const response = await adminService.getDashboardStats()
+    statsData = response?.data
+  } catch (error) {
+    console.error("Failed to fetch admin stats", error)
+  }
+
   return (
     <section className="mt-2">
       <div className="flex items-center gap-x-4">
@@ -25,9 +34,10 @@ const AdminBanner = () => {
         </div>
       </div>
 
-      <AdminStatCards />
+      <AdminStatCards data={statsData} />
     </section>
   )
 }
 
 export default AdminBanner
+

@@ -1,4 +1,4 @@
-import { VerifyUserService, GetUnverifiedUsersService, GetAllUsersService, SuspendUserService, ActivateUserService, RejectUserService } from "@/services/admin";
+import { VerifyUserService, GetUnverifiedUsersService, GetAllUsersService, SuspendUserService, ActivateUserService, RejectUserService, GetAdminStatsService } from "@/services/admin";
 import type { Request, Response } from "express";
 
 class AdminController {
@@ -35,6 +35,12 @@ class AdminController {
     const response = await RejectUserService(id);
     return res.status(response.code).json(response);
   };
+
+  public getDashboardStats = async (req: Request, res: Response) => {
+    const response = await GetAdminStatsService();
+    return res.status(response.code).json(response);
+  };
 }
 
 export default new AdminController();
+
