@@ -1,20 +1,12 @@
-"use client";
-import ProfileActions from "@/components/common/ProfileActions";
-import { Card } from "@/components/ui/card";
-import { Briefcase, Backpack, LinkIcon, Mail } from "lucide-react";
-import { useAuthContext } from "@/context/AuthContext";
-import Image from "next/image";
+"use client"
+import ProfileActions from "@/components/common/ProfileActions"
+import { Card } from "@/components/ui/card"
+import { Briefcase, Backpack, LinkIcon, Mail } from "lucide-react"
+import { useAuthContext } from "@/context/AuthContext"
+import Image from "next/image"
 
-type ProfileMode = "edit" | "view";
-
-interface StudentProfileHeaderProps {
-  mode?: ProfileMode;
-}
-
-const StudentProfileHeader = ({
-  mode = "edit",
-}: StudentProfileHeaderProps) => {
-  const { user } = useAuthContext();
+const StudentProfileHeader = () => {
+  const { user } = useAuthContext()
 
   return (
     <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm md:p-8">
@@ -50,9 +42,7 @@ const StudentProfileHeader = ({
             <div className="space-y-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <Briefcase className="h-4 w-4 shrink-0" />
-                <span>
-                  {user?.profile?.current_position || ""}
-                </span>
+                <span>{user?.profile?.current_position || ""}</span>
               </div>
 
               <div className="flex flex-wrap items-center gap-4">
@@ -63,20 +53,17 @@ const StudentProfileHeader = ({
 
                 <div className="flex items-center gap-2">
                   <LinkIcon className="h-4 w-4 shrink-0" />
-                  <span>
-                    {user?.profile?.socialLink || "-"}
-                  </span>
+                  <span>{user?.profile?.socialLink || "-"}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* default kay edit mode, view to view duh */}
-        {mode === "edit" && <ProfileActions />}
+        <ProfileActions updateProfileURL={"/student/profile/update"} />
       </div>
     </Card>
-  );
-};
+  )
+}
 
-export default StudentProfileHeader;
+export default StudentProfileHeader

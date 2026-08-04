@@ -1,27 +1,6 @@
-import { Skill } from "@/schema/skill"
+import { User } from "@/context/AuthContext"
 
-export type User = {
-  id: string,
-  profile: {
-    profilePicture: string
-    yearLevel: string
-    graduatedYear: string
-    fullName: string
-    aboutMe: string
-    work_field: string
-    socialLink: string
-    companyName: string
-    current_position: string
-    certifications: Array<{
-      id: string
-      profileId: string
-      name: string
-      issuer: string
-      fileUrl: string
-    }>
-    skills: Skill[]
-  }
-}
+export type { User }
 
 // Returns default values for the update profile form based on the user's current data.
 export const getProfileFormDefaultValues = (user: User | null) => ({
