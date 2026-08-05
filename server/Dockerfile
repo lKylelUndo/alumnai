@@ -8,6 +8,9 @@ RUN npm ci
 
 COPY . .
 
+# Generate Prisma Client (outputs to src/generated/prisma, bundled by tsdown)
+RUN npm run db:generate
+
 RUN npm run build
 
 
@@ -20,6 +23,9 @@ ENV NODE_ENV=production
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+# Prisma needs the schema at runtime
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 EXPOSE 8000
 
