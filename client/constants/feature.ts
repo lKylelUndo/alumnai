@@ -1,61 +1,53 @@
+import type { ElementType } from "react"
 import type { LucideIcon } from "lucide-react"
-import {
-  Award,
-  BarChart3,
-  Brain,
-  GitBranch,
-  Handshake,
-  Search,
-  ShieldCheck,
-} from "lucide-react"
 
 export type Feature = {
   title: string
   description: string
-  icon: LucideIcon
+  icon: LucideIcon | ElementType | string
 }
 
-export const features: Feature[] = [
+export const features = [
   {
     title: "AI-Powered Skill Indexing",
     description:
-      "Analyze GitHub repositories using the GitHub REST API and Gemini AI to generate verified skill profiles.",
-    icon: Brain,
+      "Analyze GitHub repositories using GitHub REST API and Gemini AI to generate verified skill profiles.",
+    icon: "/images/aifeature.png",
   },
   {
     title: "Skill Gap Analysis",
     description:
       "Compare student skills with alumni trends to generate personalized learning recommendations.",
-    icon: GitBranch,
+    icon: "/images/gaps.png",
   },
   {
     title: "Intelligent Talent Matching",
     description:
-      "Natural language search powered by AI to find ideal student-alumni collaborations.",
-    icon: Search,
+      "Natural language search powered by AI to find perfect student-alumni collaborations.",
+    icon: "/images/match.png",
   },
   {
     title: "Curriculum Analytics",
     description:
       "Data-driven insights into alumni skill trends to support curriculum enhancement.",
-    icon: BarChart3,
+    icon: "/images/analytics.png",
   },
   {
     title: "Mentorship Recognition",
     description:
       "Recognizes outstanding mentorship performance based on student feedback.",
-    icon: Award,
+    icon: "/images/recognition.png",
   },
   {
     title: "School-Verified System",
     description:
       "Institutional verification ensures credibility and trust within the academic ecosystem.",
-    icon: ShieldCheck,
+    icon: "/images/verified.png",
   },
   {
     title: "Mentorship & Collaboration",
     description:
       "Structured mentorship requests and collaboration invitations between students and alumni.",
-    icon: Handshake,
+    icon: "/images/mentorship.png",
   },
 ]
