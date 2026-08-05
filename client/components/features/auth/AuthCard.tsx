@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { Brain } from "lucide-react"
-import { roboto_slab } from "@/lib/fonts";
 
 interface AuthCardProps {
   title: string;
@@ -11,30 +9,23 @@ interface AuthCardProps {
 
 export default function AuthCard({ title, subtitle, children }: AuthCardProps) {
   return (
-    <div className="w-full max-w-md">
-      <Link href="/"className="text-sm text-[#232C77]">
+    <div className="w-full max-w-md mx-auto">
+      <Link 
+        href="/" 
+        className="inline-flex items-center text-sm font-medium text-[#1A216D] hover:underline mb-4"
+      >
         ← Back to Homepage
       </Link>
 
-      <div className="mt-4 border border-[#1A216D] border-2 bg-white p-10 rounded-sm">
-       <div className="">
-
-          {/* Change to logo once logo design is finished */}
-          <div className="flex items-center justify-center gap-2 md:pl-2 mb-6">
-            <Brain size={28} color="#2D7EE2" />
-            <Link href="/" className={`${roboto_slab.className} text-md text-[#1A216D] md:text-2xl font-bold`}>
-             alumnAI
-            </Link>
-          </div>
-
-          <h2 className="text-2xl font-extrabold text-[#232C77]">
+      <div className="bg-white border-2 border-[#1A216D] rounded-md p-8 sm:p-10 shadow-sm">
+        <div className="w-full mb-6">
+          <h2 className="text-2xl font-extrabold text-[#1A216D]">
             {title}
           </h2>
-  
-          <p className="text-gray-500 mb-8 text-sm">
+          <p className="text-gray-500 text-sm mt-1">
             {subtitle}
           </p>
-       </div>
+        </div>
 
         {children}
       </div>

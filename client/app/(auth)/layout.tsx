@@ -3,39 +3,30 @@ import { AuthGuard } from "@/components/features/auth/AuthGuard";
 import Image from "next/image";
 import { ReactNode } from "react";
 
-export default function AuthLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <AuthGuard mode="GUEST">
-      <div className="min-h-screen bg-[#F7F7F7] flex flex-col">
-       
-       <Header />
-  
+      <div className="min-h-screen flex flex-col bg-white">
+        <Header />
+
         {/* Content */}
-        <main className="grid lg:grid-cols-2 flex-1">
-          
-          {/* Image Size To Be Adjusted ^ */}
-          <div className="md:w-2/3 lg:block relative bg-[#1A216D]">
+        <main className="flex-1 grid grid-cols-1 lg:grid-cols-2 w-full">
+          {/* Left Column: Image Background - Hidden on mobile, full width on desktop */}
+          <div className="hidden lg:block relative w-full h-full min-h-[calc(100vh-80px)] bg-[#1A216D]">
             <Image
               src="/images/login4.jpg"
               alt="Auth Background"
               fill
               className="object-cover opacity-65"
-              sizes="(min-width: 768px) 50vw"
+              sizes="50vw"
               priority
             />
-  
-            {/* <div className="absolute inset-0 " /> */}
           </div>
-  
-          {/* Form Ari*/}
-          <div className="md:w-2/3  flex justify-center px-6 py-10">
+
+          {/* Right Column: Form Container */}
+          <div className="w-full flex items-center justify-center p-6 sm:p-10 lg:p-12">
             {children}
           </div>
-  
         </main>
       </div>
     </AuthGuard>

@@ -50,7 +50,7 @@ export default function RegisterForm() {
     >
       <form id="form-rhf-signup" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
-          <div className="flex justify-between gap-x-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Controller
               name="studentIdNumber"
               control={form.control}
@@ -141,7 +141,7 @@ export default function RegisterForm() {
         </FieldGroup>
       </form>
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-signup" className="w-full">
+        <Button type="submit" form="form-rhf-signup" className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
           Register
         </Button>
       </Field>
@@ -152,7 +152,7 @@ export default function RegisterForm() {
           href="/login"
           className="font-medium text-[#2D7EE2] hover:underline"
         >
-          Sign Up
+          Log In
         </Link>
       </p>
     </AuthCard>
