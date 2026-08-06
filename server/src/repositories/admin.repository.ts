@@ -37,7 +37,7 @@ export class AdminRepository {
   async verify(id: string) {
     return await prisma.user.update({
       where: {
-        id,
+        student_id_number: id,
       },
       data: {
         isAccountVerified: true,
