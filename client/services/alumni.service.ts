@@ -5,5 +5,9 @@ export const alumniService = {
     const response = await axiosInstance.post("/api/alumni/v1/request-alumni-upgrade", { documentUrl });
     return response.data;
   },
-};
 
+  getDashboardStats: async () => {
+    const response = await axiosInstance.get("/api/alumni/v1/get-dashboard-stats");
+    return response.data;
+  },
+};

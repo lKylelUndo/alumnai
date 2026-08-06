@@ -17,14 +17,19 @@ model User {
   role                   RoleType               @default(STUDENT)
   isAccountVerified      Boolean                @default(false)
   accountStatus          AccountStatus          @default(ACTIVE)
+
   sentCollaborations     Collaboration[]        @relation("CollaborationFrom")
   receivedCollaborations Collaboration[]        @relation("CollaborationTo")
+
   sentMentorships        Mentorship[]           @relation("MentorshipFrom")
   receivedMentorships    Mentorship[]           @relation("MentorshipTo")
+
   messages               Message[]
   profile                Profile?
+
   sentRecognitions       Recognition[]          @relation("RecognitionFrom")
   receivedRecognitions   Recognition[]          @relation("RecognitionTo")
+  
   tokens                 Token[]
   alumniUpgradeRequests  AlumniUpgradeRequest[]
 }
