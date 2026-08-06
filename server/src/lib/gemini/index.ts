@@ -5,6 +5,7 @@ export { extractTechnicalSkills } from "@/lib/gemini/extract.technical.skills"
 export { recommendStudent } from "@/lib/gemini/recommendStudent"
 export { generateSkillAnalytics } from "@/lib/gemini/generateSkillAnalytics"
 export { analyzeGithubSkills } from "@/lib/gemini/analyzeGithubSkills"
+export { generateSkillGapAnalysis } from "@/lib/gemini/skillGapAnalysis"
 
 export const AVAILABLE_GEMINI_MODELS = [
   "gemini-2.5-pro",

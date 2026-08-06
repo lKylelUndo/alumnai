@@ -1,20 +1,21 @@
 import { SkillRepository } from "@/repositories/skill.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { AddSkillInputTypes } from "@/schema/skill";
-import { prisma } from "@/lib/prisma";
 
 export const AddSkillService = async (data: AddSkillInputTypes, userId?: string) => {
   const skillRepository = new SkillRepository();
+  const profileRepository = new ProfileRepository();
 
   try {
     let targetProfileId = data.profileId;
+    let effectiveUserId = userId;
 
     if (!targetProfileId && userId) {
-      const profile = await prisma.profile.upsert({
-        where: { userId },
-        update: {},
-        create: { userId },
-      });
+      const profile = await profileRepository.getOrCreateProfileByUserId(userId);
       targetProfileId = profile.id;
+    } else if (targetProfileId && !effectiveUserId) {
+      const profile = await profileRepository.findByPk(targetProfileId);
+      if (profile) effectiveUserId = profile.userId;
     }
 
     if (!targetProfileId) {
@@ -28,6 +29,11 @@ export const AddSkillService = async (data: AddSkillInputTypes, userId?: string)
 
     if (!response)
       return { status: "error", code: 400, message: "Unable to add skill" };
+
+    // Clear skill gap analysis cache for user via repository
+    if (effectiveUserId) {
+      await skillRepository.invalidateSkillGapCache(effectiveUserId);
+    }
 
     return { status: "success", code: 201, message: "Successfully add skill" };
   } catch (error) {

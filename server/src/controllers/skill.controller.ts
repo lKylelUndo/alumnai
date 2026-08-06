@@ -1,4 +1,4 @@
-import { AddSkillService, RemoveSkillService, GetTopAlumniSkillsService, GithubSkillIndexService } from "@/services/skill";
+import { AddSkillService, RemoveSkillService, GetTopAlumniSkillsService, GithubSkillIndexService, AnalyzeSkillGapService } from "@/services/skill";
 import type { Request, Response } from "express";
 
 class SkillController {
@@ -26,6 +26,17 @@ class SkillController {
         const response = await GithubSkillIndexService(githubURL);
         return res.status(response.code).json(response);
     }
+
+    public analyzeSkillGap = async (req: Request, res: Response) => {
+        const userId = (req as any).user?.id;
+        if (!userId) {
+            return res.status(401).json({ code: 401, status: "error", message: "User not authenticated" });
+        }
+        const forceRefresh = req.query.refresh === "true";
+        const response = await AnalyzeSkillGapService(userId, forceRefresh);
+        return res.status(response.code).json(response);
+    }
 }
 
 export default new SkillController();
+

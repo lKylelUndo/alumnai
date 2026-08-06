@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 import { generateSkillAnalytics } from "@/lib/gemini";
 import { AddSkillInputTypes } from "@/schema/skill";
+import { RoleType } from "@/generated/prisma/enums";
 
 export class SkillRepository {
   async add(data: AddSkillInputTypes) {
@@ -19,6 +20,56 @@ export class SkillRepository {
 
   async find() {
 
+  }
+
+  async findAlumniSkillsByWorkField(workField?: string | null) {
+    const alumniSkills = await prisma.skill.findMany({
+      where: {
+        profile: {
+          user: {
+            role: RoleType.ALUMNI,
+          },
+          ...(workField
+            ? {
+                OR: [
+                  { work_field: { contains: workField, mode: "insensitive" } },
+                  { current_position: { contains: workField, mode: "insensitive" } },
+                ],
+              }
+            : {}),
+        },
+      },
+      select: {
+        name: true,
+      },
+    });
+
+    let skillsToProcess = alumniSkills;
+    if (skillsToProcess.length === 0 && workField) {
+      skillsToProcess = await prisma.skill.findMany({
+        where: {
+          profile: {
+            user: {
+              role: RoleType.ALUMNI,
+            },
+          },
+        },
+        select: {
+          name: true,
+        },
+      });
+    }
+
+    const skillCountsMap = new Map<string, number>();
+    for (const skill of skillsToProcess) {
+      const name = skill.name.trim();
+      if (!name) continue;
+      skillCountsMap.set(name, (skillCountsMap.get(name) || 0) + 1);
+    }
+
+    return Array.from(skillCountsMap.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
   }
 
   async findTopAlumniSkills(forceRefresh: boolean = false) {
@@ -76,4 +127,32 @@ export class SkillRepository {
 
     return analyticsWithTimestamp;
   }
+
+  async findStudentProfileWithSkills(userId: string) {
+    return await prisma.profile.findUnique({
+      where: { userId },
+      include: {
+        skills: true,
+      },
+    });
+  }
+
+  async getCachedSkillGap(userId: string) {
+    const cacheKey = `${ENV.STUDENT_REDIS_KEY}${userId}:skill-gap-analysis`;
+    const cached = await redis.get(cacheKey);
+    return cached ? JSON.parse(cached) : null;
+  }
+
+  async setCachedSkillGap(userId: string, data: any) {
+    const cacheKey = `${ENV.STUDENT_REDIS_KEY}${userId}:skill-gap-analysis`;
+    const SEVEN_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 7;
+    await redis.set(cacheKey, JSON.stringify(data), "PX", SEVEN_DAYS_IN_MS);
+  }
+
+  async invalidateSkillGapCache(userId: string) {
+    const cacheKey = `${ENV.STUDENT_REDIS_KEY}${userId}:skill-gap-analysis`;
+    await redis.del(cacheKey);
+  }
 }
+
+

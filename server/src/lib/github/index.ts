@@ -66,7 +66,7 @@ export async function fetchUserRepos(username: string): Promise<GitHubRepo[]> {
     throw new Error(`GitHub API error ${res.status}: ${await res.text()}`);
   }
 
-  const repos: GitHubRepo[] = await res.json();
+  const repos = (await res.json()) as GitHubRepo[];
 
   // Filter out forks
   return repos.filter((r) => !r.fork);
@@ -76,7 +76,7 @@ export async function fetchUserRepos(username: string): Promise<GitHubRepo[]> {
 async function fetchRepoLanguages(languagesUrl: string): Promise<string[]> {
   const res = await fetch(languagesUrl, { headers: githubHeaders() });
   if (!res.ok) return [];
-  const languagesMap: Record<string, number> = await res.json();
+  const languagesMap = (await res.json()) as Record<string, number>;
   return Object.keys(languagesMap);
 }
 
@@ -105,7 +105,7 @@ async function fetchPackageJsonDeps(username: string, repoName: string): Promise
 
     if (!res.ok) return [];
 
-    const data = await res.json();
+    const data: any = await res.json();
     const content = JSON.parse(Buffer.from(data.content, "base64").toString("utf-8"));
 
     const rawDeps = [
