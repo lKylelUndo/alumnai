@@ -28,7 +28,7 @@ class SkillController {
     }
 
     public analyzeSkillGap = async (req: Request, res: Response) => {
-        const userId = (req as any).user?.id;
+        const { userId } = (req as any).user
         if (!userId) {
             return res.status(401).json({ code: 401, status: "error", message: "User not authenticated" });
         }
