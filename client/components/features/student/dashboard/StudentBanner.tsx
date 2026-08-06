@@ -1,8 +1,23 @@
 "use client";
 import Image from "next/image"
 import StudentStatCards from "./StudentStatCards"
+import { useEffect, useState } from "react";
+import { useAuthContext } from "@/context/AuthContext";
 
 const StudentBanner = () => {
+  const { user } = useAuthContext();
+  const [dashboardStats, setDashboardStats] = useState<null>(null)
+
+  useEffect(() => {
+    async function getDashboardStats() {
+      try {
+        
+      } catch (error) {
+        console.error(error);
+      } 
+    }
+  }, [user])
+
   return (
     <section className="mt-2">
       <div className="flex items-center gap-x-4">
@@ -19,7 +34,7 @@ const StudentBanner = () => {
 
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-primary lg:text-3xl">
-            Welcome back, {"Student"}
+            Welcome back, {user?.profile?.fullName || user?.email}
           </h1>
           <p className="text-xs text-muted-foreground md:text-sm">
             Track your growth, connect with mentors, and improve your career readiness.
