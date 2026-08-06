@@ -18,5 +18,12 @@ export const skillService = {
     const response = await axiosServerInstance.get(url);
     return response.data;
   },
+
+  analyzeSkillGap: async (refresh = false) => {
+    const url = refresh ? "/api/skill/v1/skill-gap-analysis?refresh=true" : "/api/skill/v1/skill-gap-analysis";
+    const response = await axiosInstance.get(url);
+    return response.data;
+  },
 };
+
 

@@ -47,6 +47,21 @@ export class ProfileRepository {
     });
   }
 
+  async getOrCreateProfileByUserId(userId: string) {
+    return await prisma.profile.upsert({
+      where: { userId },
+      update: {},
+      create: { userId },
+    });
+  }
+
+  async findByPk(id: string) {
+    return await prisma.profile.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+  }
+
   async matchSkill(skills: string[]) {
     return await prisma.profile.findMany({
       where: {
@@ -65,3 +80,4 @@ export class ProfileRepository {
     });
   }
 }
+

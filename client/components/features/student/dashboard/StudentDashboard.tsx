@@ -1,19 +1,20 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, Users } from "lucide-react"
+import { TrendingUp, Users, Target } from "lucide-react"
 import YourMentees from "@/components/features/alumni/dashboard/YourMentees"
 import YourCollaborations from "@/components/features/alumni/dashboard/YourCollaborations"
 import ManageMentorships from "@/components/features/alumni/dashboard/ManageMentorships"
+import SkillGapAnalysis from "@/components/features/student/dashboard/SkillGapAnalysis"
 
 const DashboardPanel = () => {
   return (
     <section className="mt-6 min-h-screen">
-      <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
+      <Tabs defaultValue="gap-analysis" className="w-full bg-transparent">
         <TabsList variant="none" className="flex w-full justify-between">
           <TabsTrigger
             value="gap-analysis"
             className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Users className="h-4 w-4 text-primary" />
+            <Target className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Gap Analysis</span>
             <span className="text-xs sm:hidden">Analysis</span>
           </TabsTrigger>
@@ -46,6 +47,10 @@ const DashboardPanel = () => {
           </TabsTrigger>
         </TabsList>
 
+        <TabsContent value="gap-analysis" className="mt-4">
+          <SkillGapAnalysis />
+        </TabsContent>
+
         <TabsContent value="your-mentees" className="mt-4">
           <YourMentees />
         </TabsContent>
@@ -63,3 +68,4 @@ const DashboardPanel = () => {
 }
 
 export default DashboardPanel
+

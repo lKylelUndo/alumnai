@@ -1,7 +1,7 @@
 "use client"
 import ProfileActions from "@/components/common/ProfileActions"
 import { Card } from "@/components/ui/card"
-import { Briefcase, Backpack, LinkIcon, Mail } from "lucide-react"
+import { Briefcase, Backpack, LinkIcon, Mail, User } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
 import Image from "next/image"
 
@@ -14,12 +14,18 @@ const StudentProfileHeader = () => {
         <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
           {/* Avatar */}
           <div className="relative flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-gray-100 bg-gray-200">
-            <Image
-              src={user?.profile?.profilePicture || ""}
-              alt="profile picture"
-              fill
-              className="object-cover object-center"
-            />
+            {user?.profile?.profilePicture ? (
+              <Image
+                src={user.profile.profilePicture}
+                alt="profile picture"
+                fill
+                className="object-cover object-center"
+              />
+            ) : (
+              <span className="text-2xl font-bold text-gray-400">
+                {user?.profile?.fullName?.charAt(0) || <User />}
+              </span>
+            )}
           </div>
 
           {/* Info */}
