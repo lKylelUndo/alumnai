@@ -23,14 +23,25 @@ export class ProfileRepository {
     return profiles;
   }
 
-  async findById(userId: string) {
-    return await prisma.profile.findUnique({
-      where: { userId },
+  async findById(profileId: string, userIdWhoRequested: string) {
+    const cacheKey = `viewprofile:${userIdWhoRequested}:${profileId}`;
+
+    // try cache first
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    // fallback to db
+    const profile = await prisma.profile.findUnique({
+      where: { userId: profileId },
       include: {
         skills: true,
         certifications: true,
       },
     });
+
+    await redis.set(cacheKey, JSON.stringify(profile), "PX", 1000 * 60 * 2);
+
+    return profile;
   }
 
   async update(data: UpdateProfileInputTypes) {
