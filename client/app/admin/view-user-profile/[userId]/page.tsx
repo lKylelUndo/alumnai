@@ -1,19 +1,19 @@
-import ViewProfile from "@/components/common/ViewProfile"
-import { profileService } from "@/services/profile.service";
+import ViewProfileServerCmp from "@/components/common/ViewProfileServerCmp"
+import { profileService } from "@/services/profile.service"
 
-export default async function ViewUserProfileAdminPage({ params }: { params: Promise<{ userId: string }>}) {
-    const { userId } = await params
+export default async function ViewUserProfileAdminPage({ params }: {params: Promise<{ userId: string }>}) {
+  const { userId } = await params
 
-    let profileData = null;
-    try {
-        profileData = await profileService.viewProfile({ id: userId as string });
-    } catch (error) {
-        console.error('Failed to view profile:', error);
-    }
+  let profileData = null
+  try {
+    profileData = await profileService.viewProfile({ id: userId as string })
+  } catch (error) {
+    console.error("Failed to view profile:", error)
+  }
 
-    return (
-        <>
-        <ViewProfile profile={profileData?.profile} />
-        </>
-    )
+  return (
+    <>
+      <ViewProfileServerCmp profile={profileData?.profile} />
+    </>
+  )
 }

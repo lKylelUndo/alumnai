@@ -9,8 +9,11 @@ export type SkillLevel =
 
 export interface Skill {
   id: string;
-  name: string;
-  level: SkillLevel;
+  name?: string;
+  title?: string;
+  type?: string;
+  level?: SkillLevel | number;
+  description?: string;
 }
 
 export interface SkillCategory {
@@ -28,8 +31,11 @@ export interface Mentor {
 
 export interface Certification {
   id: string;
-  title: string;
+  name?: string;
+  title?: string;
   issuer: string;
+  fileUrl?: string;
+  issueDate?: string;
 }
 
 export interface Profile {
