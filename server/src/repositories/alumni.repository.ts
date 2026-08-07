@@ -113,9 +113,9 @@ export class AlumniRepository {
     const cacheKey = `${ENV.ALUMNI_REDIS_KEY}dashboard-stats-${userId}`
 
     const cached = await redis.get(cacheKey)
-    console.log("cachss", cached);
     if (cached) return JSON.parse(cached)
 
+    // fallback fetch data from db
     const stats = await prisma.user.findUnique({
       where: { id: userId },
       select: {

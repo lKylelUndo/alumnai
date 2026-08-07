@@ -1,7 +1,13 @@
 import DashboardQuickAction from "@/components/common/DashboardQuickAction"
 import { Handshake, Mail, Users } from "lucide-react"
 
-const StudentStatCards = () => {
+interface StudentDashboardStats {
+  activeCollaborators: number;
+  pendingInvites: number;
+  activeMentorships: number;
+}
+
+const StudentStatCards = ({dashboardStats}: {dashboardStats: StudentDashboardStats | null}) => {
   return (
     <section className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-4">
       {/* Stats Cards Section */}
@@ -17,7 +23,7 @@ const StudentStatCards = () => {
                 Active Collaborators
               </h2>
               <div className="flex items-baseline gap-x-2">
-                <span className="text-3xl font-bold text-foreground">7</span>
+                <span className="text-3xl font-bold text-foreground">{dashboardStats?.activeCollaborators || 0}</span>
                 <span className="text-xs text-muted-foreground">Users</span>
               </div>
             </div>
@@ -35,7 +41,7 @@ const StudentStatCards = () => {
                 Pending Invites
               </h2>
               <div className="flex items-baseline gap-x-2">
-                <span className="text-3xl font-bold text-foreground">2</span>
+                <span className="text-3xl font-bold text-foreground">{dashboardStats?.pendingInvites || 0}</span>
                 <span className="text-xs text-muted-foreground">Invites</span>
               </div>
             </div>
@@ -53,8 +59,8 @@ const StudentStatCards = () => {
                 Active Mentorships
               </h2>
               <div className="flex items-baseline gap-x-2">
-                <span className="text-3xl font-bold text-foreground">12</span>
-                <span className="text-xs text-muted-foreground">Mentees</span>
+                <span className="text-3xl font-bold text-foreground">{dashboardStats?.activeMentorships || 0}</span>
+                <span className="text-xs text-muted-foreground">Mentors</span>
               </div>
             </div>
           </div>
