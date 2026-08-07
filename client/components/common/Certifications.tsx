@@ -5,11 +5,15 @@ import { FileBadge, Download, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card } from "../ui/card"
 import { useAuthContext } from "@/context/AuthContext"
 
+interface CertificationsProps {
+  certifications?: any[]
+}
+
 const ITEMS_PER_PAGE = 2
 
-const Certifications = () => {
+const Certifications = ({ certifications }: CertificationsProps) => {
   const { user } = useAuthContext()
-  const certs = user?.profile?.certifications || []
+  const certs = certifications ?? user?.profile?.certifications ?? []
   const [currentPage, setCurrentPage] = useState(0)
 
   const totalPages = Math.ceil(certs.length / ITEMS_PER_PAGE)

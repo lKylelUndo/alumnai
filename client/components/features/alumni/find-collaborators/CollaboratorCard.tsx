@@ -3,7 +3,6 @@ import { Collaborator } from "@/components/features/alumni/find-collaborators/Fi
 import { Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 const VISIBLE_SKILLS = 2
 
@@ -19,7 +18,6 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
   const visibleSkills = collaborator.skills.slice(0, VISIBLE_SKILLS)
 
   const router = useRouter();
-
 
   return (
     <div className="group relative rounded-2xl border border-[#E2E6F3] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#1A216D]/30 hover:shadow-lg hover:shadow-[#1A216D]/10">

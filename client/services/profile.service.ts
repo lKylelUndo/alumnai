@@ -1,9 +1,9 @@
-import { axiosInstance } from "@/lib/axios";
+import { axiosInstance, axiosServerInstance } from "@/lib/axios";
 import { ViewProfileInput, UpdateProfileInput } from "@/schema/profile";
 
 export const profileService = {
   viewProfile: async (data: ViewProfileInput) => {
-    const response = await axiosInstance.post("/api/profile/v1/view-single-profile", data);
+    const response = await axiosServerInstance.post("/api/profile/v1/view-single-profile", { id: data.id });
     return response.data;
   },
 

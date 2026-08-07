@@ -1,13 +1,13 @@
 import { ProfileRepository } from "@/repositories/profile.repository";
 
-export const ViewProfileService = async (id: string) => {
+export const ViewProfileService = async (profileId: string, userIdWhoRequested: string) => {
   const profileRepository = new ProfileRepository();
 
   try {
-    const profile = await profileRepository.findById(id);
+    const profile = await profileRepository.findById(profileId, userIdWhoRequested);
 
     if (!profile)
-      return { stats: "error", code: 404, message: "Profile not found" };
+      return { status: "error", code: 404, message: "Profile not found" };
 
     return {
       status: "success",
