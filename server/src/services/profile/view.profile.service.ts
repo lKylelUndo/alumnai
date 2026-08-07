@@ -7,7 +7,7 @@ export const ViewProfileService = async (id: string) => {
     const profile = await profileRepository.findById(id);
 
     if (!profile)
-      return { stats: "error", code: 404, message: "Profile not found" };
+      return { status: "error", code: 404, message: "Profile not found" };
 
     return {
       status: "success",

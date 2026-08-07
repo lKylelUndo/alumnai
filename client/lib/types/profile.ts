@@ -34,19 +34,25 @@ export interface Certification {
 
 export interface Profile {
   id: string;
-  role: UserRole;
-
-  name: string;
-  studentId: string;
-  email: string;
-  github: string;
-  avatar: string;
-
-  about: string;
-
-  skills: SkillCategory[];
-
-  mentors: Mentor[];
-
+  userId: string;
+  profilePicture: string;
+  yearLevel: string;
+  fullName: string;
+  work_field: string;
+  socialLink: string;
+  companyName: string;
+  aboutMe: string;
+  current_position: string;
+  graduatedYear: string;
+  createdAt: string;
+  updatedAt: string;
+  skills: Skill[];
   certifications: Certification[];
+}
+
+export interface ViewProfileResponse {
+  status: string;
+  code: number;
+  message: string;
+  profile: Profile;
 }

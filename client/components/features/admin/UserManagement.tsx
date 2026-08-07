@@ -55,7 +55,8 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
         <UserX className="h-4 w-4" />
       </button>
       <button
-        title="View Details"
+        title="View Profile"
+        onClick={() => router.push(`/admin/view-user-profile/${id}`)}
         className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors"
       >
         <ArrowUpRight className="h-4 w-4" />
