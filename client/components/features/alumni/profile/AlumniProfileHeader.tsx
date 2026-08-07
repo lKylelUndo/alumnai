@@ -5,13 +5,7 @@ import { Briefcase, GraduationCap, LinkIcon, Mail, User } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
 import Image from "next/image"
 
-type ProfileMode = "edit" | "view";
-
-interface AlumniProfileHeaderProps {
-  mode?: ProfileMode;
-}
-
-const AlumniProfileHeader = ({ mode = "edit" }: AlumniProfileHeaderProps) => {
+const AlumniProfileHeader = () => {
   const { user } = useAuthContext();
 
   return (
