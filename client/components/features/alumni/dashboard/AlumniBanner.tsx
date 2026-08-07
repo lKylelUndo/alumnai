@@ -3,9 +3,25 @@
 import Image from "next/image"
 import AlumniStatCards from "./AlumniStatCards"
 import { useAuthContext } from "@/context/AuthContext"
+import { useEffect, useState } from "react";
+import { alumniService } from "@/services/alumni.service";
 
 const AlumniBanner = () => {
+  const [dashboardStats, setDashboardStats] = useState<null>(null);
   const { user } = useAuthContext();
+
+  useEffect(() => {
+    async function getDashboardStats() {
+      try {
+        const response = await alumniService.getDashboardStats();
+        setDashboardStats(response.data);
+      } catch (error) {
+        console.error("Failed to fetch admin stats", error);
+      }
+    }
+
+    if (user) getDashboardStats();
+  }, [user])
 
   return (
     <section className="mt-2">
@@ -30,7 +46,7 @@ const AlumniBanner = () => {
         </div>
       </div>
 
-      <AlumniStatCards />
+      <AlumniStatCards dashboardStats={dashboardStats} />
     </section>
   )
 }
