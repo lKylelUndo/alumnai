@@ -1,6 +1,6 @@
 import { Row } from "@tanstack/react-table"
 import { Collaborator } from "@/components/features/alumni/find-collaborators/FindCollaborators"
-import { Eye } from "lucide-react"
+import { Eye, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation";
 
@@ -8,6 +8,8 @@ const VISIBLE_SKILLS = 2
 
 export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
   const collaborator = row.original
+
+  console.log("cardz", collaborator);
   const initials = collaborator.name
     .split(" ")
     .map((n) => n[0])
@@ -38,7 +40,7 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
               />
             ) : (
               <span className="text-base font-bold text-[#1A216D]/60">
-                {initials}
+                <User className="h-6 w-6" />
               </span>
             )}
           </div>
@@ -49,11 +51,7 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
               {collaborator.name}
             </p>
             <p className="mt-0.5 pr-3 text-xs font-semibold text-justify text-[#4F5EBD]">
-              {collaborator.bio}
-            </p>
-
-            <p className="mt-0.5 text-[10px] font-medium tracking-wider text-gray-400 uppercase">
-              Match Score: {collaborator.score}
+              {collaborator.aboutMe?.substring(0, 50) + "..."}
             </p>
           </div>
         </div>

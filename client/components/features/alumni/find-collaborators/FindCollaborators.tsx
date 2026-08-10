@@ -1,21 +1,18 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 
 import { CardDataTable } from "@/components/common/CardDataTable"
 import CollaboratorCard from "./CollaboratorCard"
-import { Input } from "@/components/ui/input"
-import { useDebounce } from "@/hooks/useDebounce"
-import { MOCK_COLLABORATORS } from "@/constants/collaborators"
+import { alumniService } from "@/services/alumni.service"
 
 export type Collaborator = {
   id: string
   name: string
-  bio: string
-  score: number
-  reason: string
-  profilePicture?: string | null
+  aboutMe: string
+  profilePicture: string | null
+  alreadyInvited: boolean
 
   skills: {
     name: string
@@ -32,15 +29,27 @@ export const columns: ColumnDef<Collaborator>[] = [
 ]
 
 export default function FindCollaborators() {
-  // const [query, setQuery] = useState("")
+  const [collaborators, setCollaborators] = useState<Collaborator[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // const debouncedQuery = useDebounce(query, 600)
+  useEffect(() => {
+    const fetchCollaborators = async () => {
+      try {
+        setLoading(true)
+        const response = await alumniService.findCollaborators()
 
-  // const [loading, setLoading] = useState(false)
+        if (response.status === "success") {
+          setCollaborators(response.data)
+        }
+      } catch (error) {
+        console.error("Failed to fetch collaborators", error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const [collaborators, setCollaborators] = useState<Collaborator[]>(MOCK_COLLABORATORS)
-
-  //const controllerRef = useRef<AbortController | null>(null)
+    fetchCollaborators()
+  }, [])
 
   return (
     <div className="py-2">
@@ -54,26 +63,26 @@ export default function FindCollaborators() {
         </p>
       </div>
 
-      {/* <div className="mb-8">
-        <Input
-          placeholder='Try: "Looking for someone who knows React, Docker and PostgreSQL"'
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
-
       {loading && (
         <div className="mb-5 text-sm text-muted-foreground">
-          Searching collaborators...
+          Loading collaborators...
         </div>
-      )} */}
+      )}
 
-      <CardDataTable
-        columns={columns}
-        data={collaborators}
-        pageSize={6}
-        renderCard={(row) => <CollaboratorCard key={row.id} row={row} />}
-      />
+      {!loading && collaborators.length === 0 && (
+        <div className="mb-5 text-sm text-muted-foreground">
+          No student collaborators found at the moment.
+        </div>
+      )}
+
+      {!loading && collaborators.length > 0 && (
+        <CardDataTable
+          columns={columns}
+          data={collaborators}
+          pageSize={6}
+          renderCard={(row) => <CollaboratorCard key={row.id} row={row} />}
+        />
+      )}
     </div>
   )
 }
