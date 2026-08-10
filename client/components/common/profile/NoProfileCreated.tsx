@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowLeft, UserX } from "lucide-react"
 import { Card } from "../../ui/card"
 import { Button } from "../../ui/button"
