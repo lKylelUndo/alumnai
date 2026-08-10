@@ -185,12 +185,12 @@ export class AlumniRepository {
 
       return {
         id: student.id,
-        name: student.profile?.fullName ?? "Unknown Student",
-        aboutMe: student.profile?.aboutMe ?? "",
+        name: student.profile?.fullName || "Student User",
+        aboutMe: student.profile?.aboutMe || "No bio available.",
         profilePicture: student.profile?.profilePicture ?? null,
         alreadyInvited: hasInvite,
         skills: (student.profile?.skills ?? []).map((skill) => ({
-          name: skill.name,
+          name: skill.name || "General",
           level: skill.level ?? 0,
           description: skill.description ?? "",
         })),

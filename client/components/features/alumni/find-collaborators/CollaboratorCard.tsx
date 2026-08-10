@@ -9,15 +9,16 @@ const VISIBLE_SKILLS = 2
 export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
   const collaborator = row.original
 
-  console.log("cardz", collaborator);
-  const initials = collaborator.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase()
+  const name = collaborator.name || "Student User"
+  const rawAbout = collaborator.aboutMe?.trim()
+  const displayAbout = rawAbout
+    ? rawAbout.length > 50
+      ? `${rawAbout.substring(0, 50)}...`
+      : rawAbout
+    : "No bio available."
 
-  const visibleSkills = collaborator.skills.slice(0, VISIBLE_SKILLS)
+  const skills = collaborator.skills ?? []
+  const visibleSkills = skills.slice(0, VISIBLE_SKILLS)
 
   const router = useRouter();
 
@@ -35,7 +36,7 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={collaborator.profilePicture}
-                alt={collaborator.name}
+                alt={name}
                 className="h-full w-full rounded-full object-cover"
               />
             ) : (
@@ -45,13 +46,13 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
             )}
           </div>
 
-          {/* Name / Track / Year */}
+          {/* Name / About */}
           <div>
             <p className="text-sm leading-tight font-bold text-[#1A216D]">
-              {collaborator.name}
+              {name}
             </p>
             <p className="mt-0.5 pr-3 text-xs font-semibold text-justify text-[#4F5EBD]">
-              {collaborator.aboutMe?.substring(0, 50) + "..."}
+              {displayAbout}
             </p>
           </div>
         </div>
@@ -69,18 +70,22 @@ export default function CollaboratorCard({ row }: { row: Row<Collaborator> }) {
       </div>
 
       {/* Skills */}
-      {collaborator.skills.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {visibleSkills.map((skill) => (
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {visibleSkills.length > 0 ? (
+          visibleSkills.map((skill) => (
             <span
               key={skill.name}
               className="inline-flex items-center rounded-full border border-[#E2E6F3] bg-[#F5F6FC] px-2.5 py-0.5 text-[11px] font-semibold text-[#1A216D]"
             >
               {skill.name} ({skill.level}/5)
             </span>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <span className="inline-flex items-center rounded-full border border-[#E2E6F3]/60 bg-[#F5F6FC]/60 px-2.5 py-0.5 text-[11px] italic text-gray-400">
+            No skills listed
+          </span>
+        )}
+      </div>
     </div>
   )
 }
