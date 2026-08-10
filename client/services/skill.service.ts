@@ -24,6 +24,11 @@ export const skillService = {
     const response = await axiosInstance.get(url);
     return response.data;
   },
+
+  githubSkillIndex: async (githubURL: string) => {
+    const response = await axiosInstance.post("/api/skill/v1/github-skill-index", { githubURL });
+    return response.data;
+  },
 };
 
 
