@@ -11,7 +11,7 @@ import { mentorshipService } from "@/services/mentorship.service"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import Certifications from "@/components/common/Certifications"
 import { Briefcase,GraduationCap,LinkIcon,User,UserX,Building2,Mail,RefreshCw,ArrowLeft,CheckCircle2,Award,Users,Code2,Loader2,Sparkles,} from "lucide-react"
@@ -56,9 +56,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   } | null>(null)
   const [githubError, setGithubError] = useState<string | null>(null)
 
-  // Custom GitHub URL modal state if profile social link is missing
-  const [githubUrlModalOpen, setGithubUrlModalOpen] = useState(false)
-  const [customGithubUrl, setCustomGithubUrl] = useState("")
+
 
   useEffect(() => {
     if (!targetUserId) return
@@ -132,25 +130,32 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
     ) || []
   const otherSkills = profile.skills?.filter((s) => !s.type) || []
 
-  // GitHub URL extraction helper
-  const getGithubUrlToAnalyze = (urlOverride?: string) => {
-    const raw = urlOverride || customGithubUrl || profile.socialLink || ""
+  // Check if the student has a GitHub URL set in their profile
+  const hasGithubUrl = Boolean(
+    profile.socialLink &&
+    (profile.socialLink.includes("github.com") || profile.socialLink.includes("github"))
+  )
+
+  const getGithubUrl = () => {
+    const raw = profile.socialLink || ""
     if (!raw) return ""
     if (raw.startsWith("http://") || raw.startsWith("https://")) return raw
     if (raw.includes("github.com")) return `https://${raw}`
     return `https://github.com/${raw}`
   }
 
-  const handleAnalyzeGithub = async (urlOverride?: string) => {
-    const targetUrl = getGithubUrlToAnalyze(urlOverride)
-    if (!targetUrl) {
-      setGithubUrlModalOpen(true)
+  const handleAnalyzeGithub = async () => {
+    if (!hasGithubUrl) {
+      setGithubError("This student has not added their GitHub account yet. They can add it from their profile settings.")
       return
     }
+
+    const targetUrl = getGithubUrl()
 
     try {
       setAnalyzingGithub(true)
       setGithubError(null)
+      setGithubResult(null)
       const res = await skillService.githubSkillIndex(targetUrl)
 
       if (res.status === "success" && res.data) {
@@ -746,47 +751,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
         </DialogContent>
       </Dialog>
 
-      {/* GitHub URL Input Dialog (Modal fallback if socialLink is missing) */}
-      <Dialog open={githubUrlModalOpen} onOpenChange={setGithubUrlModalOpen}>
-        <DialogContent className="max-w-md p-6">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-[#1A216D]">
-              Analyze GitHub Skill Index
-            </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
-              Please enter the student&apos;s GitHub profile URL or username to analyze their repositories.
-            </DialogDescription>
-          </DialogHeader>
 
-          <div className="space-y-4 py-3">
-            <Input
-              placeholder="e.g. https://github.com/username"
-              value={customGithubUrl}
-              onChange={(e) => setCustomGithubUrl(e.target.value)}
-              className="text-sm border-gray-300 focus:border-[#1877F2]"
-            />
-
-            <div className="flex justify-end gap-3 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => setGithubUrlModalOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  setGithubUrlModalOpen(false)
-                  handleAnalyzeGithub(customGithubUrl)
-                }}
-                disabled={!customGithubUrl.trim()}
-                className="bg-[#1877F2] hover:bg-[#1565C0] text-white"
-              >
-                Analyze Skills
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
