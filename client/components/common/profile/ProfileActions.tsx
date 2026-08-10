@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Button } from "../ui/button"
+import { Button } from "../../ui/button"
 import { Download, Edit3 } from "lucide-react"
 
 const ProfileActions = ({ updateProfileURL }: { updateProfileURL: string }) => {

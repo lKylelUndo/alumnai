@@ -1,11 +1,12 @@
 import Image from "next/image"
 import { Profile } from "@/lib/types/profile"
 import { Card } from "@/components/ui/card"
-import Certifications from "@/components/common/Certifications"
+import Certifications from "@/components/common/layout/Certifications"
 import { Briefcase, GraduationCap, LinkIcon, User, UserX, Building2 } from "lucide-react"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import ProfiecienyScale from "./ProficiencyScale"
+import ProfiecienyScale from "@/components/common/skills/ProficiencyScale"
+import NoProfileCreated from "./NoProfileCreated"
 
 interface ViewProfileProps {
   profile?: Profile | null
@@ -14,20 +15,7 @@ interface ViewProfileProps {
 const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
   if (!profile) {
     return (
-      <div className="mx-auto mt-8 w-full max-w-[1200px] p-4 md:p-8">
-        <Card className="flex flex-col items-center justify-center rounded-xl border border-[#A4B1CC] bg-white p-12 text-center shadow-sm">
-          <div className="mb-4 rounded-full bg-gray-100 p-4 text-gray-400">
-            <UserX className="h-10 w-10" />
-          </div>
-          <h2 className="text-2xl font-bold text-[#1A216D]">
-            No Profile Found
-          </h2>
-          <p className="mt-2 max-w-md text-sm text-gray-500">
-            This user has not created a profile yet or the profile data could
-            not be fetched.
-          </p>
-        </Card>
-      </div>
+      <NoProfileCreated error="No profile created"/>
     )
   }
 

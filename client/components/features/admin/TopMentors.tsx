@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "@/components/common/DataTable"
+import { DataTable } from "@/components/common/tables/DataTable"
 import { Award, ArrowUpRight } from "lucide-react"
 
 export type TopMentors = {

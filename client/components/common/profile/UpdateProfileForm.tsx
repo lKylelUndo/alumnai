@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field } from "@/components/ui/field"
 import { updateProfileSchema } from "@/schema/profile"
-import AddTechOrToolsDialog from "@/components/common/AddTechOrToolsDialog"
+import AddTechOrToolsDialog from "@/components/common/dialogs/AddTechOrToolsDialog"
 import { useAuthContext } from "@/context/AuthContext"
 
 import ProfilePictureUpload from "./ProfilePictureUpload"

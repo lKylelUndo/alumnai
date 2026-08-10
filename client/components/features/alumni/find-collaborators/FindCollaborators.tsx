@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 
-import { CardDataTable } from "@/components/common/CardDataTable"
+import { CardDataTable } from "@/components/common/tables/CardDataTable"
 import CollaboratorCard from "./CollaboratorCard"
 import { alumniService } from "@/services/alumni.service"
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { DataTable } from "@/components/common/DataTable"
+import { DataTable } from "@/components/common/tables/DataTable"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"

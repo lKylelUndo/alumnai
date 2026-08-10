@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import Image from "next/image"
 import { Profile } from "@/lib/types/profile"
 import { profileService } from "@/services/profile.service"
 import { skillService } from "@/services/skill.service"
@@ -10,24 +9,19 @@ import { collaborationService } from "@/services/collaboration.service"
 import { mentorshipService } from "@/services/mentorship.service"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import Certifications from "@/components/common/Certifications"
-import { Briefcase,GraduationCap,LinkIcon,User,UserX,Building2,Mail,RefreshCw,ArrowLeft,CheckCircle2,Award,Users,Code2,Loader2,Sparkles,} from "lucide-react"
+import Certifications from "@/components/common/layout/Certifications"
+import ViewProfileHeaderCard from "@/components/common/profile/ViewProfileHeaderCard"
+import InviteDialog from "@/components/common/dialogs/InviteDialog"
+import GithubSkillIndexResultCmp, { GithubSkillIndexResultData } from "@/components/common/skills/GithubSkillIndexResultCmp"
+import { RefreshCw, ArrowLeft, Award, Users, Loader2 } from "lucide-react"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import ProfiecienyScale from "./ProficiencyScale"
+import ProfiecienyScale from "@/components/common/skills/ProficiencyScale"
+import NoProfileCreated from "./NoProfileCreated"
+import ViewProfileLoading from "./ViewProfileLoading"
 
 interface ViewProfileClientCmpProps {
   userId?: string
-}
-
-export interface GithubSkillIndexResult {
-  hardSkills: string[]
-  softSkills: string[]
-  domainFocus: string[]
-  summary: string
 }
 
 export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfileClientCmpProps) {
@@ -52,11 +46,9 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   const [githubResult, setGithubResult] = useState<{
     username: string
     reposAnalyzed: number
-    skills: GithubSkillIndexResult
+    skills: GithubSkillIndexResultData
   } | null>(null)
   const [githubError, setGithubError] = useState<string | null>(null)
-
-
 
   useEffect(() => {
     if (!targetUserId) return
@@ -85,37 +77,13 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
 
   if (loading) {
     return (
-      <div className="mx-auto mt-8 flex w-full max-w-[1200px] items-center justify-center p-8">
-        <div className="flex items-center gap-3 text-[#1A216D]">
-          <Loader2 className="h-6 w-6 animate-spin text-[#1877F2]" />
-          <span className="font-medium text-gray-700">Loading profile details...</span>
-        </div>
-      </div>
+     <ViewProfileLoading />
     )
   }
 
   if (error || !profile) {
     return (
-      <div className="mx-auto mt-8 w-full max-w-[1200px] p-4 md:p-8">
-        <Card className="flex flex-col items-center justify-center rounded-xl border border-[#A4B1CC] bg-white p-12 text-center shadow-sm">
-          <div className="mb-4 rounded-full bg-gray-100 p-4 text-gray-400">
-            <UserX className="h-10 w-10" />
-          </div>
-          <h2 className="text-2xl font-bold text-[#1A216D]">
-            {error || "No Profile Found"}
-          </h2>
-          <p className="mt-2 max-w-md text-sm text-gray-500">
-            This user has not created a profile yet or the profile data could not be fetched.
-          </p>
-          <Button
-            variant="outline"
-            className="mt-6 rounded-full"
-            onClick={() => router.back()}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
-          </Button>
-        </Card>
-      </div>
+      <NoProfileCreated error={error} />
     )
   }
 
@@ -124,10 +92,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   const isAlumni = role === "ALUMNI" || Boolean(profile.graduatedYear)
 
   const coreSkills = profile.skills?.filter((s) => s.type === "SOFT_SKILL") || []
-  const techSkills =
-    profile.skills?.filter(
-      (s) => s.type === "HARD_SKILL" || s.type === "OTHER_HARD_SKILL"
-    ) || []
+  const techSkills = profile.skills?.filter((s) => s.type === "HARD_SKILL" || s.type === "OTHER_HARD_SKILL") || []
   const otherSkills = profile.skills?.filter((s) => !s.type) || []
 
   // Check if the student has a GitHub URL set in their profile
@@ -146,7 +111,9 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
 
   const handleAnalyzeGithub = async () => {
     if (!hasGithubUrl) {
-      setGithubError("This student has not added their GitHub account yet. They can add it from their profile settings.")
+      setGithubError(
+        "This student has not added their GitHub account yet. They can add it from their profile settings."
+      )
       return
     }
 
@@ -241,129 +208,14 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* LEFT COLUMN */}
         <div className="space-y-6 lg:col-span-2">
-          {/* Header Card */}
-          <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm md:p-8">
-            <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-              <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
-                {/* Avatar */}
-                <div className="relative flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-gray-100 bg-gray-200">
-                  {profile.profilePicture ? (
-                    <Image
-                      src={profile.profilePicture}
-                      alt="profile picture"
-                      fill
-                      className="object-cover object-center"
-                    />
-                  ) : (
-                    <span className="text-3xl font-bold text-gray-400">
-                      {profile.fullName?.charAt(0) || (
-                        <User className="h-10 w-10" />
-                      )}
-                    </span>
-                  )}
-                </div>
-
-                {/* Profile Details */}
-                <div className="space-y-3">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-3xl font-bold text-[#1A216D]">
-                      {profile.fullName || "Unnamed User"}
-                    </h1>
-
-                    {isAlumni ? (
-                      <>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#1A216D] px-3 py-1 text-xs font-medium text-white">
-                          <GraduationCap className="h-4 w-4" />
-                          Alumni {profile.graduatedYear ? `(${profile.graduatedYear})` : ""}
-                        </span>
-                        <span className="inline-flex items-center gap-1 rounded-full border border-teal-500 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700">
-                          Available for Mentoring
-                        </span>
-                      </>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[#1877F2] px-3 py-1 text-xs font-medium text-white">
-                        <GraduationCap className="h-4 w-4" />
-                        Student
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="space-y-2 text-sm text-gray-600">
-                    {/* Role specific lines */}
-                    {isStudent && profile.user?.student_id_number && (
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-gray-700">
-                          Student ID: {profile.user.student_id_number}
-                        </span>
-                      </div>
-                    )}
-
-                    {isAlumni && profile.current_position && (
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="h-4 w-4 shrink-0 text-[#1A216D]" />
-                        <span className="font-medium text-gray-800">
-                          {profile.current_position}
-                        </span>
-                        {profile.companyName && (
-                          <span className="text-gray-500">
-                            @ {profile.companyName}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {profile.work_field && (
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 shrink-0 text-[#1A216D]" />
-                        <span>{profile.work_field}</span>
-                      </div>
-                    )}
-
-                    {profile.user?.email && (
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 shrink-0 text-[#1877F2]" />
-                        <span>{profile.user.email}</span>
-                      </div>
-                    )}
-
-                    {profile.socialLink && (
-                      <div className="flex items-center gap-2">
-                        <LinkIcon className="h-4 w-4 shrink-0 text-[#1877F2]" />
-                        <a
-                          href={
-                            profile.socialLink.startsWith("http")
-                              ? profile.socialLink
-                              : `https://${profile.socialLink}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[#1877F2] hover:underline"
-                        >
-                          {profile.socialLink}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="shrink-0 mt-4 md:mt-0">
-                <Button
-                  id="profile-action-invite-btn"
-                  onClick={openInviteModal}
-                  disabled={alreadyInvited}
-                  className="rounded-full bg-[#1877F2] hover:bg-[#1565C0] px-6 py-2.5 font-semibold text-white shadow-sm transition-all"
-                >
-                  {alreadyInvited
-                    ? "Invitation Sent"
-                    : isStudent
-                    ? "Send Collaboration Invite"
-                    : "Apply for Mentorship"}
-                </Button>
-              </div>
-            </div>
-          </Card>
+          {/* Top Profile Header Card */}
+          <ViewProfileHeaderCard
+            profile={profile}
+            isStudent={isStudent}
+            isAlumni={isAlumni}
+            alreadyInvited={alreadyInvited}
+            onOpenInviteModal={openInviteModal}
+          />
 
           {/* About & Skills Card */}
           <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm md:p-8">
@@ -479,7 +331,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                 </div>
               )}
 
-              {/* Fallback All Skills (if not categorized by type) */}
+              {/* Fallback All Skills */}
               {otherSkills.length > 0 && (
                 <div>
                   <h3 className="mb-3 text-sm font-semibold text-gray-800">
@@ -554,94 +406,9 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
             </Card>
           )}
 
-          {/* GitHub Skill Indexing Result Section */}
+          {/* GitHub Skill Indexing Result Component */}
           {githubResult && (
-            <Card className="rounded-xl border border-[#1877F2]/30 bg-white p-6 shadow-sm md:p-8">
-              <div className="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1877F2]/10 text-[#1877F2]">
-                  <Code2 className="h-6 w-6" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-[#1A216D]">
-                    GitHub Skill Indexing Result
-                  </h2>
-                  <p className="text-xs text-gray-500">
-                    Analyzed GitHub User:{" "}
-                    <span className="font-semibold text-gray-700">@{githubResult.username}</span>{" "}
-                    ({githubResult.reposAnalyzed} repositories detected)
-                  </p>
-                </div>
-              </div>
-
-              {/* Summary */}
-              {githubResult.skills.summary && (
-                <div className="mb-6 rounded-lg bg-[#F8FAFC] p-4 border border-slate-100">
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    {githubResult.skills.summary}
-                  </p>
-                </div>
-              )}
-
-              <div className="space-y-5">
-                {/* Domain Focus */}
-                {githubResult.skills.domainFocus?.length > 0 && (
-                  <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      Domain Focus
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {githubResult.skills.domainFocus.map((domain, i) => (
-                        <span
-                          key={i}
-                          className="inline-flex items-center rounded-md bg-[#1A216D] px-3 py-1 text-xs font-semibold text-white"
-                        >
-                          {domain}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Hard Skills */}
-                {githubResult.skills.hardSkills?.length > 0 && (
-                  <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      Detected Hard Skills & Tech Stack
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {githubResult.skills.hardSkills.map((skill, i) => (
-                        <span
-                          key={i}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-[#1877F2]/30 bg-[#F0F4FF] px-3.5 py-1 text-xs font-semibold text-[#1877F2]"
-                        >
-                          <Sparkles className="h-3 w-3 text-[#1877F2]" />
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Soft Skills */}
-                {githubResult.skills.softSkills?.length > 0 && (
-                  <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      Inferred Competencies & Soft Skills
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {githubResult.skills.softSkills.map((skill, i) => (
-                        <span
-                          key={i}
-                          className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
+            <GithubSkillIndexResultCmp githubResult={githubResult} />
           )}
         </div>
 
@@ -685,73 +452,19 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
         </div>
       </div>
 
-      {/* Invite Dialog Modal */}
-      <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
-        <DialogContent className="max-w-md p-6">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-[#1A216D]">
-              {isStudent ? "Send Collaboration Invite" : "Apply for Mentorship"}
-            </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
-              Send an invitation message to{" "}
-              <span className="font-semibold text-gray-700">
-                {profile.fullName || "User"}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-
-          {inviteSuccess ? (
-            <div className="flex flex-col items-center justify-center py-6 gap-2">
-              <CheckCircle2 className="h-12 w-12 text-emerald-500" />
-              <p className="font-semibold text-emerald-700">
-                {isStudent ? "Collaboration Invite Sent!" : "Mentorship Request Sent!"}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4 py-4">
-              <Textarea
-                placeholder="Write a message..."
-                value={inviteMessage}
-                onChange={(e) => setInviteMessage(e.target.value)}
-                rows={4}
-                className="w-full text-sm border-gray-300 focus:border-[#1877F2]"
-              />
-
-              {inviteError && (
-                <p className="text-xs text-red-600 font-medium">{inviteError}</p>
-              )}
-
-              <div className="flex justify-end gap-3 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setInviteDialogOpen(false)}
-                  disabled={sendingInvite}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSendInvite}
-                  disabled={sendingInvite}
-                  className="bg-[#1877F2] hover:bg-[#1565C0] text-white"
-                >
-                  {sendingInvite ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
-                    </>
-                  ) : isStudent ? (
-                    "Send Collaboration Invite"
-                  ) : (
-                    "Apply for Mentorship"
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-
+      {/* Invite Dialog Component */}
+      <InviteDialog
+        open={inviteDialogOpen}
+        onOpenChange={setInviteDialogOpen}
+        isStudent={isStudent}
+        fullName={profile.fullName}
+        inviteMessage={inviteMessage}
+        onMessageChange={setInviteMessage}
+        sendingInvite={sendingInvite}
+        inviteSuccess={inviteSuccess}
+        inviteError={inviteError}
+        onSendInvite={handleSendInvite}
+      />
     </div>
   )
 }

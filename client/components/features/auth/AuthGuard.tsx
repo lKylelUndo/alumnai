@@ -1,6 +1,6 @@
 "use client"
 
-import Spinner from "@/components/common/Spinner"
+import Spinner from "@/components/common/layout/Spinner"
 import { useAuthContext } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { ReactNode, useEffect } from "react"

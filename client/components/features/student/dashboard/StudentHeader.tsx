@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { User, LogOut, GraduationCap } from "lucide-react";
 import { useState } from "react";
-import RequestAlumniUpgradeDialog from "@/components/common/RequestAlumniUpgradeDialog";
+import RequestAlumniUpgradeDialog from "@/components/common/dialogs/RequestAlumniUpgradeDialog";
 
 const StudentHeader = () => {
   const { user, logout } = useAuthContext()

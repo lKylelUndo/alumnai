@@ -1,6 +1,6 @@
 "use client"
 
-import ProfiecienyScale from "@/components/common/ProficiencyScale"
+import ProfiecienyScale from "@/components/common/skills/ProficiencyScale"
 import { Card } from "@/components/ui/card"
 import AlumniCoreSkills from "./AlumniCoreSkills"
 import AlumniToolsTechnology from "./AlumniToolsTechnology"

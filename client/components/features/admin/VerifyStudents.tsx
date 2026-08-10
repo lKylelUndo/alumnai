@@ -1,6 +1,6 @@
 "use client"
 
-import { DataTable } from "@/components/common/DataTable"
+import { DataTable } from "@/components/common/tables/DataTable"
 import { adminService } from "@/services/admin.service"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { CheckCircle2, XCircle } from "lucide-react"

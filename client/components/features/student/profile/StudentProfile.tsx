@@ -1,5 +1,5 @@
 import StudentCurrentMentors from "./StudentCurrentMentors"
-import Certifications from "@/components/common/Certifications"
+import Certifications from "@/components/common/layout/Certifications"
 import StudentProfileHeader from "./StudentProfileHeader"
 import StudentProfileAbout from "./StudentProfileAbout"
 

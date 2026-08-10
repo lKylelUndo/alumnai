@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { FileBadge, Download, ChevronLeft, ChevronRight } from "lucide-react"
-import { Card } from "../ui/card"
+import { Card } from "../../ui/card"
 import { useAuthContext } from "@/context/AuthContext"
 
 interface CertificationsProps {

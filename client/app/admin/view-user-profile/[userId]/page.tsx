@@ -1,4 +1,4 @@
-import ViewProfileServerCmp from "@/components/common/ViewProfileServerCmp"
+import ViewProfileServerCmp from "@/components/common/profile/ViewProfileServerCmp"
 import { profileService } from "@/services/profile.service"
 
 export default async function ViewUserProfileAdminPage({ params }: {params: Promise<{ userId: string }>}) {
