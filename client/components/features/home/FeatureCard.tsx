@@ -1,25 +1,35 @@
-import { Card, CardDescription, CardHeader } from "@/components/ui/card"
+import type { Feature } from "@/constants/feature"
 import Image from "next/image"
 
-interface FeatureCardProps {
-  title: string
-  description: string
-  icon: string
-}
+type FeatureCardProps = Pick<Feature, "title" | "description" | "icon">
 
-export default function FeatureCard({ title, description, icon }: FeatureCardProps) {
+export default function FeatureCard({
+  title,
+  description,
+  icon,
+}: FeatureCardProps) {
+  const isImageIcon = typeof icon === "string"
+  const IconComponent = !isImageIcon ? icon : null
+
   return (
-    <Card className="p-6 border border-[#A4B1CC] hover:translate-y-0.5 transition-transform duration-300">
-      <CardHeader className="mb-4 flex justify-center">
-        <Image src={icon} alt={title} width={50} height={50} loading="eager" />
-      </CardHeader>
-      <CardHeader className="text-center text-lg font-semibold text-slate-800">
-        {title}
-      </CardHeader>
-
-      <CardDescription className="mt-3 text-center text-slate-600">
+    <article className="group flex h-full flex-col rounded-2xl border border-[#1A216D]/8 bg-white p-6 shadow-sm transition-shadow hover:shadow-md hover:shadow-[#1A216D]/5">
+      <div className="mb-5 flex size-11 items-center justify-center overflow-hidden rounded-xl bg-[#1A216D]/5 text-[#1A216D] transition-colors group-hover:bg-[#1A216D] group-hover:text-white">
+        {isImageIcon ? (
+          <Image
+            src={icon}
+            alt={title}
+            width={24}
+            height={24}
+            className="size-6 object-contain"
+          />
+        ) : IconComponent ? (
+          <IconComponent className="size-5" aria-hidden />
+        ) : null}
+      </div>
+      <h3 className="text-base font-semibold text-[#1A216D]">{title}</h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">
         {description}
-      </CardDescription>
-    </Card>
+      </p>
+    </article>
   )
 }

@@ -1,10 +1,152 @@
-import { ChartPie } from "./PieChart"
+"use client"
 
-const Analytics = () => {
+import { useState } from "react"
+import { ChartPie, PieChartItem } from "./PieChart"
+import { RefreshCw, Sparkles } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { axiosInstance } from "@/lib/axios"
+
+export type TopSkillInsight = {
+  field: string
+  skill: string
+  percentage: number
+  abbreviation: string
+  bgColor: string
+}
+
+export type SkillAnalyticsData = {
+  pieChart: PieChartItem[]
+  topSkills: TopSkillInsight[]
+  recommendation: string
+  lastUpdated?: string
+}
+
+const defaultAnalytics: SkillAnalyticsData = {
+  pieChart: [
+    { name: "TypeScript", value: 40, color: "#2563EB" },
+    { name: "JavaScript", value: 20, color: "#F59E0B" },
+    { name: "React", value: 20, color: "#06B6D4" },
+    { name: "PHP", value: 10, color: "#8B5CF6" },
+    { name: "C#", value: 10, color: "#EF4444" },
+  ],
+  topSkills: [
+    {
+      field: "Fullstack Web Development",
+      skill: "TypeScript",
+      percentage: 40,
+      abbreviation: "TS",
+      bgColor: "#2563EB",
+    },
+    {
+      field: "Backend Web Development",
+      skill: "PHP",
+      percentage: 10,
+      abbreviation: "PHP",
+      bgColor: "#8B5CF6",
+    },
+  ],
+  recommendation:
+    "TypeScript continues to lead industry adoption. Consider adding advanced Fullstack TypeScript workshops for graduating students.",
+}
+
+const Analytics = ({ data }: { data?: SkillAnalyticsData }) => {
+  const [analytics, setAnalytics] = useState<SkillAnalyticsData>(data ?? defaultAnalytics)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const handleRefreshAnalytics = async () => {
+    try {
+      setIsRefreshing(true)
+      const res = await axiosInstance.get("/api/admin/v1/get-analytics?refresh=true")
+      if (res.data?.data?.skills) {
+        setAnalytics(res.data.data.skills)
+      }
+    } catch (error) {
+      console.error("Failed to refresh AI analytics:", error)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
   return (
-    <>
-      <ChartPie />
-    </>
+    <div className="space-y-4">
+      {/* Top Header Bar with Refresh Trigger */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card p-4 shadow-xs">
+        <div>
+          <h2 className="text-lg font-bold text-primary flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-amber-500" />
+            AI Skill Trend Analytics
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Analysis is cached for 7 days to optimize performance and AI requests.
+            {analytics.lastUpdated && (
+              <span className="ml-1 text-primary/80 font-medium">
+                • Last updated: {new Date(analytics.lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+          </p>
+        </div>
+
+        <Button
+          onClick={handleRefreshAnalytics}
+          disabled={isRefreshing}
+          variant="outline"
+          size="sm"
+          className="gap-2 rounded-xl text-xs font-semibold hover:bg-primary hover:text-white transition-colors"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+          {isRefreshing ? "Analyzing with AI..." : "Refresh AI Analytics"}
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Left Card: Most Used Alumni Skills */}
+        <ChartPie data={analytics.pieChart} />
+
+        {/* Right Card: Key Insights */}
+        <div className="flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 shadow-xs h-full min-h-[420px]">
+          <div>
+            <h2 className="text-xl font-bold text-primary">Key Insights</h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              Summary of skill trends and recommendations
+            </p>
+
+            <div className="mt-8">
+              <h3 className="text-base font-bold text-primary">Overall Top Skills</h3>
+
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {analytics.topSkills?.map((item, idx) => (
+                  <div key={idx}>
+                    <p className="text-xs font-semibold text-primary/90 mb-3">
+                      {item.field}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="flex h-12 w-12 items-center justify-center rounded-lg text-white font-black text-sm shadow-xs shrink-0"
+                        style={{ backgroundColor: item.bgColor || "#007ACC" }}
+                      >
+                        {item.abbreviation}
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-foreground">{item.skill}</h4>
+                        <p className="text-xs text-muted-foreground">Used by {item.percentage}% of alumni</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Insight Badges */}
+          <div className="mt-8 rounded-xl bg-muted/50 p-4 border border-border/40">
+            <p className="text-xs font-semibold text-primary">Skill Growth Recommendation</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {analytics.recommendation}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 

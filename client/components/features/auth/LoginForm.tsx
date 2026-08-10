@@ -87,20 +87,20 @@ export default function LoginForm() {
         </FieldGroup>
         <Link
           href={"/forgot-password"}
-          className="text-xs text-primary hover:underline"
+          className="text-xs text-slate-500 hover:text-[#1A216D] hover:underline"
         >
           Forgot password?
         </Link>
       </form>
 
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-login" className="w-full">
+        <Button type="submit" form="form-rhf-login" className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
           Login
         </Button>
       </Field>
 
       <p className="mt-6 text-center text-sm text-gray-600">
-        {"Don't"} have an account?
+        {"Don't"} have an account?{" "}
         <Link
           href="/register"
           className="font-medium text-[#2D7EE2] hover:underline"

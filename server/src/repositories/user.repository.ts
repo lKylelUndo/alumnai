@@ -56,4 +56,24 @@ export class UserRepository {
       data: { password },
     });
   }
+
+  async findUserWithProfile(id: string) {
+    return await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        profile: {
+          include: {
+            skills: true,
+            certifications: true,
+          },
+        },
+        student_id_number: true,
+        email: true,
+        role: true,
+        isAccountVerified: true,
+      },
+    });
+  }
 }
+

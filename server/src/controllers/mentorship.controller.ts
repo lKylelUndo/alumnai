@@ -1,10 +1,4 @@
-import {
-  AcceptMentorshipService,
-  DeclineMentorshipService,
-  ViewAllMentorshipInvitesService,
-  SendMentorshipInviteService,
-  EndMentorshipService,
-} from "@/services/mentorship";
+import { AcceptMentorshipService, DeclineMentorshipService, ViewAllMentorshipInvitesService, SendMentorshipInviteService, EndMentorshipService } from "@/services/mentorship";
 import { Request, Response } from "express";
 
 class MentorshipController {

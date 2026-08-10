@@ -17,6 +17,7 @@ export function signRefreshToken(userId: string, email: string | null, role: str
 }
 
 export function verifyAccessToken(token: string) {
+    if (!token) return null;
     try {
       const payload = jwt.verify(token, ENV.JWT_SECRET) as JwtPayload;
       return payload.type === "access" ? payload : null;
@@ -27,6 +28,7 @@ export function verifyAccessToken(token: string) {
 }
 
 export function verifyRefreshToken(token: string) {
+     if (!token) return null;
      try {
         const payload = jwt.verify(token, ENV.JWT_SECRET) as JwtPayload;
         return payload.type === "refresh" ? payload : null;

@@ -11,13 +11,16 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-    title: "Alumnai CPC",
-    description: "This app is partial fulfillment for capstone 2"
+    title: "AlumnAI - AI-Powered Alumni-Student Matching And Skill Gap Analysis System",
+    description: "This app is partial fulfillment for Capstone 2"
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("antialiased", roboto.className)} >
+      {/* <head>
+        <script src="https://unpkg.com/react-scan/dist/auto.global.js"></script>
+      </head> */}
       <body>
         <AuthProvider>
           <TooltipProvider>

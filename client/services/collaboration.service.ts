@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import { AcceptCollaborationInviteInput, DeclineCollaborationInviteInput, SendCollaborationInviteInput, } from "@/schema/collaboration";
 
 export const collaborationService = {

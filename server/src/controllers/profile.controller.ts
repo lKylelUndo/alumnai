@@ -9,8 +9,10 @@ class ProfileController {
     }
 
     public viewProfile = async (req: Request, res: Response) => {
-        const { id } = req.body ?? {};
-        const response = await ViewProfileService(id);
+        const { id: profileId } = req.body ?? {};
+        const { userId: userIdWhoRequested } = (req as any).user;
+
+        const response = await ViewProfileService(profileId, userIdWhoRequested);
         return res.status(response.code).json(response);
     }
 

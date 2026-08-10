@@ -1,4 +1,4 @@
-import AlumniProfile from "@/components/features/alumni/AlumniProfile"
+import AlumniProfile from "@/components/features/alumni/profile/AlumniProfile"
 
 export default function AlumniProfilePage() {
   return (
