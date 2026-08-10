@@ -10,4 +10,9 @@ export const alumniService = {
     const response = await axiosInstance.get("/api/alumni/v1/get-dashboard-stats");
     return response.data;
   },
+
+  findCollaborators: async () => {
+    const response = await axiosInstance.get("/api/alumni/v1/find-collaborators");
+    return response.data;
+  },
 };

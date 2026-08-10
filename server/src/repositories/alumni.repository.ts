@@ -143,5 +143,64 @@ export class AlumniRepository {
 
     return formatted
   }
+
+  async findStudents(alumniUserId: string) {
+    const cacheKey = `${ENV.ALUMNI_REDIS_KEY}find-collaborators-${alumniUserId}`;
+
+    // try cache first
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    // fallback to DB — fetch all active students with profiles and skills
+    const students = await prisma.user.findMany({
+      where: {
+        role: "STUDENT",
+        accountStatus: "ACTIVE",
+      },
+      select: {
+        id: true,
+        profile: {
+          select: {
+            fullName: true,
+            profilePicture: true,
+            aboutMe: true,
+            skills: {
+              select: {
+                name: true,
+                level: true,
+                description: true,
+              },
+            },
+          },
+        },
+        receivedCollaborations: {
+          where: { fromAlumniId: alumniUserId },
+          select: { id: true, status: true },
+        },
+      },
+    });
+
+    const formatted = students.map((student) => {
+      const hasInvite = student.receivedCollaborations.length > 0;
+
+      return {
+        id: student.id,
+        name: student.profile?.fullName || "Student User",
+        aboutMe: student.profile?.aboutMe || "No bio available.",
+        profilePicture: student.profile?.profilePicture ?? null,
+        alreadyInvited: hasInvite,
+        skills: (student.profile?.skills ?? []).map((skill) => ({
+          name: skill.name || "General",
+          level: skill.level ?? 0,
+          description: skill.description ?? "",
+        })),
+      };
+    });
+
+    // cache for 2 minutes
+    await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 2);
+
+    return formatted;
+  }
 }
 
