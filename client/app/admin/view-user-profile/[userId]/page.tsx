@@ -1,13 +1,18 @@
 import ViewProfileServerCmp from "@/components/common/profile/ViewProfileServerCmp"
 import { profileService } from "@/services/profile.service"
 
+export const dynamic = "force-dynamic"
+
 export default async function ViewUserProfileAdminPage({ params }: {params: Promise<{ userId: string }>}) {
   const { userId } = await params
 
   let profileData = null
   try {
     profileData = await profileService.viewProfile({ id: userId as string })
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE") {
+      throw error
+    }
     console.error("Failed to view profile:", error)
   }
 

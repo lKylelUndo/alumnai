@@ -7,7 +7,10 @@ const AdminBanner = async () => {
   try {
     const response = await adminService.getDashboardStats()
     statsData = response?.data
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE") {
+      throw error
+    }
     console.error("Failed to fetch admin stats", error)
   }
 
