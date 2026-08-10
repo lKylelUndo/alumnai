@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef, Row } from "@tanstack/react-table"
-import { DataTable } from "@/components/common/DataTable"
+import { DataTable } from "@/components/common/tables/DataTable"
 import { FileText, CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"

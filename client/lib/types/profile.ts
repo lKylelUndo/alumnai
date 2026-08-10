@@ -54,6 +54,12 @@ export interface Profile {
   updatedAt: string;
   skills: Skill[];
   certifications: Certification[];
+  user?: {
+    id: string;
+    email?: string | null;
+    student_id_number?: string | null;
+    role?: "STUDENT" | "ALUMNI" | "ADMIN" | string;
+  };
 }
 
 export interface ViewProfileResponse {

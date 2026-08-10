@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Row } from "@tanstack/react-table"
 import { UserCircle2, XCircle } from "lucide-react"
-import { CardDataTable } from "@/components/common/CardDataTable"
+import { CardDataTable } from "@/components/common/tables/CardDataTable"
 import { dummyCollaborations, Collaboration } from "@/constants/alumni"
 import { useRouter } from "next/navigation";
 

@@ -1,8 +1,6 @@
-
-
 import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, Row, useReactTable } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "../ui/button"
+import { Button } from "../../ui/button"
 
 interface CardDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]

@@ -1,5 +1,5 @@
-import Header from "@/components/common/Header"
-import Footer from "@/components/common/Footer"
+import Header from "@/components/common/layout/Header"
+import Footer from "@/components/common/layout/Footer"
 import LandingPage from "@/components/features/home/LandingPage"
 
 export default function Page() {

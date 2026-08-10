@@ -1,5 +1,5 @@
 import AlumniRecognition from "./AlumniRecognition"
-import Certifications from "@/components/common/Certifications"
+import Certifications from "@/components/common/layout/Certifications"
 import AlumniProfileHeader from "./AlumniProfileHeader"
 import AlumniProfileAbout from "./AlumniProfileAbout"
 

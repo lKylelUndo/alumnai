@@ -1,4 +1,4 @@
-import DashboardQuickAction from "@/components/common/DashboardQuickAction"
+import DashboardQuickAction from "@/components/common/layout/DashboardQuickAction"
 import { Handshake, Mail, Users } from "lucide-react"
 
 interface StudentDashboardStats {

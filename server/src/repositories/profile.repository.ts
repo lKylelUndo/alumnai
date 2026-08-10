@@ -34,6 +34,14 @@ export class ProfileRepository {
     const profile = await prisma.profile.findUnique({
       where: { userId: profileId },
       include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            student_id_number: true,
+            role: true,
+          },
+        },
         skills: true,
         certifications: true,
       },

@@ -3,7 +3,8 @@ import { ViewProfileInput, UpdateProfileInput } from "@/schema/profile";
 
 export const profileService = {
   viewProfile: async (data: ViewProfileInput) => {
-    const response = await axiosServerInstance.post("/api/profile/v1/view-single-profile", { id: data.id });
+    const instance = typeof window !== "undefined" ? axiosInstance : axiosServerInstance;
+    const response = await instance.post("/api/profile/v1/view-single-profile", { id: data.id });
     return response.data;
   },
 
