@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
@@ -124,7 +125,23 @@ export const columns: ColumnDef<UserManagement>[] = [
   },
 ]
 
-export default function UserManagement({ data }: { data: UserManagement[] }) {
+export default function UserManagement({ data: initialData }: { data: UserManagement[] }) {
+  const [users, setUsers] = useState<UserManagement[]>(initialData ?? [])
+
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      setUsers(initialData)
+    } else {
+      adminService.getAllUsers()
+        .then((res) => {
+          if (res?.data?.users) {
+            setUsers(res.data.users)
+          }
+        })
+        .catch((err) => console.error("Client fetch users failed:", err))
+    }
+  }, [initialData])
+
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -134,13 +151,13 @@ export default function UserManagement({ data }: { data: UserManagement[] }) {
         </p>
       </div>
       <DataTable
-          columns={columns}
-          data={data}
-          filterColumn="user"
-          filterPlaceholder="Search by user..."
-          statusFilterColumn="status"
-          statusOptions={["Active", "Inactive", "Suspended"]}
-        />
+        columns={columns}
+        data={users}
+        filterColumn="user"
+        filterPlaceholder="Search by user..."
+        statusFilterColumn="status"
+        statusOptions={["Active", "Inactive", "Suspended"]}
+      />
     </div>
   )
 }

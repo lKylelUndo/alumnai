@@ -1,8 +1,10 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { Award, ArrowUpRight } from "lucide-react"
+import { adminService } from "@/services/admin.service"
 
 export type TopMentors = {
   ranking: string | number
@@ -53,7 +55,23 @@ export const columns: ColumnDef<TopMentors>[] = [
   },
 ]
 
-export default function TopMentors({ data }: { data: TopMentors[] }) {
+export default function TopMentors({ data: initialData }: { data: TopMentors[] }) {
+  const [mentors, setMentors] = useState<TopMentors[]>(initialData ?? [])
+
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      setMentors(initialData)
+    } else {
+      adminService.getTopMentors()
+        .then((res) => {
+          if (res?.data?.mentors) {
+            setMentors(res.data.mentors)
+          }
+        })
+        .catch((err) => console.error("Client fetch top mentors failed:", err))
+    }
+  }, [initialData])
+
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -62,7 +80,7 @@ export default function TopMentors({ data }: { data: TopMentors[] }) {
           Alumni with the most mentees and contributions
         </p>
       </div>
-      <DataTable columns={columns} data={data} filterColumn="name" filterPlaceholder="Search by name..." />
+      <DataTable columns={columns} data={mentors} filterColumn="name" filterPlaceholder="Search by name..." />
     </div>
   )
 }

@@ -1,4 +1,8 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { BookOpen, GraduationCap, Handshake, Users2, TrendingUp } from "lucide-react"
+import { adminService } from "@/services/admin.service"
 
 export interface AdminDashboardStats {
   totalStudents?: number;
@@ -15,7 +19,23 @@ interface AdminStatCardsProps {
   data?: AdminDashboardStats | null;
 }
 
-const AdminStatCards = ({ data }: AdminStatCardsProps) => {
+const AdminStatCards = ({ data: initialData }: AdminStatCardsProps) => {
+  const [stats, setStats] = useState<AdminDashboardStats | null>(initialData ?? null)
+
+  useEffect(() => {
+    if (initialData) {
+      setStats(initialData)
+    } else {
+      adminService.getDashboardStats()
+        .then((res) => {
+          if (res?.data) {
+            setStats(res.data)
+          }
+        })
+        .catch((err) => console.error("Client fetch stats failed:", err))
+    }
+  }, [initialData])
+
   const formatNumber = (num?: number) => (num ?? 0).toLocaleString();
 
   return (
@@ -29,10 +49,10 @@ const AdminStatCards = ({ data }: AdminStatCardsProps) => {
           <h2 className="mt-3 text-sm font-semibold text-primary">Total Students</h2>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-foreground">
-              {formatNumber(data?.totalStudents)}
+              {formatNumber(stats?.totalStudents)}
             </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{data?.newStudentsThisMonth ?? 0} this month
+              <TrendingUp className="h-3 w-3" /> +{stats?.newStudentsThisMonth ?? 0} this month
             </span>
           </div>
         </div>
@@ -48,10 +68,10 @@ const AdminStatCards = ({ data }: AdminStatCardsProps) => {
           <h2 className="mt-3 text-sm font-semibold text-primary">Verified Alumni</h2>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-foreground">
-              {formatNumber(data?.verifiedAlumni)}
+              {formatNumber(stats?.verifiedAlumni)}
             </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{data?.newAlumniThisMonth ?? 0} this month
+              <TrendingUp className="h-3 w-3" /> +{stats?.newAlumniThisMonth ?? 0} this month
             </span>
           </div>
         </div>
@@ -67,10 +87,10 @@ const AdminStatCards = ({ data }: AdminStatCardsProps) => {
           <h2 className="mt-3 text-sm font-semibold text-primary">Active Mentorships</h2>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-foreground">
-              {formatNumber(data?.activeMentorships)}
+              {formatNumber(stats?.activeMentorships)}
             </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{data?.newMentorshipsThisMonth ?? 0} this month
+              <TrendingUp className="h-3 w-3" /> +{stats?.newMentorshipsThisMonth ?? 0} this month
             </span>
           </div>
         </div>
@@ -86,10 +106,10 @@ const AdminStatCards = ({ data }: AdminStatCardsProps) => {
           <h2 className="mt-3 text-sm font-semibold text-primary">Active Collaborations</h2>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-foreground">
-              {formatNumber(data?.activeCollaborations)}
+              {formatNumber(stats?.activeCollaborations)}
             </span>
             <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{data?.newCollaborationsThisMonth ?? 0} this month
+              <TrendingUp className="h-3 w-3" /> +{stats?.newCollaborationsThisMonth ?? 0} this month
             </span>
           </div>
         </div>

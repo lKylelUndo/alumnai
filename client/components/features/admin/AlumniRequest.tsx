@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { FileText, CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
@@ -134,7 +135,23 @@ export const columns: ColumnDef<AlumniRequest>[] = [
   },
 ]
 
-export default function AlumniRequest({ data }: { data: AlumniRequest[] }) {
+export default function AlumniRequest({ data: initialData }: { data: AlumniRequest[] }) {
+  const [requests, setRequests] = useState<AlumniRequest[]>(initialData ?? [])
+
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      setRequests(initialData)
+    } else {
+      adminService.getAlumniRequest()
+        .then((res) => {
+          if (res?.data?.requests) {
+            setRequests(res.data.requests)
+          }
+        })
+        .catch((err) => console.error("Client fetch alumni requests failed:", err))
+    }
+  }, [initialData])
+
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -147,7 +164,7 @@ export default function AlumniRequest({ data }: { data: AlumniRequest[] }) {
       </div>
       <DataTable
         columns={columns}
-        data={data}
+        data={requests}
         filterColumn="studentId"
         filterPlaceholder="Search by Student Id..."
       />

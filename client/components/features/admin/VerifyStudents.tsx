@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { adminService } from "@/services/admin.service"
 import { ColumnDef, Row } from "@tanstack/react-table"
@@ -106,7 +107,23 @@ export const columns: ColumnDef<VerifyStudents>[] = [
   }
 ]
 
-export default function VerifyStudents({ data }: { data: VerifyStudents[] }) {
+export default function VerifyStudents({ data: initialData }: { data: VerifyStudents[] }) {
+  const [students, setStudents] = useState<VerifyStudents[]>(initialData ?? [])
+
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      setStudents(initialData)
+    } else {
+      adminService.getUnverifiedUsers()
+        .then((res) => {
+          if (res?.data?.users) {
+            setStudents(res.data.users)
+          }
+        })
+        .catch((err) => console.error("Client fetch unverified users failed:", err))
+    }
+  }, [initialData])
+
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
       <div className="mb-4">
@@ -115,7 +132,7 @@ export default function VerifyStudents({ data }: { data: VerifyStudents[] }) {
           Approve or reject student verification requests
         </p>
       </div>
-      <DataTable columns={columns} data={data} filterColumn="student_id_number" filterPlaceholder="Search by Student Id..." />
+      <DataTable columns={columns} data={students} filterColumn="student_id_number" filterPlaceholder="Search by Student Id..." />
     </div>
   )
 }

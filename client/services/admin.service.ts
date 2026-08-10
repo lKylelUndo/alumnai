@@ -1,8 +1,10 @@
 import { axiosServerInstance, axiosInstance } from "@/lib/axios"
 
+const getInstance = () => (typeof window !== "undefined" ? axiosInstance : axiosServerInstance)
+
 export const adminService = {
   getUnverifiedUsers: async () => {
-    const response = await axiosServerInstance.get("/api/admin/v1/get-unverified-users")
+    const response = await getInstance().get("/api/admin/v1/get-unverified-users")
     return response.data
   },
   
@@ -17,12 +19,12 @@ export const adminService = {
   },
 
   getTopMentors: async () => {
-    const response = await axiosServerInstance.get("/api/admin/v1/get-top-mentors")
+    const response = await getInstance().get("/api/admin/v1/get-top-mentors")
     return response.data
   },
 
   getAlumniRequest: async () => {
-    const response = await axiosServerInstance.get("/api/admin/v1/get-alumni-request")
+    const response = await getInstance().get("/api/admin/v1/get-alumni-request")
     return response.data
   },
 
@@ -37,7 +39,7 @@ export const adminService = {
   },
 
   getAllUsers: async () => {
-    const response = await axiosServerInstance.get("/api/admin/v1/get-all-users")
+    const response = await getInstance().get("/api/admin/v1/get-all-users")
     return response.data
   },
 
@@ -53,15 +55,13 @@ export const adminService = {
 
   getSkillTrendAnalytics: async (refresh = false) => {
     const url = refresh ? "/api/skill/v1/get-top-alumni-skills?refresh=true" : "/api/skill/v1/get-top-alumni-skills"
-    const response = await axiosServerInstance.get(url)
+    const response = await getInstance().get(url)
     return response.data
   },
 
   getDashboardStats: async () => {
     // All in one API for admin dashboard stats
-    const response = await axiosServerInstance.get("/api/admin/v1/get-stats")
+    const response = await getInstance().get("/api/admin/v1/get-stats")
     return response.data
   },
 }
-
-
