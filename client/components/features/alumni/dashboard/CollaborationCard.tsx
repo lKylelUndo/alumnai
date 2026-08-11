@@ -7,7 +7,7 @@ import { UserCircle2, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-export default function CollaborationCard({ row, onEnded }: { row: Row<AlumniStudentCard>; onEnded: (recordId: string) => void }) {
+export default function CollaborationCard({ row }: { row: Row<AlumniStudentCard>}) {
   const collab = row.original
   const initials = collab.name
     .split(" ")
@@ -27,7 +27,7 @@ export default function CollaborationCard({ row, onEnded }: { row: Row<AlumniStu
       })
 
       if (response.status === "success") {
-        onEnded(collab.recordId)
+        router.refresh();
       }
     } catch (error) {
       console.error("Failed to end collaboration", error)

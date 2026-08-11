@@ -5,9 +5,8 @@ import { mentorshipService } from "@/services/mentorship.service"
 import { Row } from "@tanstack/react-table"
 import { UserCircle2, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 
-export default function MenteeCard({ row, onEnded }: {row: Row<AlumniStudentCard>; onEnded: (recordId: string) => void}) {
+export default function MenteeCard({ row }: {row: Row<AlumniStudentCard>}) {
   const mentee = row.original
   const initials = mentee.name
     .split(" ")
@@ -17,23 +16,20 @@ export default function MenteeCard({ row, onEnded }: {row: Row<AlumniStudentCard
     .toUpperCase()
 
   const router = useRouter()
-  const [ending, setEnding] = useState(false)
 
   const handleEndMentorship = async () => {
     try {
-      setEnding(true)
       const response = await mentorshipService.endMentorship({
         mentorshipId: mentee.recordId,
       })
 
       if (response.status === "success") {
-        onEnded(mentee.recordId)
+        console.log("ended")
+        router.refresh();
       }
     } catch (error) {
       console.error("Failed to end mentorship", error)
-    } finally {
-      setEnding(false)
-    }
+    } 
   }
 
   return (
@@ -80,12 +76,11 @@ export default function MenteeCard({ row, onEnded }: {row: Row<AlumniStudentCard
         </button>
         <button
           id={`end-mentorship-${mentee.recordId}`}
-          disabled={ending}
           className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#793A3A] bg-white px-3 py-1.5 text-xs font-semibold text-[#793A3A] transition-all duration-200 hover:border-red-400 hover:bg-red-500 hover:text-white active:scale-95 disabled:opacity-50"
           onClick={handleEndMentorship}
         >
           <XCircle className="h-3.5 w-3.5" />
-          {ending ? "Ending..." : "End Mentorship"}
+          End Mentorship
         </button>
       </div>
     </div>

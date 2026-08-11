@@ -4,8 +4,31 @@ import SkillGapAnalysis from "@/components/features/student/dashboard/SkillGapAn
 import CollaborationInvites from "./CollaborationInvites"
 import Collaborators from "./Collaborators"
 import Mentors from "./Mentors"
+import { studentService } from "@/services/student.service"
 
-const DashboardPanel = () => {
+const DashboardPanel = async () => {
+  // let myCollaborationInvites: any = null
+  // let myMentors: any = null
+  // let myCollaborators: any = null
+
+  // try {
+  //   const results = await Promise.allSettled([
+  //     studentService.getMyCollaborationInvites(),
+  //     studentService.getMyMentors(),
+  //     studentService.getMyCollaborators(),
+  //   ])
+
+  //   if(results[0].status === "fulfilled") myCollaborationInvites = results[0].value
+  //   if(results[1].status === "fulfilled") myMentors = results[1].value
+  //   if(results[2].status === "fulfilled") myCollaborators = results[2].value
+  // } catch (error) {
+  //   console.error("Failed to load admin dashboard panel data:", error)
+  // }
+
+  // console.log("Student collaboration invites:",myCollaborationInvites)
+  // console.log("Student mentors:",myMentors)
+  // console.log("Student collaborators:",myCollaborators)
+  
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="gap-analysis" className="w-full bg-transparent">

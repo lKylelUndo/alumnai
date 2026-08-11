@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axios";
+import { axiosInstance, axiosServerInstance } from "@/lib/axios";
 
 export type AlumniStudentCard = {
   id: string
@@ -10,6 +10,8 @@ export type AlumniStudentCard = {
   profilePicture?: string | null
   message?: string
 }
+
+const getInstance = () => (typeof window !== "undefined" ? axiosInstance : axiosServerInstance)
 
 export const alumniService = {
   requestAlumniUpgrade: async (documentUrl: string) => {
@@ -23,22 +25,22 @@ export const alumniService = {
   },
 
   findCollaborators: async () => {
-    const response = await axiosInstance.get("/api/alumni/v1/find-collaborators");
+    const response = await getInstance().get("/api/alumni/v1/find-collaborators");
     return response.data;
   },
 
   getMyMentees: async () => {
-    const response = await axiosInstance.get("/api/alumni/v1/get-my-mentees");
+    const response = await getInstance().get("/api/alumni/v1/get-my-mentees");
     return response.data;
   },
 
   getMyCollaborations: async () => {
-    const response = await axiosInstance.get("/api/alumni/v1/get-my-collaborations");
+    const response = await getInstance().get("/api/alumni/v1/get-my-collaborations");
     return response.data;
   },
 
   getMentorshipRequests: async () => {
-    const response = await axiosInstance.get("/api/alumni/v1/get-mentorship-requests");
+    const response = await getInstance().get("/api/alumni/v1/get-mentorship-requests");
     return response.data;
   },
 };
