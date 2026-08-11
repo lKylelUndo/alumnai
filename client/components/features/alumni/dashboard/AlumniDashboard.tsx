@@ -4,11 +4,12 @@ import YourMentees from "./YourMentees"
 import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
 import { alumniService } from "@/services/alumni.service"
+import { AlumniStudentCardTypes } from "@/constants/alumni"
 
 const DashboardPanel = async () => {
-  let myMentees: any = null
-  let myCollaborations: any = null
-  let myMentorshipRequests: any = null
+  let myMentees: AlumniStudentCardTypes | null = null
+  let myCollaborations: AlumniStudentCardTypes | null = null
+  let myMentorshipRequests: AlumniStudentCardTypes | null = null
 
   try {
     const results = await Promise.allSettled([
@@ -23,10 +24,6 @@ const DashboardPanel = async () => {
   } catch (error) {
     console.error("Failed to load admin dashboard panel data:", error)
   }
-
-  console.log("Alumni mentees:",myMentees)
-  console.log("Alumni collaborations:",myCollaborations)
-  console.log("Alumni mentorships:",myMentorshipRequests)
 
   return (
     <section className="mt-6 min-h-screen">
