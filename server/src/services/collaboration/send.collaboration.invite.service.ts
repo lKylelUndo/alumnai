@@ -2,6 +2,7 @@ import { ENV } from "@/config/env";
 import { redis } from "@/lib/redis";
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { SendCollaborationInviteInputTypes } from "@/schema/collaboration";
+import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 
 export const SendCollaborationInviteService = async (userId: string, data: SendCollaborationInviteInputTypes) => {
   const collaborationRepository = new CollaborationRepository();
@@ -17,8 +18,10 @@ export const SendCollaborationInviteService = async (userId: string, data: SendC
     if (Object.keys(response).length === 0)
       return { status: "error", code: 400, message: "Failed to send an invitation" };
 
-    // Invalidate the find-collaborators cache for this alumni
-    await redis.del(`${ENV.ALUMNI_REDIS_KEY}find-collaborators-${userId}`);
+    await Promise.all([
+      redis.del(`${ENV.ALUMNI_REDIS_KEY}find-collaborators-${userId}`),
+      invalidateAlumniDashboardCache(userId),
+    ]);
 
     return { status: "success", code: 200, message: "Successfully send an invitation" };
   } catch (error) {

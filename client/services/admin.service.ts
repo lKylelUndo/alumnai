@@ -1,6 +1,6 @@
 import { axiosServerInstance, axiosInstance } from "@/lib/axios"
 
-// tima elhan ni sia na if client component ba or server component ni mag call
+// tima elhan ni sia na if client component ba or server component ang nag call
 const getInstance = () => (typeof window !== "undefined" ? axiosInstance : axiosServerInstance)
 
 export const adminService = {

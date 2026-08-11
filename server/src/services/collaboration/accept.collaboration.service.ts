@@ -1,4 +1,5 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
+import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 
 export const AcceptCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
@@ -8,6 +9,8 @@ export const AcceptCollaborationService = async (collaborationId: string) => {
 
     if (!response)
       return { status: "error", code: 400, message: "Failed to accept a collaboration" };
+
+    await invalidateAlumniDashboardCache(response.fromAlumniId);
 
     return { status: "success", code: 200, message: "Successfully accept a collaboration" };
   } catch (error) {

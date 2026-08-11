@@ -1,18 +1,25 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Row } from "@tanstack/react-table"
+import { useEffect, useState } from "react"
+import { ColumnDef, Row } from "@tanstack/react-table"
 import { UserCircle2, XCircle } from "lucide-react"
 import { CardDataTable } from "@/components/common/tables/CardDataTable"
-import { dummyCollaborations, Collaboration } from "@/constants/alumni"
-import { useRouter } from "next/navigation";
+import { AlumniStudentCard } from "@/constants/alumni"
+import { alumniService } from "@/services/alumni.service"
+import { collaborationService } from "@/services/collaboration.service"
+import { useRouter } from "next/navigation"
 
-
-export const columns: ColumnDef<Collaboration>[] = [
+export const columns: ColumnDef<AlumniStudentCard>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
-function CollaborationCard({ row }: { row: Row<Collaboration> }) {
+function CollaborationCard({
+  row,
+  onEnded,
+}: {
+  row: Row<AlumniStudentCard>
+  onEnded: (recordId: string) => void
+}) {
   const collab = row.original
   const initials = collab.name
     .split(" ")
@@ -21,15 +28,30 @@ function CollaborationCard({ row }: { row: Row<Collaboration> }) {
     .slice(0, 2)
     .toUpperCase()
 
-    const router = useRouter();
+  const router = useRouter()
+  const [ending, setEnding] = useState(false)
 
+  const handleEndCollaboration = async () => {
+    try {
+      setEnding(true)
+      const response = await collaborationService.endCollab({
+        collaborationId: collab.recordId,
+      })
+
+      if (response.status === "success") {
+        onEnded(collab.recordId)
+      }
+    } catch (error) {
+      console.error("Failed to end collaboration", error)
+    } finally {
+      setEnding(false)
+    }
+  }
 
   return (
     <div className="group relative rounded-2xl border border-[#E2E6F3] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#1A216D]/30 hover:shadow-lg hover:shadow-[#1A216D]/10">
-      {/* Hover accent top line */}
-      <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl  opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      {/* Avatar + Info */}
       <div className="flex items-center gap-3">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#E2E6F3] bg-[#EEF0FB] transition-all duration-300 group-hover:border-[#1A216D]/30">
           {collab.profilePicture ? (
@@ -59,7 +81,6 @@ function CollaborationCard({ row }: { row: Row<Collaboration> }) {
         </div>
       </div>
 
-      {/* Actions */}
       <div className="mt-4 flex items-center gap-2">
         <button
           id={`view-profile-collab-${collab.id}`}
@@ -70,11 +91,13 @@ function CollaborationCard({ row }: { row: Row<Collaboration> }) {
           View Profile
         </button>
         <button
-          id={`end-collab-${collab.id}`}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#793A3A] bg-white px-3 py-1.5 text-xs font-semibold text-[#793A3A] transition-all duration-200 hover:border-red-400 hover:bg-red-500 hover:text-white active:scale-95"
+          id={`end-collab-${collab.recordId}`}
+          disabled={ending}
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#793A3A] bg-white px-3 py-1.5 text-xs font-semibold text-[#793A3A] transition-all duration-200 hover:border-red-400 hover:bg-red-500 hover:text-white active:scale-95 disabled:opacity-50"
+          onClick={handleEndCollaboration}
         >
           <XCircle className="h-3.5 w-3.5" />
-          End Collaboration
+          {ending ? "Ending..." : "End Collaboration"}
         </button>
       </div>
     </div>
@@ -82,20 +105,65 @@ function CollaborationCard({ row }: { row: Row<Collaboration> }) {
 }
 
 const YourCollaborations = () => {
+  const [collaborations, setCollaborations] = useState<AlumniStudentCard[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchCollaborations = async () => {
+      try {
+        setLoading(true)
+        const response = await alumniService.getMyCollaborations()
+
+        if (response.status === "success") {
+          setCollaborations(response.data ?? [])
+        }
+      } catch (error) {
+        console.error("Failed to fetch collaborations", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCollaborations()
+  }, [])
+
+  const handleEnded = (recordId: string) => {
+    setCollaborations((prev) =>
+      prev.filter((collab) => collab.recordId !== recordId),
+    )
+  }
+
   return (
-    <div className="p-4 rounded shadow-md">
+    <div className="rounded p-4 shadow-md">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-primary">Your Collaborations</h2>
         <p className="text-xs text-muted-foreground">
           Students you&apos;re collaborating with
         </p>
       </div>
-      <CardDataTable
-        columns={columns}
-        data={dummyCollaborations}
-        pageSize={9}
-        renderCard={(row) => <CollaborationCard key={row.id} row={row} />}
-      />
+
+      {loading && (
+        <div className="mb-5 text-sm text-muted-foreground">
+          Loading collaborations...
+        </div>
+      )}
+
+      {!loading && collaborations.length === 0 && (
+        <div className="mb-5 text-sm text-muted-foreground">
+          No active collaborations at the moment.
+        </div>
+      )}
+
+      {!loading && collaborations.length > 0 && (
+        <CardDataTable
+          columns={columns}
+          data={collaborations}
+          pageSize={9}
+          renderCard={(row) => (
+            <CollaborationCard key={row.id} row={row} onEnded={handleEnded} />
+          )}
+        />
+      )}
     </div>
   )
 }
