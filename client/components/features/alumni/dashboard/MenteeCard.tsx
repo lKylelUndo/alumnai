@@ -1,12 +1,12 @@
 "use client";
 
-import { AlumniStudentCard } from "@/constants/alumni"
+import { AlumniStudentCardTypes } from "@/constants/alumni"
 import { mentorshipService } from "@/services/mentorship.service"
 import { Row } from "@tanstack/react-table"
 import { UserCircle2, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-export default function MenteeCard({ row }: {row: Row<AlumniStudentCard>}) {
+export default function MenteeCard({ row }: {row: Row<AlumniStudentCardTypes>}) {
   const mentee = row.original
   const initials = mentee.name
     .split(" ")

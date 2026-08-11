@@ -1,11 +1,11 @@
-import { AlumniStudentCard } from "@/constants/alumni"
+import { AlumniStudentCardTypes } from "@/constants/alumni"
 import { MessageSquare, UserCircle2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Row } from "@tanstack/react-table"
 import { useState } from "react"
 
-export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentCard> }) {
+export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentCardTypes> }) {
   const request = row.original
   const initials = request.name
     .split(" ")

@@ -2,10 +2,10 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { CardDataTable } from "@/components/common/tables/CardDataTable"
-import { AlumniStudentCard } from "@/constants/alumni"
+import { AlumniStudentCardTypes } from "@/constants/alumni"
 import MenteeCard from "./MenteeCard"
 
-export const columns: ColumnDef<AlumniStudentCard>[] = [
+export const columns: ColumnDef<AlumniStudentCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 

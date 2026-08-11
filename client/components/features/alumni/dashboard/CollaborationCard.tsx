@@ -1,13 +1,13 @@
 "use client"
 
-import { AlumniStudentCard } from "@/constants/alumni"
+import { AlumniStudentCardTypes } from "@/constants/alumni"
 import { collaborationService } from "@/services/collaboration.service"
 import { Row } from "@tanstack/react-table"
 import { UserCircle2, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-export default function CollaborationCard({ row }: { row: Row<AlumniStudentCard>}) {
+export default function CollaborationCard({ row }: { row: Row<AlumniStudentCardTypes>}) {
   const collab = row.original
   const initials = collab.name
     .split(" ")
