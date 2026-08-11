@@ -3,8 +3,32 @@ import { TrendingUp, Users, Handshake } from "lucide-react"
 import YourMentees from "./YourMentees"
 import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
+import { alumniService } from "@/services/alumni.service"
+import { AlumniStudentCardTypes } from "@/constants/alumni"
 
-const DashboardPanel = () => {
+const DashboardPanel = async () => {
+  let myMentees: any = null
+  let myCollaborations: any = null
+  let myMentorshipRequests: any = null
+
+  try {
+    const results = await Promise.allSettled([
+      alumniService.getMyMentees(),
+      alumniService.getMyCollaborations(),
+      alumniService.getMentorshipRequests(),
+    ])
+
+    if(results[0].status === "fulfilled") myMentees = results[0].value
+    if(results[1].status === "fulfilled") myCollaborations = results[1].value
+    if(results[2].status === "fulfilled") myMentorshipRequests = results[2].value
+  } catch (error) {
+    console.error("Failed to load admin dashboard panel data:", error)
+  }
+
+  console.log("myntesss", myMentees)
+  console.log("mycollabs", myCollaborations)
+  console.log("mymens", myMentorshipRequests)
+
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
@@ -40,18 +64,18 @@ const DashboardPanel = () => {
         </TabsList>
 
         <TabsContent value="your-mentees" className="mt-4 bg-transparent">
-          <YourMentees />
+          <YourMentees mentees={myMentees?.data || []} />
         </TabsContent>
 
         <TabsContent
           value="your-collaborations"
           className="mt-4 bg-transparent"
         >
-          <YourCollaborations />
+          <YourCollaborations collaborations={myCollaborations?.data || []} />
         </TabsContent>
 
         <TabsContent value="manage-mentorships" className="mt-4 bg-transparent">
-          <ManageMentorships />
+          <ManageMentorships requests={myMentorshipRequests?.data || []} />
         </TabsContent>
       </Tabs>
     </section>

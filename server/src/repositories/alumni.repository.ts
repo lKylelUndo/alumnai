@@ -1,6 +1,7 @@
 import { ENV } from "@/config/env";
 import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
+import { formatStudentCard } from "@/utils/format-student-card";
 
 export class AlumniRepository {
   async findAlumniRequests() {
@@ -201,6 +202,132 @@ export class AlumniRepository {
     await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 2);
 
     return formatted;
+  }
+
+  async getActiveMentees(alumniUserId: string) {
+    const cacheKey = `${ENV.ALUMNI_REDIS_KEY}mentees-${alumniUserId}`
+
+    const cached = await redis.get(cacheKey)
+    if (cached) return JSON.parse(cached)
+
+    const mentorships = await prisma.mentorship.findMany({
+      where: {
+        toAlumniId: alumniUserId,
+        status: "ACTIVE",
+      },
+      include: {
+        fromStudent: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                fullName: true,
+                profilePicture: true,
+                work_field: true,
+                yearLevel: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    })
+
+    const formatted = mentorships.map((mentorship) =>
+      formatStudentCard(mentorship.fromStudent.id, mentorship.fromStudent.profile, {
+        recordId: mentorship.id,
+        status: mentorship.status,
+        message: mentorship.message_details,
+      }),
+    )
+
+    await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5)
+
+    return formatted
+  }
+
+  async getActiveCollaborations(alumniUserId: string) {
+    const cacheKey = `${ENV.ALUMNI_REDIS_KEY}collaborations-${alumniUserId}`
+
+    const cached = await redis.get(cacheKey)
+    if (cached) return JSON.parse(cached)
+
+    const collaborations = await prisma.collaboration.findMany({
+      where: {
+        fromAlumniId: alumniUserId,
+        status: "ACTIVE",
+      },
+      include: {
+        toStudent: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                fullName: true,
+                profilePicture: true,
+                work_field: true,
+                yearLevel: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    })
+
+    const formatted = collaborations.map((collaboration) =>
+      formatStudentCard(collaboration.toStudent.id, collaboration.toStudent.profile, {
+        recordId: collaboration.id,
+        status: collaboration.status,
+        message: collaboration.message_details,
+      }),
+    )
+
+    await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5)
+
+    return formatted
+  }
+
+  async getPendingMentorshipRequests(alumniUserId: string) {
+    const cacheKey = `${ENV.ALUMNI_REDIS_KEY}mentorship-requests-${alumniUserId}`
+
+    const cached = await redis.get(cacheKey)
+    if (cached) return JSON.parse(cached)
+
+    const requests = await prisma.mentorship.findMany({
+      where: {
+        toAlumniId: alumniUserId,
+        status: "PENDING",
+      },
+      include: {
+        fromStudent: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                fullName: true,
+                profilePicture: true,
+                work_field: true,
+                yearLevel: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    })
+
+    const formatted = requests.map((request) =>
+      formatStudentCard(request.fromStudent.id, request.fromStudent.profile, {
+        recordId: request.id,
+        status: request.status,
+        message: request.message_details,
+      }),
+    )
+
+    await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5)
+
+    return formatted
   }
 }
 
