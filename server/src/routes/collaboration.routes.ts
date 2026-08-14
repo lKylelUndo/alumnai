@@ -8,6 +8,9 @@ import { Router } from "express";
 
 const router = Router();
 
+router.get("/v1/get-my-student-collaborations", authMiddleware.execute, permittedRole([RoleType.STUDENT]), collaborationController.getMyCollaborations);
+router.get("/v1/get-collab-requests", authMiddleware.execute, permittedRole([RoleType.STUDENT]), collaborationController.getCollabRequests);
+
 router.post("/v1/view-my-collab-invites", authMiddleware.execute, permittedRole([RoleType.STUDENT]), collaborationController.viewAllCollaborationInvites);
 router.post("/v1/accept-collab", authMiddleware.execute, permittedRole([RoleType.STUDENT]), validateSchema(acceptCollaborationInviteSchema), collaborationController.acceptCollaboration);
 router.delete("/v1/decline-collab", authMiddleware.execute, permittedRole([RoleType.STUDENT]), validateSchema(declineCollaborationInviteSchema), collaborationController.declineCollaboration);

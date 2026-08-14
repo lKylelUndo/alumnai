@@ -3,6 +3,7 @@ import { redis } from "@/lib/redis";
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { SendMentorshipInviteTypes } from "@/schema/mentorship";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
+import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
 
 export const SendMentorshipInviteService = async (userId: string, data: SendMentorshipInviteTypes) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -21,6 +22,7 @@ export const SendMentorshipInviteService = async (userId: string, data: SendMent
     await Promise.all([
       redis.del(`${ENV.STUDENT_REDIS_KEY}find-mentors-${userId}`),
       invalidateAlumniDashboardCache(data.toAlumniId),
+      invalidateStudentDashboardCache(userId),
     ]);
 
     return { status: "success", code: 200, message: "Successfully send mentorship invite" };

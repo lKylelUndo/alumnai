@@ -3,6 +3,7 @@ import { redis } from "@/lib/redis";
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { SendCollaborationInviteInputTypes } from "@/schema/collaboration";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
+import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
 
 export const SendCollaborationInviteService = async (userId: string, data: SendCollaborationInviteInputTypes) => {
   const collaborationRepository = new CollaborationRepository();
@@ -21,6 +22,7 @@ export const SendCollaborationInviteService = async (userId: string, data: SendC
     await Promise.all([
       redis.del(`${ENV.ALUMNI_REDIS_KEY}find-collaborators-${userId}`),
       invalidateAlumniDashboardCache(userId),
+      invalidateStudentDashboardCache(data.toStudentId),
     ]);
 
     return { status: "success", code: 200, message: "Successfully send an invitation" };

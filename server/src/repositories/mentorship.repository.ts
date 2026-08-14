@@ -1,5 +1,6 @@
 import { ENV } from "@/config/env";
 import { prisma } from "@/lib/prisma";
+import { redis } from "@/lib/redis";
 import { SendMentorshipInviteTypes } from "@/schema/mentorship";
 
 export class MentorshipRepository {
@@ -49,5 +50,54 @@ export class MentorshipRepository {
       where: { id },
       data: { status: "INACTIVE" },
     });
+  }
+
+  async getActiveMentors(studentUserId: string) {
+    const cacheKey = `${ENV.STUDENT_REDIS_KEY}mentors-${studentUserId}`;
+
+    const cached = await redis.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    const mentorships = await prisma.mentorship.findMany({
+      where: {
+        fromStudentId: studentUserId,
+        status: "ACTIVE",
+      },
+      include: {
+        toAlumni: {
+          select: {
+            id: true,
+            email: true,
+            profile: {
+              select: {
+                fullName: true,
+                profilePicture: true,
+                work_field: true,
+                companyName: true,
+                current_position: true,
+                graduatedYear: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    const formatted = mentorships.map((mentorship) => ({
+      toAlumniId: mentorship.toAlumni.id,
+      mentorshipRecordId: mentorship.id,
+      fullName: mentorship.toAlumni.profile?.fullName || "Alumni Mentor",
+      workField: mentorship.toAlumni.profile?.work_field || "General",
+      companyName: mentorship.toAlumni.profile?.companyName || null,
+      currentPosition: mentorship.toAlumni.profile?.current_position || null,
+      status: mentorship.status,
+      profilePicture: mentorship.toAlumni.profile?.profilePicture ?? null,
+      message: mentorship.message_details,
+    }));
+
+    await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5);
+
+    return formatted;
   }
 }
