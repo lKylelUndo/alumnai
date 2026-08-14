@@ -16,8 +16,4 @@ router.get("/v1/get-my-mentees", authMiddleware.execute, permittedRole([RoleType
 router.get("/v1/get-my-collaborations", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), alumniController.getMyCollaborations);
 router.get("/v1/get-mentorship-requests", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), alumniController.getMentorshipRequests);
 
-router.post("/v1/accept-mentorship-request", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), alumniController.acceptMentorshipRequest);
-router.post("/v1/decline-mentorship-request", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), alumniController.declineMentorshipRequest);
-
-
 export default router;

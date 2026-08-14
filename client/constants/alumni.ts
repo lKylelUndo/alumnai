@@ -1,6 +1,6 @@
 export type AlumniStudentCardTypes = {
   fromStudentId: string
-  mentorshipRecord: string
+  mentorshipRecordId: string
   fullName: string
   track: string | null
   yearLevel: string | null

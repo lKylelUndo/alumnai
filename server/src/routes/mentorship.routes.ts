@@ -9,8 +9,10 @@ import { acceptMentorshipInviteSchema, declineMentorshipInviteSchema, sendMentor
 const router = Router();
 
 router.get("/v1/view-my-mentorship-invites", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), mentorshipController.viewAllMentorshipInvites);
+
 router.post("/v1/accept-mentorship", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), validateSchema(acceptMentorshipInviteSchema),mentorshipController.acceptMentorship);
 router.delete("/v1/decline-mentorship", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), validateSchema(declineMentorshipInviteSchema), mentorshipController.declineMentorship);
+
 router.post("/v1/send-mentorship-invite", authMiddleware.execute, permittedRole([RoleType.STUDENT]), validateSchema(sendMentorshipInviteSchema), mentorshipController.sendMentorshipInvite);
 router.delete("/v1/end-mentorship", authMiddleware.execute, permittedRole([RoleType.ALUMNI, RoleType.STUDENT]), validateSchema(declineMentorshipInviteSchema), mentorshipController.endMentorship);
 

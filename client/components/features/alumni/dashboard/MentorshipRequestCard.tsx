@@ -76,7 +76,7 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentC
             View Profile
           </button>
           <button
-            id={`view-message-request-${request.mentorshipRecord}`}
+            id={`view-message-request-${request.mentorshipRecordId}`}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[#1A216D] px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-[#1A216D]/85 active:scale-95"
             onClick={() => setMessageOpen(true)}
           >

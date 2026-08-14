@@ -38,15 +38,6 @@ class AlumniController {
     const response = await GetMentorshipRequestsService(userId);
     return res.status(response.code).json(response);
   };
-
-  public acceptMentorshipRequest = async (req: Request, res: Response) => {
-    const userId = req.user!.userId;
-    const { mentorshipRecordId } = req.body ?? {};
-    const response = await AcceptMentorshipRequestService(userId, mentorshipRecordId);
-    return res.status(response.code).json(response);
-  };
-
-  // public declineMentorshipRequest = async (req: Request, res: Response) => {
   //   const userId = req.user!.userId;
   //   const { mentorshipRecordId } = req.body ?? {};
   //   const response = await DeclineMentorshipRequestService(userId, mentorshipRecordId);
