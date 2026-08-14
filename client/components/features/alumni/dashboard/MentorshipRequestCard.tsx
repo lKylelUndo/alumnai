@@ -1,12 +1,13 @@
-import { AlumniStudentCardTypes } from "@/constants/alumni"
 import { MessageSquare, User, UserCircle2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Row } from "@tanstack/react-table"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { mentorshipService } from "@/services/mentorship.service"
+import { AlumniStudentMentorshipCardTypes } from "@/constants/alumni"
 
-export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentCardTypes> }) {
+export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentMentorshipCardTypes> }) {
   const request = row.original
   const router = useRouter()
   const [messageOpen, setMessageOpen] = useState(false)
@@ -15,7 +16,12 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentC
   async function acceptMentorshipRequest() {
     try {
       setLoading(true)
-      console.log("request", request);
+      const response = await mentorshipService.acceptMentorship({
+        mentorshipRecordId: request.mentorshipRecordId,
+      })
+      if (response.status === "success") {
+        router.refresh()
+      }
     } catch (error) {
       console.error("error accepting mentorship request:", error)
     } finally {
@@ -26,7 +32,14 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentC
   async function declineMentorshipRequest() {
     try {
       setLoading(true)
+      const response = await mentorshipService.declineMentorship({
+        mentorshipRecordId: request.mentorshipRecordId,
+      })
+      if (response.status === "success") {
+        router.refresh()
+      }
     } catch (error) {
+      console.error("error declining mentorship request:", error)
     } finally {
       setLoading(false)
     }

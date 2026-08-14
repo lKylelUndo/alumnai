@@ -4,14 +4,14 @@ import { Request, Response } from "express";
 
 class MentorshipController {
   public acceptMentorship = async (req: Request, res: Response) => {
-    const { mentorshipId } = req.body ?? {};
-    const response = await AcceptMentorshipService(mentorshipId)
+    const { mentorshipRecordId } = req.body ?? {};
+    const response = await AcceptMentorshipService(mentorshipRecordId)
     return res.status(response.code).json(response);
   };
 
   public declineMentorship = async (req: Request, res: Response) => {
-    const { mentorshipId } = req.body ?? {};
-    const response = await DeclineMentorshipService(mentorshipId)
+    const { mentorshipRecordId } = req.body ?? {};
+    const response = await DeclineMentorshipService(mentorshipRecordId)
     return res.status(response.code).json(response);
   };
 
@@ -29,8 +29,8 @@ class MentorshipController {
   };
 
   public endMentorship = async (req: Request, res: Response) => {
-    const { mentorshipId } = req.body ?? {};
-    const response = await EndMentorshipService(mentorshipId);
+    const { mentorshipRecordId } = req.body ?? {};
+    const response = await EndMentorshipService(mentorshipRecordId);
     return res.status(response.code).json(response);
   };
 

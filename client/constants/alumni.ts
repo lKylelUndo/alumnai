@@ -1,10 +1,20 @@
-export type AlumniStudentCardTypes = {
+export type AlumniStudentMentorshipCardTypes = {
   fromStudentId: string
   mentorshipRecordId: string
   fullName: string
-  track: string | null
-  yearLevel: string | null
+  track: string 
+  yearLevel: string
   status: "ACTIVE" | "INACTIVE" | "PENDING"
-  profilePicture: string | null
+  profilePicture: string
   message: string
+}
+
+export type AlumniStudentCollaborationCardTypes = {
+  fromStudentId: string
+  collaborationId: string 
+  fullName: string
+  track: string 
+  yearLevel: string 
+  status: "ACTIVE" | "INACTIVE" | "PENDING"
+  profilePicture: string 
 }
