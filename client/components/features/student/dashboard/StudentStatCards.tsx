@@ -2,9 +2,10 @@ import DashboardQuickAction from "@/components/common/layout/DashboardQuickActio
 import { Handshake, Mail, Users } from "lucide-react"
 
 interface StudentDashboardStats {
-  activeCollaborators: number;
-  pendingInvites: number;
-  activeMentorships: number;
+  activeCollaborators?: number;
+  pendingInvites?: number;
+  pendingRequests?: number;
+  activeMentorships?: number;
 }
 
 const StudentStatCards = ({dashboardStats}: {dashboardStats: StudentDashboardStats | null}) => {
@@ -41,7 +42,7 @@ const StudentStatCards = ({dashboardStats}: {dashboardStats: StudentDashboardSta
                 Pending Invites
               </h2>
               <div className="flex items-baseline gap-x-2">
-                <span className="text-3xl font-bold text-foreground">{dashboardStats?.pendingInvites || 0}</span>
+                <span className="text-3xl font-bold text-foreground">{dashboardStats?.pendingInvites ?? dashboardStats?.pendingRequests ?? 0}</span>
                 <span className="text-xs text-muted-foreground">Invites</span>
               </div>
             </div>
@@ -70,7 +71,7 @@ const StudentStatCards = ({dashboardStats}: {dashboardStats: StudentDashboardSta
       {/* Quick Actions Panel */}
       <DashboardQuickAction
         profileRoute="/student/profile"
-        updateProfileRoute="/alumni/profile/update"
+        updateProfileRoute="/student/profile/update"
         featureRoute="/student/find-mentors"
         featureLabel="Find Mentors"
       />

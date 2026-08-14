@@ -3,3 +3,5 @@ export { DeclineCollaborationService } from "@/services/collaboration/decline.co
 export { ViewAllCollaborationInvitesService } from "@/services/collaboration/view.all.collaboration.invites.service";
 export { SendCollaborationInviteService } from "@/services/collaboration/send.collaboration.invite.service";
 export { EndCollaborationService } from "@/services/collaboration/end.collaboration.service";
+export { GetMyStudentCollaborationsService } from "@/services/collaboration/get.my.student.collaborations.service";
+export { GetCollabRequestsService } from "@/services/collaboration/get.collab.requests.service";

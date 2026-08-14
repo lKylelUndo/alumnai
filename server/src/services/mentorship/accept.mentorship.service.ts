@@ -1,5 +1,6 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
+import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
 
 export const AcceptMentorshipService = async (mentorshipId: string, alumniId: string) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -10,7 +11,10 @@ export const AcceptMentorshipService = async (mentorshipId: string, alumniId: st
     if (!response)
       return { status: "error", code: 400, message: "Failed to accept mentorship invite" };
 
-    await invalidateAlumniDashboardCache(alumniId);
+    await Promise.all([
+      invalidateAlumniDashboardCache(alumniId),
+      invalidateStudentDashboardCache(response.fromStudentId),
+    ]);
 
     return { status: "success", code: 200, message: "Successfully accept a mentorship" };
   } catch (error) {

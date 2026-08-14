@@ -13,24 +13,25 @@ export class StudentRepository {
         const stats = await prisma.user.findUnique({
             where: { id: userId },
             select: {
-                sentCollaborations: {
+                receivedCollaborations: {
                     select: { id: true, status: true },
                 },
-                receivedMentorships: {
+                sentMentorships: {
                     select: { id: true, status: true },
                 },
             }
         })
 
-        const activeCollaborators = stats?.sentCollaborations.filter((c) => c.status === "ACTIVE").length ?? 0
-        const activeMentorships = stats?.receivedMentorships.filter((m) => m.status === "ACTIVE").length ?? 0
-        const pendingMentorships = stats?.receivedMentorships.filter((m) => m.status === "PENDING").length ?? 0
-        const pendingCollaborations = stats?.sentCollaborations.filter((c) => c.status === "PENDING").length ?? 0
+        const activeCollaborators = stats?.receivedCollaborations.filter((c) => c.status === "ACTIVE").length ?? 0
+        const activeMentorships = stats?.sentMentorships.filter((m) => m.status === "ACTIVE").length ?? 0
+        const pendingMentorships = stats?.sentMentorships.filter((m) => m.status === "PENDING").length ?? 0
+        const pendingCollaborations = stats?.receivedCollaborations.filter((c) => c.status === "PENDING").length ?? 0
 
         const formatted = {
             activeCollaborators,
             activeMentorships,
-            pendingRequests: pendingMentorships + pendingCollaborations,
+            pendingRequests: pendingCollaborations,
+            pendingInvites: pendingCollaborations,
         }
 
         await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5)

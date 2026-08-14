@@ -38,5 +38,11 @@ export const mentorshipService = {
     const response = await getInstance().get("/api/mentorship/v1/get-mentorship-requests");
     return response.data;
   },
+
+  getMyMentors: async () => {
+    const response = await getInstance().get("/api/mentorship/v1/get-my-mentors");
+    return response.data;
+  },
 };
+
 

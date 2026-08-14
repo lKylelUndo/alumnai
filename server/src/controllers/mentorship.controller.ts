@@ -1,4 +1,4 @@
-import { AcceptMentorshipService, DeclineMentorshipService, ViewAllMentorshipInvitesService, SendMentorshipInviteService, EndMentorshipService } from "@/services/mentorship";
+import { AcceptMentorshipService, DeclineMentorshipService, ViewAllMentorshipInvitesService, SendMentorshipInviteService, EndMentorshipService, GetMyMentorsService } from "@/services/mentorship";
 import { GetMyMenteesService, GetMentorshipRequestsService } from "@/services/alumni";
 import { Request, Response } from "express";
 
@@ -47,7 +47,14 @@ class MentorshipController {
     const response = await GetMentorshipRequestsService(userId);
     return res.status(response.code).json(response);
   };
+
+  public getMyMentors = async (req: Request, res: Response) => {
+    const userId = req.user!.userId;
+    const response = await GetMyMentorsService(userId);
+    return res.status(response.code).json(response);
+  };
 }
 
 export default new MentorshipController();
+
 
