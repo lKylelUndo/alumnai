@@ -5,13 +5,15 @@ import { Request, Response } from "express";
 class MentorshipController {
   public acceptMentorship = async (req: Request, res: Response) => {
     const { mentorshipRecordId } = req.body ?? {};
-    const response = await AcceptMentorshipService(mentorshipRecordId)
+    const { userId: alumniId } = req.user!;
+    const response = await AcceptMentorshipService(mentorshipRecordId, alumniId)
     return res.status(response.code).json(response);
   };
 
   public declineMentorship = async (req: Request, res: Response) => {
     const { mentorshipRecordId } = req.body ?? {};
-    const response = await DeclineMentorshipService(mentorshipRecordId)
+    const { userId: alumniId } = req.user!;
+    const response = await DeclineMentorshipService(mentorshipRecordId, alumniId)
     return res.status(response.code).json(response);
   };
 
@@ -24,7 +26,7 @@ class MentorshipController {
   public sendMentorshipInvite = async (req: Request, res: Response) => {
     const { userId } = req.user!;
     const { toAlumniId, message_details } = req.body ?? {};
-    const response = await SendMentorshipInviteService(userId, { toAlumniId, message_details } );
+    const response = await SendMentorshipInviteService(userId, { toAlumniId, message_details });
     return res.status(response.code).json(response);
   };
 
