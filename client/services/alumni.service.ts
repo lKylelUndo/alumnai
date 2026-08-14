@@ -29,18 +29,10 @@ export const alumniService = {
     return response.data;
   },
 
-  getMyMentees: async () => {
-    const response = await getInstance().get("/api/alumni/v1/get-my-mentees");
-    return response.data;
-  },
-
   getMyCollaborations: async () => {
     const response = await getInstance().get("/api/alumni/v1/get-my-collaborations");
     return response.data;
   },
 
-  getMentorshipRequests: async () => {
-    const response = await getInstance().get("/api/alumni/v1/get-mentorship-requests");
-    return response.data;
-  },
+
 };

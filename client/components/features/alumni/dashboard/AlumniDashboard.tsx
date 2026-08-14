@@ -4,6 +4,7 @@ import YourMentees from "./YourMentees"
 import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
 import { alumniService } from "@/services/alumni.service"
+import { mentorshipService } from "@/services/mentorship.service"
 import { AlumniStudentCardTypes } from "@/constants/alumni"
 
 const DashboardPanel = async () => {
@@ -13,9 +14,9 @@ const DashboardPanel = async () => {
 
   try {
     const results = await Promise.allSettled([
-      alumniService.getMyMentees(),
+      mentorshipService.getMyMentees(),
       alumniService.getMyCollaborations(),
-      alumniService.getMentorshipRequests(),
+      mentorshipService.getMentorshipRequests(),
     ])
 
     if(results[0].status === "fulfilled") myMentees = results[0].value.data
