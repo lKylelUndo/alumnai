@@ -18,7 +18,7 @@ export const GetAlumniDashboardStatsService = async (userId: string) => {
             data: response,
         };
     } catch (error) {
-        console.error("Failed to fetch admin stats", error);
+        console.error("GetAlumniDashboardStatsServiceError", error);
         return {
             status: "error",
             message: "Failed to fetch admin stats",

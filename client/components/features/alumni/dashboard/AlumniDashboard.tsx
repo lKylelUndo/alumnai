@@ -25,10 +25,6 @@ const DashboardPanel = async () => {
     console.error("Failed to load admin dashboard panel data:", error)
   }
 
-  console.log("myntesss", myMentees)
-  console.log("mycollabs", myCollaborations)
-  console.log("mymens", myMentorshipRequests)
-
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">

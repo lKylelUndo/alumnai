@@ -1,4 +1,4 @@
-import { FindRandomCollaboratorsService, GetAlumniDashboardStatsService, GetMentorshipRequestsService, GetMyCollaborationsService, GetMyMenteesService, RequestAlumniUpgradeService } from "@/services/alumni";
+import { AcceptMentorshipRequestService, DeclineMentorshipRequestService, FindRandomCollaboratorsService, GetAlumniDashboardStatsService, GetMentorshipRequestsService, GetMyCollaborationsService, GetMyMenteesService, RequestAlumniUpgradeService } from "@/services/alumni";
 import type { Request, Response } from "express";
 
 class AlumniController {
@@ -38,6 +38,20 @@ class AlumniController {
     const response = await GetMentorshipRequestsService(userId);
     return res.status(response.code).json(response);
   };
+
+  public acceptMentorshipRequest = async (req: Request, res: Response) => {
+    const userId = req.user!.userId;
+    const { mentorshipRecordId } = req.body ?? {};
+    const response = await AcceptMentorshipRequestService(userId, mentorshipRecordId);
+    return res.status(response.code).json(response);
+  };
+
+  // public declineMentorshipRequest = async (req: Request, res: Response) => {
+  //   const userId = req.user!.userId;
+  //   const { mentorshipRecordId } = req.body ?? {};
+  //   const response = await DeclineMentorshipRequestService(userId, mentorshipRecordId);
+  //   return res.status(response.code).json(response);
+  // };
 }
 
 export default new AlumniController();

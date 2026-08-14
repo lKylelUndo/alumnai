@@ -4,3 +4,5 @@ export { FindRandomCollaboratorsService } from "@/services/alumni/find.random.co
 export { GetMyMenteesService } from "@/services/alumni/get.my.mentees.service"
 export { GetMyCollaborationsService } from "@/services/alumni/get.my.collaborations.service"
 export { GetMentorshipRequestsService } from "@/services/alumni/get.mentorship.requests.service"
+export { AcceptMentorshipRequestService } from "@/services/alumni/accept.mentorship.request.service"
+export { DeclineMentorshipRequestService } from "@/services/alumni/decline.mentorship.request.service"
