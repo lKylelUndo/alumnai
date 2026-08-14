@@ -5,12 +5,12 @@ import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
 import { alumniService } from "@/services/alumni.service"
 import { mentorshipService } from "@/services/mentorship.service"
-import { AlumniStudentCardTypes } from "@/constants/alumni"
+import { AlumniStudentMentorshipCardTypes, AlumniStudentCollaborationCardTypes } from "@/constants/alumni"
 
 const DashboardPanel = async () => {
-  let myMentees: AlumniStudentCardTypes[] = []
-  let myCollaborations: AlumniStudentCardTypes[] = []
-  let myMentorshipRequests: AlumniStudentCardTypes[] = []
+  let myMentees: AlumniStudentMentorshipCardTypes[] = []
+  let myCollaborations: AlumniStudentCollaborationCardTypes[] = []
+  let myMentorshipRequests: AlumniStudentMentorshipCardTypes[] = []
 
   try {
     const results = await Promise.allSettled([

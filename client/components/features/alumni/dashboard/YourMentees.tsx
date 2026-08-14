@@ -2,14 +2,14 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { CardDataTable } from "@/components/common/tables/CardDataTable"
-import { AlumniStudentCardTypes } from "@/constants/alumni"
+import { AlumniStudentMentorshipCardTypes } from "@/constants/alumni"
 import MenteeCard from "./MenteeCard"
 
-export const columns: ColumnDef<AlumniStudentCardTypes>[] = [
+export const columns: ColumnDef<AlumniStudentMentorshipCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
-const YourMentees = ({ mentees }: { mentees: AlumniStudentCardTypes[] }) => {
+const YourMentees = ({ mentees }: { mentees: AlumniStudentMentorshipCardTypes[] }) => {
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

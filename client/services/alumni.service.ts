@@ -20,7 +20,7 @@ export const alumniService = {
   },
 
   getDashboardStats: async () => {
-    const response = await axiosInstance.get("/api/alumni/v1/get-dashboard-stats");
+    const response = await getInstance().get("/api/alumni/v1/get-dashboard-stats");
     return response.data;
   },
 
