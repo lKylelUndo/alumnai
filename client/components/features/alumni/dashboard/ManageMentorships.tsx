@@ -9,7 +9,7 @@ export const columns: ColumnDef<AlumniStudentCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
-const ManageMentorships = ({ requests }: { requests: any }) => {
+const ManageMentorships = ({ requests }: { requests: AlumniStudentCardTypes[] }) => {
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

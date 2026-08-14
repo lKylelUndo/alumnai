@@ -9,9 +9,7 @@ export const columns: ColumnDef<AlumniStudentCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
-const YourCollaborations = ({ collaborations }: { collaborations: any }) => {
-
-  console.log("yourcollaborcmp: ", collaborations)
+const YourCollaborations = ({ collaborations }: { collaborations: AlumniStudentCardTypes[] }) => {
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

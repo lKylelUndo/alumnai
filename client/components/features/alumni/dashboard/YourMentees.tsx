@@ -9,8 +9,7 @@ export const columns: ColumnDef<AlumniStudentCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
-const YourMentees = ({ mentees }: { mentees: any }) => {
-  console.log("yourmenteescmp",mentees)
+const YourMentees = ({ mentees }: { mentees: AlumniStudentCardTypes[] }) => {
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">
