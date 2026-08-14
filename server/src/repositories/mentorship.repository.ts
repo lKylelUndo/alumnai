@@ -1,3 +1,4 @@
+import { ENV } from "@/config/env";
 import { prisma } from "@/lib/prisma";
 import { SendMentorshipInviteTypes } from "@/schema/mentorship";
 
@@ -13,16 +14,16 @@ export class MentorshipRepository {
     });
   }
 
-  async accept(id: string) {
+  async accept(id: string, alumniId: string) {
     return await prisma.mentorship.update({
-      where: { id },
+      where: { id, toAlumniId: alumniId },
       data: { status: "ACTIVE" },
     });
   }
 
-  async decline(id: string) {
+  async decline(id: string, alumniId: string) {
     return await prisma.mentorship.delete({
-      where: { id },
+      where: { id, toAlumniId: alumniId },
     });
   }
 

@@ -1,4 +1,4 @@
-import { FindRandomCollaboratorsService, GetAlumniDashboardStatsService, GetMentorshipRequestsService, GetMyCollaborationsService, GetMyMenteesService, RequestAlumniUpgradeService } from "@/services/alumni";
+import { FindRandomCollaboratorsService, GetAlumniDashboardStatsService, GetMyCollaborationsService, RequestAlumniUpgradeService } from "@/services/alumni";
 import type { Request, Response } from "express";
 
 class AlumniController {
@@ -21,23 +21,12 @@ class AlumniController {
     return res.status(response.code).json(response);
   };
 
-  public getMyMentees = async (req: Request, res: Response) => {
-    const userId = req.user!.userId;
-    const response = await GetMyMenteesService(userId);
-    return res.status(response.code).json(response);
-  };
-
   public getMyCollaborations = async (req: Request, res: Response) => {
     const userId = req.user!.userId;
     const response = await GetMyCollaborationsService(userId);
     return res.status(response.code).json(response);
   };
-
-  public getMentorshipRequests = async (req: Request, res: Response) => {
-    const userId = req.user!.userId;
-    const response = await GetMentorshipRequestsService(userId);
-    return res.status(response.code).json(response);
-  };
 }
 
 export default new AlumniController();
+

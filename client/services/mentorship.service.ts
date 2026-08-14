@@ -1,5 +1,7 @@
-import { axiosInstance } from "@/lib/axios";
+import { axiosInstance, axiosServerInstance } from "@/lib/axios";
 import { AcceptMentorshipInviteInput, DeclineMentorshipInviteInput, SendMentorshipInviteInput } from "@/schema/mentorship";
+
+const getInstance = () => (typeof window !== "undefined" ? axiosInstance : axiosServerInstance)
 
 export const mentorshipService = {
   viewMyMentorshipInvites: async () => {
@@ -26,4 +28,15 @@ export const mentorshipService = {
     const response = await axiosInstance.delete("/api/mentorship/v1/end-mentorship", { data });
     return response.data;
   },
+
+  getMyMentees: async () => {
+    const response = await getInstance().get("/api/mentorship/v1/get-my-mentees");
+    return response.data;
+  },
+
+  getMentorshipRequests: async () => {
+    const response = await getInstance().get("/api/mentorship/v1/get-mentorship-requests");
+    return response.data;
+  },
 };
+

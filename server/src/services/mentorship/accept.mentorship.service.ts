@@ -1,16 +1,16 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 
-export const AcceptMentorshipService = async (mentorshipId: string) => {
+export const AcceptMentorshipService = async (mentorshipId: string, alumniId: string) => {
   const mentorshipRepository = new MentorshipRepository();
 
   try {
-    const response = await mentorshipRepository.accept(mentorshipId);
+    const response = await mentorshipRepository.accept(mentorshipId, alumniId);
 
     if (!response)
       return { status: "error", code: 400, message: "Failed to accept mentorship invite" };
 
-    await invalidateAlumniDashboardCache(response.toAlumniId);
+    await invalidateAlumniDashboardCache(alumniId);
 
     return { status: "success", code: 200, message: "Successfully accept a mentorship" };
   } catch (error) {

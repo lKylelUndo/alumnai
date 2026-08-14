@@ -1,27 +1,20 @@
-"use client";
-
 import Image from "next/image"
 import AlumniStatCards from "./AlumniStatCards"
-import { useAuthContext } from "@/context/AuthContext"
-import { useEffect, useState } from "react";
-import { alumniService } from "@/services/alumni.service";
+import AlumniWelcomeHeader from "./AlumniWelcomeHeader"
+import { alumniService } from "@/services/alumni.service"
 
-const AlumniBanner = () => {
-  const [dashboardStats, setDashboardStats] = useState<null>(null);
-  const { user } = useAuthContext();
+const AlumniBanner = async () => {
+  let dashboardStats = null;
 
-  useEffect(() => {
-    async function getDashboardStats() {
-      try {
-        const response = await alumniService.getDashboardStats();
-        setDashboardStats(response.data);
-      } catch (error) {
-        console.error("Failed to fetch admin stats", error);
-      }
+  try {
+    const response = await alumniService.getDashboardStats();
+    dashboardStats = response?.data;
+  } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE") {
+      throw error;
     }
-
-    if (user) getDashboardStats();
-  }, [user])
+    console.error("Failed to fetch alumni stats", error);
+  }
 
   return (
     <section className="mt-2">
@@ -36,14 +29,7 @@ const AlumniBanner = () => {
           />
         </div>
 
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-primary lg:text-3xl">
-            Welcome back, {user?.profile?.fullName || user?.email || "Alumni"}
-          </h1>
-          <p className="text-xs text-muted-foreground md:text-sm">
-            Manage mentorships, connect with mentees, and collaborate with projects.
-          </p>
-        </div>
+        <AlumniWelcomeHeader />
       </div>
 
       <AlumniStatCards dashboardStats={dashboardStats} />
@@ -52,3 +38,4 @@ const AlumniBanner = () => {
 }
 
 export default AlumniBanner
+

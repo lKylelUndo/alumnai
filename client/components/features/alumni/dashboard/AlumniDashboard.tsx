@@ -4,30 +4,27 @@ import YourMentees from "./YourMentees"
 import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
 import { alumniService } from "@/services/alumni.service"
-import { AlumniStudentCardTypes } from "@/constants/alumni"
+import { mentorshipService } from "@/services/mentorship.service"
+import { AlumniStudentMentorshipCardTypes, AlumniStudentCollaborationCardTypes } from "@/constants/alumni"
 
 const DashboardPanel = async () => {
-  let myMentees: any = null
-  let myCollaborations: any = null
-  let myMentorshipRequests: any = null
+  let myMentees: AlumniStudentMentorshipCardTypes[] = []
+  let myCollaborations: AlumniStudentCollaborationCardTypes[] = []
+  let myMentorshipRequests: AlumniStudentMentorshipCardTypes[] = []
 
   try {
     const results = await Promise.allSettled([
-      alumniService.getMyMentees(),
+      mentorshipService.getMyMentees(),
       alumniService.getMyCollaborations(),
-      alumniService.getMentorshipRequests(),
+      mentorshipService.getMentorshipRequests(),
     ])
 
-    if(results[0].status === "fulfilled") myMentees = results[0].value
-    if(results[1].status === "fulfilled") myCollaborations = results[1].value
-    if(results[2].status === "fulfilled") myMentorshipRequests = results[2].value
+    if(results[0].status === "fulfilled") myMentees = results[0].value.data
+    if(results[1].status === "fulfilled") myCollaborations = results[1].value.data
+    if(results[2].status === "fulfilled") myMentorshipRequests = results[2].value.data
   } catch (error) {
     console.error("Failed to load admin dashboard panel data:", error)
   }
-
-  console.log("myntesss", myMentees)
-  console.log("mycollabs", myCollaborations)
-  console.log("mymens", myMentorshipRequests)
 
   return (
     <section className="mt-6 min-h-screen">
@@ -64,18 +61,18 @@ const DashboardPanel = async () => {
         </TabsList>
 
         <TabsContent value="your-mentees" className="mt-4 bg-transparent">
-          <YourMentees mentees={myMentees?.data || []} />
+          <YourMentees mentees={myMentees || []} />
         </TabsContent>
 
         <TabsContent
           value="your-collaborations"
           className="mt-4 bg-transparent"
         >
-          <YourCollaborations collaborations={myCollaborations?.data || []} />
+          <YourCollaborations collaborations={myCollaborations || []} />
         </TabsContent>
 
         <TabsContent value="manage-mentorships" className="mt-4 bg-transparent">
-          <ManageMentorships requests={myMentorshipRequests?.data || []} />
+          <ManageMentorships requests={myMentorshipRequests || []} />
         </TabsContent>
       </Tabs>
     </section>
