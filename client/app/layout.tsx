@@ -11,8 +11,11 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-    title: "AlumnAI - AI-Powered Alumni-Student Matching And Skill Gap Analysis System",
-    description: "This app is partial fulfillment for Capstone 2"
+  title: {
+    default: "AlumnAI - AI-Powered Alumni-Student Matching And Skill Gap Analysis System",
+    template: "%s | AlumnAI",
+  },
+  description: "Bridge the gap between education and career. AlumnAI connects students with alumni for mentorship, career guidance, and skill analysis.",
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
