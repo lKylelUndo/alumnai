@@ -1,3 +1,5 @@
+"use client";
+
 import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, Row, useReactTable } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "../../ui/button"
@@ -9,6 +11,7 @@ interface CardDataTableProps<TData, TValue> {
   pageSize?: number
   renderCard: (row: Row<TData>) => React.ReactNode
   emptyState?: React.ReactNode
+  emptyMessage?: string
 }
 
 export function CardDataTable<TData, TValue>({
@@ -18,6 +21,7 @@ export function CardDataTable<TData, TValue>({
   pageSize = 9,
   renderCard,
   emptyState,
+  emptyMessage
 }: CardDataTableProps<TData, TValue>) {
 
   const table = useReactTable({
@@ -62,10 +66,7 @@ export function CardDataTable<TData, TValue>({
               </svg>
             </div>
             <p className="text-base font-semibold text-[#1A216D]">
-              No collaborators found
-            </p>
-            <p className="mt-1 text-sm text-gray-400">
-              Try adjusting your search
+              {emptyMessage}
             </p>
           </div>
         )

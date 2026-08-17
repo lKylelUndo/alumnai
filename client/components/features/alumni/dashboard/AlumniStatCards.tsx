@@ -8,7 +8,6 @@ interface DashboardStats {
 }
 
 const AlumniStatCards = ({ dashboardStats } : {dashboardStats: DashboardStats | null}) => {
-  console.log("dashboardStats", dashboardStats)
   return (
     <section className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-4">
       {/* Stats Cards Section */}

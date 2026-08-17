@@ -1,4 +1,6 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
+import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
+import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
 
 export const EndMentorshipService = async (mentorshipId: string) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -8,6 +10,11 @@ export const EndMentorshipService = async (mentorshipId: string) => {
 
     if (!response)
       return { status: "error", code: 400, message: "Failed to end mentorship" };
+
+    await Promise.all([
+      invalidateAlumniDashboardCache(response.toAlumniId),
+      invalidateStudentDashboardCache(response.fromStudentId),
+    ]);
 
     return { status: "success", code: 200, message: "Successfully end mentorship" };
   } catch (error) {

@@ -1,11 +1,32 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, Users, Target } from "lucide-react"
-import YourMentees from "@/components/features/alumni/dashboard/YourMentees"
-import YourCollaborations from "@/components/features/alumni/dashboard/YourCollaborations"
-import ManageMentorships from "@/components/features/alumni/dashboard/ManageMentorships"
+import { TrendingUp, Users, Target, Mail, Handshake } from "lucide-react"
 import SkillGapAnalysis from "@/components/features/student/dashboard/SkillGapAnalysis"
+import CollaborationInvites from "./CollaborationInvites"
+import Collaborators from "./Collaborators"
+import Mentors from "./Mentors"
+import { mentorshipService } from "@/services/mentorship.service"
+import { collaborationService } from "@/services/collaboration.service"
+import { StudentMentorCardTypes, StudentCollaboratorCardTypes, StudentCollabInviteCardTypes } from "@/constants/student"
 
-const DashboardPanel = () => {
+const DashboardPanel = async () => {
+  let myCollaborationInvites: StudentCollabInviteCardTypes[] = []
+  let myMentors: StudentMentorCardTypes[] = []
+  let myCollaborators: StudentCollaboratorCardTypes[] = []
+
+  try {
+    const results = await Promise.allSettled([
+      collaborationService.getCollabRequests(),
+      mentorshipService.getMyMentors(),
+      collaborationService.getMyStudentCollaborations(),
+    ])
+
+    if (results[0].status === "fulfilled") myCollaborationInvites = results[0].value?.data || []
+    if (results[1].status === "fulfilled") myMentors = results[1].value?.data || []
+    if (results[2].status === "fulfilled") myCollaborators = results[2].value?.data || []
+  } catch (error) {
+    console.error("Failed to load student dashboard panel data:", error)
+  }
+
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="gap-analysis" className="w-full bg-transparent">
@@ -20,16 +41,16 @@ const DashboardPanel = () => {
           </TabsTrigger>
 
           <TabsTrigger
-            value="your-collaborations"
+            value="collaboration-invites"
             className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Users className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Collaboration Invites</span>
-            <span className="text-xs sm:hidden">Collaborations</span>
+            <Mail className="h-4 w-4 text-primary" />
+            <span className="hidden sm:inline">Collaboration Requests</span>
+            <span className="text-xs sm:hidden">Requests</span>
           </TabsTrigger>
 
           <TabsTrigger
-            value="your-mentees"
+            value="my-mentors"
             className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <TrendingUp className="h-4 w-4 text-primary" />
@@ -38,11 +59,11 @@ const DashboardPanel = () => {
           </TabsTrigger>
 
           <TabsTrigger
-            value="manage-mentorships"
+            value="my-collaborators"
             className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Users className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">My Collaborators</span>
+            <Handshake className="h-4 w-4 text-primary" />
+            <span className="hidden sm:inline">Your Collaborators</span>
             <span className="text-xs sm:hidden">Collaborators</span>
           </TabsTrigger>
         </TabsList>
@@ -51,16 +72,16 @@ const DashboardPanel = () => {
           <SkillGapAnalysis />
         </TabsContent>
 
-        <TabsContent value="your-mentees" className="mt-4">
-          <YourMentees />
+        <TabsContent value="collaboration-invites" className="mt-4">
+          <CollaborationInvites invites={myCollaborationInvites || []} />
         </TabsContent>
 
-        <TabsContent value="your-collaborations" className="mt-4">
-          <YourCollaborations />
+        <TabsContent value="my-mentors" className="mt-4">
+          <Mentors mentors={myMentors || []} />
         </TabsContent>
 
-        <TabsContent value="manage-mentorships" className="mt-4">
-          <ManageMentorships />
+        <TabsContent value="my-collaborators" className="mt-4">
+          <Collaborators collaborators={myCollaborators || []} />
         </TabsContent>
       </Tabs>
     </section>

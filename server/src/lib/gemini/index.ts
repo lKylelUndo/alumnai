@@ -15,7 +15,8 @@ export const AVAILABLE_GEMINI_MODELS = [
   "gemini-2.0-flash-lite",
   "gemini-3.6-flash",
   "gemini-3.5-flash-lite",
-  "gemini-3.5-flash"
+  "gemini-3.5-flash",
+  "gemini-3.7-flash"
 ] as const;
 
 export const EMBEDDING_MODEL = "gemini-embedding-2";

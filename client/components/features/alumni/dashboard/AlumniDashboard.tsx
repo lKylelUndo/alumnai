@@ -3,8 +3,29 @@ import { TrendingUp, Users, Handshake } from "lucide-react"
 import YourMentees from "./YourMentees"
 import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
+import { alumniService } from "@/services/alumni.service"
+import { mentorshipService } from "@/services/mentorship.service"
+import { AlumniStudentMentorshipCardTypes, AlumniStudentCollaborationCardTypes } from "@/constants/alumni"
 
-const DashboardPanel = () => {
+const DashboardPanel = async () => {
+  let myMentees: AlumniStudentMentorshipCardTypes[] = []
+  let myCollaborations: AlumniStudentCollaborationCardTypes[] = []
+  let myMentorshipRequests: AlumniStudentMentorshipCardTypes[] = []
+
+  try {
+    const results = await Promise.allSettled([
+      mentorshipService.getMyMentees(),
+      alumniService.getMyCollaborations(),
+      mentorshipService.getMentorshipRequests(),
+    ])
+
+    if(results[0].status === "fulfilled") myMentees = results[0].value.data
+    if(results[1].status === "fulfilled") myCollaborations = results[1].value.data
+    if(results[2].status === "fulfilled") myMentorshipRequests = results[2].value.data
+  } catch (error) {
+    console.error("Failed to load admin dashboard panel data:", error)
+  }
+
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
@@ -40,18 +61,18 @@ const DashboardPanel = () => {
         </TabsList>
 
         <TabsContent value="your-mentees" className="mt-4 bg-transparent">
-          <YourMentees />
+          <YourMentees mentees={myMentees || []} />
         </TabsContent>
 
         <TabsContent
           value="your-collaborations"
           className="mt-4 bg-transparent"
         >
-          <YourCollaborations />
+          <YourCollaborations collaborations={myCollaborations || []} />
         </TabsContent>
 
         <TabsContent value="manage-mentorships" className="mt-4 bg-transparent">
-          <ManageMentorships />
+          <ManageMentorships requests={myMentorshipRequests || []} />
         </TabsContent>
       </Tabs>
     </section>

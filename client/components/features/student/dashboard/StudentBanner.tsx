@@ -1,26 +1,20 @@
-"use client"
 import Image from "next/image"
 import StudentStatCards from "./StudentStatCards"
-import { useEffect, useState } from "react"
-import { useAuthContext } from "@/context/AuthContext"
+import StudentWelcomeHeader from "./StudentWelcomeHeader"
 import { studentService } from "@/services/student.service"
 
-const StudentBanner = () => {
-  const { user } = useAuthContext()
-  const [dashboardStats, setDashboardStats] = useState<null>(null)
+const StudentBanner = async () => {
+  let dashboardStats = null;
 
-  useEffect(() => {
-    async function getDashboardStats() {
-      try {
-        const response = await studentService.getDashboardStats()
-        setDashboardStats(response.data)
-      } catch (error) {
-        console.error(error)
-      }
+  try {
+    const response = await studentService.getDashboardStats();
+    dashboardStats = response?.data;
+  } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE") {
+      throw error;
     }
-
-    getDashboardStats()
-  }, [user])
+    console.error("Failed to fetch student stats", error);
+  }
 
   return (
     <section className="mt-2">
@@ -35,15 +29,7 @@ const StudentBanner = () => {
           />
         </div>
 
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-primary lg:text-3xl">
-            Welcome back, {user?.profile?.fullName || user?.email}
-          </h1>
-          <p className="text-xs text-muted-foreground md:text-sm">
-            Track your growth, connect with mentors, and improve your career
-            readiness.
-          </p>
-        </div>
+        <StudentWelcomeHeader />
       </div>
 
       <StudentStatCards dashboardStats={dashboardStats} />
@@ -52,3 +38,4 @@ const StudentBanner = () => {
 }
 
 export default StudentBanner
+
