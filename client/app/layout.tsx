@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     template: "%s | AlumnAI",
   },
   description: "Bridge the gap between education and career. AlumnAI connects students with alumni for mentorship, career guidance, and skill analysis.",
+  keywords: ["alumnai", "cpc", "skill", "gap", "github api", "platform", "student", "alumni", "mentorship", "collaboration"]
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
