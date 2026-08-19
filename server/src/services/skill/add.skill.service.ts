@@ -1,10 +1,12 @@
 import { SkillRepository } from "@/repositories/skill.repository";
 import { ProfileRepository } from "@/repositories/profile.repository";
+import { CanonicalSkillRepository } from "@/repositories/canonical.skill.repository";
 import { AddSkillInputTypes } from "@/schema/skill";
 
 export const AddSkillService = async (data: AddSkillInputTypes, userId?: string) => {
   const skillRepository = new SkillRepository();
   const profileRepository = new ProfileRepository();
+  const canonicalSkillRepository = new CanonicalSkillRepository();
 
   try {
     let targetProfileId = data.profileId;
@@ -22,9 +24,14 @@ export const AddSkillService = async (data: AddSkillInputTypes, userId?: string)
       return { status: "error", code: 400, message: "Profile ID could not be determined" };
     }
 
+    // Resolve skill name through the canonical system
+    const canonical = await canonicalSkillRepository.findOrCreate(data.name);
+
     const response = await skillRepository.add({
       ...data,
+      name: canonical.name, // Use the canonical display name
       profileId: targetProfileId,
+      canonicalSkillId: canonical.id,
     });
 
     if (!response)

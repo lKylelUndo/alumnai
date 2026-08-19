@@ -64,16 +64,27 @@ model Certification {
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
+model CanonicalSkill {
+  id             String   @id @default(uuid())
+  name           String   @unique
+  normalizedName String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  skills         Skill[]
+}
+
 model Skill {
-  id          String    @id @default(uuid())
-  profileId   String
-  type        SkillType
-  name        String
-  level       Float?
-  description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  id               String          @id @default(uuid())
+  profileId        String
+  type             SkillType
+  name             String
+  level            Float?
+  description      String?
+  canonicalSkillId String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  profile          Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  canonicalSkill   CanonicalSkill? @relation(fields: [canonicalSkillId], references: [id])
 }
 
 model Token {
