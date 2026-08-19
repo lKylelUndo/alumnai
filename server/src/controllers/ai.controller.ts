@@ -7,8 +7,6 @@ class AIController {
     const response = await SmartSearchService(rawSearch);
     return res.status(response.code).json(response);
   };
-
-  public analyzeSkillGap = async () => {};
 }
 
 export default new AIController();
