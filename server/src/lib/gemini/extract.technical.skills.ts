@@ -3,8 +3,6 @@ import { AVAILABLE_GEMINI_MODELS, genAI } from ".";
 export async function extractTechnicalSkills(rawSearch: string) {
   const wordCount = rawSearch.trim().split(/\s+/).length;
 
-  console.log("ww", wordCount);
-
   // Skip AI for simple searches
   if (wordCount <= 3) {
     return [rawSearch.trim()];

@@ -12,6 +12,8 @@ export const SmartSearchService = async (rawSearch: string) => {
     // Extract skills
     const rawExtractedSkills = await extractTechnicalSkills(rawSearch);
 
+    console.log("rawExtractSkill", rawExtractedSkills);
+
     // Canonicalize each extracted skill
     const canonicalSkillsPromises = rawExtractedSkills.map(async (rawSkill) => {
       const normalized = normalizeSkillName(rawSkill);
@@ -21,15 +23,18 @@ export const SmartSearchService = async (rawSearch: string) => {
     });
 
     const extractedSkills = Array.from(new Set(await Promise.all(canonicalSkillsPromises)));
-    console.log("🚀 ~ SmartSearchService ~ canonical extractedSkills:", extractedSkills);
+    console.log("SmartSearchService - canonical extractedSkills:", extractedSkills);
 
     // Get matching candidates
     const students = await profileRepository.matchSkill(extractedSkills);
+    console.log("SmartSearchService - students:", students);
 
     // Ranked formatted candidates
     const formattedCandidates = formatCandidates(students, extractedSkills);
+    console.log("SmartSearchService - formattedCandidates:", formattedCandidates);
 
     const recommendedStudents = await recommendStudent(rawSearch,extractedSkills,formattedCandidates);
+    console.log("SmartSearchService - recommendedStudents:", recommendedStudents);
 
     const candidateById = new Map(
       formattedCandidates.map((candidate) => [candidate.id, candidate]),

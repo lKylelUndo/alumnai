@@ -2,9 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { normalizeSkillName } from "@/utils/normalize.skill";
 
 export class CanonicalSkillRepository {
-  /**
-   * Find a canonical skill by its normalized name.
-   */
   async findByNormalizedName(normalizedName: string) {
     return await prisma.canonicalSkill.findUnique({
       where: { normalizedName },
@@ -39,10 +36,6 @@ export class CanonicalSkillRepository {
     });
   }
 
-  /**
-   * Search canonical skills by partial text (for autocomplete).
-   * Matches against both the display name and normalized name.
-   */
   async search(query: string, limit: number = 10) {
     const trimmed = query.trim();
     if (!trimmed) return [];
