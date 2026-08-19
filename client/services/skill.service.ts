@@ -13,6 +13,11 @@ export const skillService = {
     return response.data;
   },
 
+  searchSkills: async (query: string) => {
+    const response = await axiosInstance.get(`/api/skill/v1/search-skills?q=${encodeURIComponent(query)}`);
+    return response.data;
+  },
+
   getTopAlumniSkills: async (refresh = false) => {
     const url = refresh ? "/api/skill/v1/get-top-alumni-skills?refresh=true" : "/api/skill/v1/get-top-alumni-skills";
     const response = await axiosServerInstance.get(url);
