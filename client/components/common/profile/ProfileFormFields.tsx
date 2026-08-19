@@ -137,7 +137,7 @@ export default function ProfileFormFields({
               <SelectTrigger id="update-profile-workfield" className="w-full">
                 <SelectValue placeholder="Select your IT Field" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="mt-22">
                 <SelectItem value="Frontend Development">
                   Frontend Development
                 </SelectItem>
@@ -190,6 +190,39 @@ export default function ProfileFormFields({
                   autoComplete="off"
                   type="text"
                 />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </>
+      )}
+
+      {userRole === "STUDENT" && (
+        <>
+          <Controller
+            name="yearLevel"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="lg:col-span-2">
+                <FieldLabel
+                  htmlFor="update-profile-yearlevel"
+                  className="font-semibold text-primary"
+                >
+                  Year Level
+                </FieldLabel>
+                <Select value={field.value || ""} onValueChange={field.onChange}>
+                  <SelectTrigger id="update-profile-yearlevel" className="w-full">
+                    <SelectValue placeholder="Select your Year Level" />
+                  </SelectTrigger>
+                  <SelectContent className="mt-8">
+                    <SelectItem value="1st Year">1st Year</SelectItem>
+                    <SelectItem value="2nd Year">2nd Year</SelectItem>
+                    <SelectItem value="3rd Year">3rd Year</SelectItem>
+                    <SelectItem value="4th Year">4th Year</SelectItem>
+                  </SelectContent>
+                </Select>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
