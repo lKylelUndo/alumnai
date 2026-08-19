@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
 import { addTechOrToolsSchema, type AddTechOrToolsFormValues } from "@/schema/skill"
 import { addSkillSchema } from "@/schema/skill"
+import { SkillAutocomplete } from "@/components/common/skills/SkillAutocomplete"
 import { z } from "zod"
 
 type Skill = z.infer<typeof addSkillSchema>
@@ -73,8 +74,9 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
     }
   }, [open])
 
-  const addSoftSkillTag = () => {
-    const trimmed = softSkillInput.trim()
+  const addSoftSkillTag = (skillName?: string) => {
+    const raw = skillName ?? softSkillInput
+    const trimmed = raw.trim()
     if (trimmed && !softSkillTags.includes(trimmed))
       setSoftSkillTags((prev) => [...prev, trimmed])
     setSoftSkillInput("")
@@ -83,8 +85,9 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
   const removeSoftSkillTag = (tag: string) =>
     setSoftSkillTags((prev) => prev.filter((t) => t !== tag))
 
-  const addOtherHardSkillTag = () => {
-    const trimmed = otherHardSkillInput.trim()
+  const addOtherHardSkillTag = (skillName?: string) => {
+    const raw = skillName ?? otherHardSkillInput
+    const trimmed = raw.trim()
     if (trimmed && !otherHardSkillTags.includes(trimmed))
       setOtherHardSkillTags((prev) => [...prev, trimmed])
     setOtherHardSkillInput("")
@@ -182,26 +185,26 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
               >
                 Core / Soft Skills
               </FieldLabel>
-              <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
-                <input
+              <div className="flex items-center gap-2">
+                <SkillAutocomplete
                   id="dialog-softskills-tag-input"
                   value={softSkillInput}
-                  onChange={(e) => setSoftSkillInput(e.target.value)}
+                  onChange={setSoftSkillInput}
+                  onSelectSkill={(name) => addSoftSkillTag(name)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault()
                       addSoftSkillTag()
                     }
                   }}
-                  placeholder="Type and press Enter to add…"
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  placeholder="Type and press Enter or pick a suggestion…"
                 />
                 <button
                   type="button"
-                  onClick={addSoftSkillTag}
-                  className="flex h-6 w-6 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
+                  onClick={() => addSoftSkillTag()}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition hover:border-primary hover:text-primary"
                 >
-                  <PlusIcon size={13} />
+                  <PlusIcon size={15} />
                 </button>
               </div>
               {softSkillTags.length > 0 && (
@@ -238,9 +241,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                     >
                       Tech/Tool Name
                     </FieldLabel>
-                    <Input
-                      {...field}
+                    <SkillAutocomplete
                       id="dialog-skill-name"
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
                       placeholder="e.g. React"
                     />
                     {fieldState.invalid && (
@@ -303,26 +307,26 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                   (e.g. Networking, Sound System Setup, Photography)
                 </span>
               </FieldLabel>
-              <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
-                <input
+              <div className="flex items-center gap-2">
+                <SkillAutocomplete
                   id="dialog-otherskills-tag-input"
                   value={otherHardSkillInput}
-                  onChange={(e) => setOtherHardSkillInput(e.target.value)}
+                  onChange={setOtherHardSkillInput}
+                  onSelectSkill={(name) => addOtherHardSkillTag(name)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault()
                       addOtherHardSkillTag()
                     }
                   }}
-                  placeholder="Type and press Enter to add…"
-                  className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  placeholder="Type and press Enter or pick a suggestion…"
                 />
                 <button
                   type="button"
-                  onClick={addOtherHardSkillTag}
-                  className="flex h-6 w-6 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
+                  onClick={() => addOtherHardSkillTag()}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition hover:border-primary hover:text-primary"
                 >
-                  <PlusIcon size={13} />
+                  <PlusIcon size={15} />
                 </button>
               </div>
               {otherHardSkillTags.length > 0 && (
