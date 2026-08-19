@@ -84,6 +84,10 @@ export class ProfileRepository {
   async matchSkill(skills: string[]) {
     return await prisma.profile.findMany({
       where: {
+        user: {
+          role: "STUDENT",
+          accountStatus: "ACTIVE",
+        },
         skills: {
           some: {
             name: {
