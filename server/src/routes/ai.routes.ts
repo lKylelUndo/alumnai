@@ -6,6 +6,9 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/v1/find-collaborators", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), aiController.smartSearch)
+// router.post("/v1/find-collaborators", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), aiController.smartSearch)
+
+// Development
+router.post("/v1/find-collaborators", aiController.smartSearch)
 
 export default router;
