@@ -11,6 +11,7 @@ interface ViewProfileHeaderCardProps {
   isStudent: boolean
   isAlumni: boolean
   alreadyInvited: boolean
+  mentorshipStatus?: "PENDING" | "ACTIVE" | null
   onOpenInviteModal: () => void
 }
 
@@ -19,8 +20,11 @@ export default function ViewProfileHeaderCard({
   isStudent,
   isAlumni,
   alreadyInvited,
+  mentorshipStatus,
   onOpenInviteModal,
 }: ViewProfileHeaderCardProps) {
+  const mentorshipUnavailable = mentorshipStatus === "ACTIVE" || mentorshipStatus === "PENDING"
+
   return (
     <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm md:p-8">
       <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
@@ -132,11 +136,13 @@ export default function ViewProfileHeaderCard({
           <Button
             id="profile-action-invite-btn"
             onClick={onOpenInviteModal}
-            disabled={alreadyInvited}
+            disabled={alreadyInvited || mentorshipUnavailable}
             className="rounded-full bg-[#1877F2] hover:bg-[#1565C0] px-6 py-2.5 font-semibold text-white shadow-sm transition-all"
           >
-            {alreadyInvited
-              ? "Invitation Sent"
+            {mentorshipStatus === "ACTIVE"
+              ? "Mentorship Active"
+              : mentorshipStatus === "PENDING" || alreadyInvited
+              ? "Request Pending"
               : isStudent
               ? "Send Collaboration Invite"
               : "Apply for Mentorship"}

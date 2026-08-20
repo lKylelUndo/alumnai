@@ -214,6 +214,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
             isStudent={isStudent}
             isAlumni={isAlumni}
             alreadyInvited={alreadyInvited}
+            mentorshipStatus={isAlumni ? profile.mentorshipStatus : null}
             onOpenInviteModal={openInviteModal}
           />
 

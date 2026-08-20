@@ -54,6 +54,7 @@ export interface Profile {
   updatedAt: string;
   skills: Skill[];
   certifications: Certification[];
+  mentorshipStatus?: "PENDING" | "ACTIVE" | null;
   user?: {
     id: string;
     email?: string | null;
