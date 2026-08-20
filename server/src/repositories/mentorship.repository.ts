@@ -30,7 +30,11 @@ export class MentorshipRepository {
 
   async findIfInviteExisted(fromStudentId: string, toAlumniId: string) {
     return await prisma.mentorship.findFirst({
-      where: { fromStudentId, toAlumniId, status: "PENDING" },
+      where: {
+        fromStudentId,
+        toAlumniId,
+        status: { in: ["PENDING", "ACTIVE"] },
+      },
     });
   }
 
