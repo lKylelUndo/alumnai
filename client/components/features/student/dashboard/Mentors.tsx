@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CardDataTable } from "@/components/common/tables/CardDataTable";
-import { StudentMentorCardTypes } from "@/constants/student";
+import { StudentMentorCardTypes } from "@/lib/types/mentorship";
 import MentorCard from "./MentorCard";
 
 export const columns: ColumnDef<StudentMentorCardTypes>[] = [

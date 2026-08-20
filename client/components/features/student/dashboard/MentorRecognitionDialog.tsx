@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { StudentMentorCardTypes } from "@/constants/student";
+import { StudentMentorCardTypes } from "@/lib/types/mentorship";
 import { mentorshipService } from "@/services/mentorship.service";
 import { CheckCircle2, Loader2, Sparkles, User } from "lucide-react";
 

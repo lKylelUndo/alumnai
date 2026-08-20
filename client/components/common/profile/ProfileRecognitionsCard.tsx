@@ -5,22 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Award, ChevronLeft, ChevronRight, User } from "lucide-react";
 import Image from "next/image";
 
-export interface RecognitionItem {
-  id: string;
-  fromStudentId?: string;
-  toAlumniId?: string;
-  message: string;
-  createdAt: string;
-  updatedAt?: string;
-  fromStudent?: {
-    id: string;
-    profile?: {
-      fullName?: string | null;
-      profilePicture?: string | null;
-      work_field?: string | null;
-    } | null;
-  } | null;
-}
+import { RecognitionItem } from "@/lib/types/mentorship";
 
 interface ProfileRecognitionsCardProps {
   recognitions?: RecognitionItem[] | null;

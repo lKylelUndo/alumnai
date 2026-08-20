@@ -5,7 +5,7 @@ import { Row } from "@tanstack/react-table"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { mentorshipService } from "@/services/mentorship.service"
-import { AlumniStudentMentorshipCardTypes } from "@/constants/alumni"
+import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship"
 
 export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentMentorshipCardTypes> }) {
   const request = row.original

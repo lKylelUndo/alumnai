@@ -5,7 +5,8 @@ import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
 import { alumniService } from "@/services/alumni.service"
 import { mentorshipService } from "@/services/mentorship.service"
-import { AlumniStudentMentorshipCardTypes, AlumniStudentCollaborationCardTypes } from "@/constants/alumni"
+import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship"
+import { AlumniStudentCollaborationCardTypes } from "@/lib/types/collaboration"
 
 const DashboardPanel = async () => {
   let myMentees: AlumniStudentMentorshipCardTypes[] = []
