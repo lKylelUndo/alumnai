@@ -11,13 +11,13 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         {/* Content */}
         <main className="flex-1 grid grid-cols-1 lg:grid-cols-2 w-full">
-          {/* Left Column: Image Background - Hidden on mobile, full width on desktop */}
-          <div className="hidden lg:block relative w-full h-full min-h-[calc(100vh-80px)] bg-[#1A216D]">
+          {/* Left Column: Image Background - Hidden on mobile, full width on desktop bg-[#1A216D] below*/}
+          <div className="hidden lg:block relative w-full h-full min-h-[calc(100vh-80px)] border-r-2 border-[#dfe2e5]">
             <Image
-              src="/images/login4.jpg"
+              src="/images/authpic1.png"
               alt="Auth Background"
               fill
-              className="object-cover opacity-65"
+              className="object-cover"
               sizes="50vw"
               priority
             />

@@ -22,13 +22,13 @@ export default function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-2">
             <Image
-              src="/logo/logoalumnai.png"
+              src="/logo/altlogo2.png"
               width={160}
               height={64}
               alt="alumnAI"
               loading="lazy"
             />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500 lg:pl-3">
               AI-powered institutional platform connecting CPC computing students
               and alumni through verified, evidence-based skill profiles.
             </p>
