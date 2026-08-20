@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Profile } from "@/lib/types/profile"
 import { Card } from "@/components/ui/card"
 import Certifications from "@/components/common/layout/Certifications"
+import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
 import { Briefcase, GraduationCap, LinkIcon, User, UserX, Building2 } from "lucide-react"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -281,6 +282,9 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
 
         {/* RIGHT COLUMN */}
         <div className="space-y-6 lg:col-span-1">
+          {isAlumni && (
+            <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />
+          )}
           <Certifications certifications={profile.certifications} />
         </div>
       </div>

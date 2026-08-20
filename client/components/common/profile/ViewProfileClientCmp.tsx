@@ -13,6 +13,7 @@ import Certifications from "@/components/common/layout/Certifications"
 import ViewProfileHeaderCard from "@/components/common/profile/ViewProfileHeaderCard"
 import InviteDialog from "@/components/common/dialogs/InviteDialog"
 import GithubSkillIndexResultCmp, { GithubSkillIndexResultData } from "@/components/common/skills/GithubSkillIndexResultCmp"
+import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
 import { RefreshCw, ArrowLeft, Award, Users, Loader2 } from "lucide-react"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -417,20 +418,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
         <div className="space-y-6 lg:col-span-1">
           {/* Recognitions or Mentors overview card */}
           {isAlumni ? (
-            <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <Award className="h-5 w-5 text-[#1877F2]" />
-                <div>
-                  <h3 className="font-bold text-[#1A216D]">My Recognitions</h3>
-                  <p className="text-xs text-gray-500">
-                    Recognitions and thank-you notes from students you helped
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 rounded-lg bg-[#F8FAFC] p-4 text-center text-xs text-gray-500">
-                No public recognitions listed yet.
-              </div>
-            </Card>
+            <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />
           ) : (
             <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm">
               <div className="flex items-center gap-3 mb-3">
