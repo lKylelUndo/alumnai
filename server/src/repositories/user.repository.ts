@@ -68,6 +68,23 @@ export class UserRepository {
             certifications: true,
           },
         },
+        receivedRecognitions: {
+          include: {
+            fromStudent: {
+              select: {
+                id: true,
+                profile: {
+                  select: {
+                    fullName: true,
+                    profilePicture: true,
+                    work_field: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+        },
         student_id_number: true,
         email: true,
         role: true,

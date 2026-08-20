@@ -6,7 +6,8 @@ import Collaborators from "./Collaborators"
 import Mentors from "./Mentors"
 import { mentorshipService } from "@/services/mentorship.service"
 import { collaborationService } from "@/services/collaboration.service"
-import { StudentMentorCardTypes, StudentCollaboratorCardTypes, StudentCollabInviteCardTypes } from "@/constants/student"
+import { StudentMentorCardTypes } from "@/lib/types/mentorship"
+import { StudentCollaboratorCardTypes, StudentCollabInviteCardTypes } from "@/lib/types/collaboration"
 
 const DashboardPanel = async () => {
   let myCollaborationInvites: StudentCollabInviteCardTypes[] = []

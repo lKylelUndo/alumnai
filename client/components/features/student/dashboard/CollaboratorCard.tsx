@@ -1,6 +1,6 @@
 "use client";
 
-import { StudentCollaboratorCardTypes } from "@/constants/student";
+import { StudentCollaboratorCardTypes } from "@/lib/types/collaboration";
 import { collaborationService } from "@/services/collaboration.service";
 import { Row } from "@tanstack/react-table";
 import { User, UserCircle2, XCircle } from "lucide-react";

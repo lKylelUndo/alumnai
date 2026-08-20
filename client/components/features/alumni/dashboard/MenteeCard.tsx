@@ -1,6 +1,6 @@
 "use client";
 
-import { AlumniStudentMentorshipCardTypes } from "@/constants/alumni";
+import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship";
 import { mentorshipService } from "@/services/mentorship.service"
 import { Row } from "@tanstack/react-table"
 import { User, UserCircle2, XCircle } from "lucide-react"

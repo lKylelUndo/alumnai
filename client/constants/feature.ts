@@ -1,11 +1,6 @@
-import type { ElementType } from "react"
-import type { LucideIcon } from "lucide-react"
+import { Feature } from "@/lib/types/feature";
 
-export type Feature = {
-  title: string
-  description: string
-  icon: LucideIcon | ElementType | string
-}
+export type { Feature };
 
 export const features = [
   {

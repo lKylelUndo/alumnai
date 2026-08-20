@@ -40,6 +40,23 @@ export class ProfileRepository {
             email: true,
             student_id_number: true,
             role: true,
+            receivedRecognitions: {
+              include: {
+                fromStudent: {
+                  select: {
+                    id: true,
+                    profile: {
+                      select: {
+                        fullName: true,
+                        profilePicture: true,
+                        work_field: true,
+                      },
+                    },
+                  },
+                },
+              },
+              orderBy: { createdAt: "desc" },
+            },
           },
         },
         skills: true,
