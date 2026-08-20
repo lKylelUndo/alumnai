@@ -60,6 +60,20 @@ export interface Profile {
     email?: string | null;
     student_id_number?: string | null;
     role?: "STUDENT" | "ALUMNI" | "ADMIN" | string;
+    receivedRecognitions?: Array<{
+      id: string;
+      message: string;
+      createdAt: string;
+      updatedAt: string;
+      fromStudent?: {
+        id: string;
+        profile?: {
+          fullName?: string | null;
+          profilePicture?: string | null;
+          work_field?: string | null;
+        } | null;
+      };
+    }>;
   };
 }
 

@@ -82,6 +82,18 @@ export class MentorshipRepository {
                 graduatedYear: true,
               },
             },
+            receivedRecognitions: {
+              where: {
+                fromStudentId: studentUserId,
+              },
+              select: {
+                id: true,
+                message: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+              take: 1,
+            },
           },
         },
       },
@@ -98,6 +110,7 @@ export class MentorshipRepository {
       status: mentorship.status,
       profilePicture: mentorship.toAlumni.profile?.profilePicture ?? null,
       message: mentorship.message_details,
+      recognition: mentorship.toAlumni.receivedRecognitions?.[0] || null,
     }));
 
     await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5);

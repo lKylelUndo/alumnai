@@ -8,6 +8,12 @@ export type StudentMentorCardTypes = {
   status: "ACTIVE" | "INACTIVE" | "PENDING"
   profilePicture: string | null
   message: string
+  recognition?: {
+    id: string
+    message: string
+    createdAt: string
+    updatedAt: string
+  } | null
 }
 
 export type StudentCollaboratorCardTypes = {
