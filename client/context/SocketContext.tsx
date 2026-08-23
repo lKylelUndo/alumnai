@@ -13,28 +13,27 @@ const SocketContext = createContext<SocketContextType>({ socket: null, isConnect
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, isAuthenticated } = useAuthContext();
-  const socketRef = useRef<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     // Only connect when user is authenticated
     if (!isAuthenticated || !user) {
-      // Disconnect if user logs out
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-        setIsConnected(false);
-      }
+      setSocket((prev) => {
+        if (prev) prev.disconnect();
+        return null;
+      });
+      setIsConnected(false);
       return;
     }
 
     // Create socket connection (cookies sent automatically via withCredentials)
-    const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000", {
+    const socketInstance = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000", {
       withCredentials: true,
       transports: ["websocket", "polling"],
     });
 
-    socketRef.current = socket;
+    setSocket(socketInstance);
 
     const onConnect = () => {
       console.log("Connected to Socket.IO");
@@ -50,21 +49,21 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Socket connection error:", err.message);
     };
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("connect_error", onConnectError);
+    socketInstance.on("connect", onConnect);
+    socketInstance.on("disconnect", onDisconnect);
+    socketInstance.on("connect_error", onConnectError);
 
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("connect_error", onConnectError);
-      socket.disconnect();
-      socketRef.current = null;
+      socketInstance.off("connect", onConnect);
+      socketInstance.off("disconnect", onDisconnect);
+      socketInstance.off("connect_error", onConnectError);
+      socketInstance.disconnect();
+      setSocket(null);
     };
   }, [isAuthenticated, user]);
 
   return (
-    <SocketContext.Provider value={{ socket: socketRef.current, isConnected }}>
+    <SocketContext.Provider value={{ socket, isConnected }}>
       {children}
     </SocketContext.Provider>
   );

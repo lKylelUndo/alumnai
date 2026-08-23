@@ -1,27 +1,28 @@
 # 📡 Socket.IO Real-Time Implementation Guide
 
-This document provides a complete, start-to-finish reference and code templates for the **Socket.IO Real-Time Architecture** implemented in the **AlumnAI** platform (Express + Next.js App Router).
+This document provides a complete, start-to-finish reference and code templates for the **Socket.IO Real-Time Architecture** implemented in the **AlumnAI** platform (Express + Next.js App Router), including a comprehensive breakdown of core WebSocket / Socket.IO concepts.
 
 ---
 
 ## 📑 Table of Contents
 1. [Architecture Overview](#1-architecture-overview)
-2. [Backend Implementation (Server)](#2-backend-implementation-server)
+2. [WebSocket & Socket.IO Core Terminologies Cheat Sheet](#2-websocket--socketio-core-terminologies-cheat-sheet)
+3. [Backend Implementation (Server)](#3-backend-implementation-server)
    - [Socket Manager & Cookie Authentication](#a-socket-manager--authentication-serversrclibsocketts)
    - [Server Entry Point](#b-server-entry-point-serversrcserverts)
    - [Triggering Events from Services](#c-triggering-real-time-events-from-services)
    - [Redis Cache Invalidation Workflow](#d-redis-cache-invalidation-workflow)
-3. [Frontend Implementation (Client)](#3-frontend-implementation-client)
+4. [Frontend Implementation (Client)](#4-frontend-implementation-client)
    - [Global Socket Context](#a-socket-context-clientcontextsocketcontexttsx)
    - [Root Layout Integration](#b-root-layout-clientapplayouttsx)
    - [Consumer Custom Hook](#c-consumer-hook-clienthooksuseadminsocketts)
-4. [Component Implementation Examples](#4-component-implementation-examples)
+5. [Component Implementation Examples](#5-component-implementation-examples)
    - [Example A: Alumni Status Requests (with Toast Alert)](#example-a-alumni-status-requests-with-toast-alert)
    - [Example B: User Management](#example-b-user-management)
    - [Example C: Admin Metric Cards](#example-c-admin-metric-cards)
    - [Tab Persistence with Radix UI (`forceMount`)](#tab-persistence-with-radix-ui-tabscontent)
-5. [Real-Time Chat & User Notifications (Extension Template)](#5-real-time-chat--user-notifications-extension-template)
-6. [Troubleshooting & Common Gotchas](#6-troubleshooting--common-gotchas)
+6. [Real-Time Chat & User Notifications (Extension Template)](#6-real-time-chat--user-notifications-extension-template)
+7. [Troubleshooting & Common Gotchas](#7-troubleshooting--common-gotchas)
 
 ---
 
@@ -63,7 +64,28 @@ This document provides a complete, start-to-finish reference and code templates 
 
 ---
 
-## 2. Backend Implementation (Server)
+## 2. WebSocket & Socket.IO Core Terminologies Cheat Sheet
+
+| Term / Method | Scope | What it Does | Real Example in AlumnAI |
+| :--- | :--- | :--- | :--- |
+| **`socket.emit(event, data)`** | Client / Server | **Sends** a named event with a payload from the current socket to the other side. | `socket.emit("send_message", { text: "Hello" })` |
+| **`socket.on(event, handler)`** | Client / Server | **Listens** for an incoming event and triggers the handler function whenever that event fires. | `socket.on("admin:refresh", (data) => refetch())` |
+| **`socket.off(event, handler)`** | Client / Server | **Removes** an event listener to prevent memory leaks and duplicate executions when React components unmount. | `return () => { socket.off("admin:refresh", handler) }` |
+| **`socket.once(event, handler)`** | Client / Server | Listens for an event **only once**, then automatically deregisters itself. | `socket.once("connected_ack", () => ...)` |
+| **`io.to(room).emit(...)`** | Server | **Broadcasts** an event to **every socket that joined a specific room** (e.g. all admins or one specific user). | `io.to("role:admin").emit("admin:refresh", payload)` |
+| **`io.emit(...)`** | Server | **Broadcasts to all connected clients** on the entire server regardless of room. | `io.emit("system_announcement", { msg: "Maintenance" })` |
+| **`socket.broadcast.emit(...)`**| Server | Broadcasts to **all connected clients EXCEPT the sender**. | `socket.broadcast.emit("user_typing", { userId })` |
+| **`socket.join(room)`** | Server | Adds a socket connection to a logical channel (room). | `socket.join("role:admin")` / `socket.join("user:123")` |
+| **`socket.leave(room)`** | Server | Removes a socket connection from a room. | `socket.leave("chat_room_456")` |
+| **`io.use((socket, next))`** | Server | **Middleware** that executes before a socket connection is accepted (used for JWT validation). | Checking `accessToken` cookie in handshake before `next()` |
+| **`socket.handshake`** | Server | Object containing metadata sent during the initial HTTP upgrade request (headers, cookies, query, auth). | `socket.handshake.headers.cookie` |
+| **`socket.id`** | Client / Server | A unique string identifier assigned to each active connection. | `Connected: 921d96aa-1a49-469d` |
+| **`withCredentials: true`** | Client / Server | Allows cross-origin requests to send and receive **httpOnly cookies**. | Passed in Next.js `io(url, { withCredentials: true })` |
+| **`transports`** | Client | Transport protocols used (`["websocket", "polling"]`). WebSockets are tried first, falling back to HTTP long-polling if blocked. | `transports: ["websocket", "polling"]` |
+
+---
+
+## 3. Backend Implementation (Server)
 
 ### A. Socket Manager & Authentication (`server/src/lib/socket.ts`)
 
@@ -93,7 +115,7 @@ export const initSocket = (server: HttpServer, corsOrigin: string) => {
     },
   });
 
-  // 1. Authenticate using httpOnly cookies
+  // 1. Authenticate using httpOnly cookies (Middleware)
   io.use((socket: Socket, next) => {
     try {
       const cookies = parseCookies(socket.handshake.headers.cookie);
@@ -226,7 +248,7 @@ export const RequestAlumniUpgradeService = async (userId: string, documentUrl: s
 
     const request = await alumniRepository.createAlumniUpgradeRequest(userId, uploadedUrl);
 
-    // 📡 Notify all connected admins in real-time
+    // 📡 Real-time alert to all connected admins
     notifyRole("admin", "admin:refresh", {
       targets: ["alumni-requests"],
       message: "A new student has submitted an alumni upgrade request!",
@@ -278,7 +300,7 @@ async approveAlumniRequest(studentId: string) {
 
 ---
 
-## 3. Frontend Implementation (Client)
+## 4. Frontend Implementation (Client)
 
 ### A. Socket Context (`client/context/SocketContext.tsx`)
 
@@ -392,7 +414,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ### C. Consumer Hook (`client/hooks/useAdminSocket.ts`)
 
-Allows any admin component to subscribe to specific refresh targets:
+Allows any admin component to subscribe to specific refresh targets with optional message payload:
 
 ```typescript
 "use client";
@@ -437,7 +459,7 @@ export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
 
 ---
 
-## 4. Component Implementation Examples
+## 5. Component Implementation Examples
 
 ### Example A: Alumni Status Requests (with Toast Alert)
 **File: `client/components/features/admin/AlumniRequest.tsx`**
@@ -465,11 +487,15 @@ export default function AlumniRequest({ data: initialData }: { data: any[] }) {
       .catch((err) => console.error("Fetch alumni requests failed:", err));
   }, []);
 
-  // 1. Listen for real-time submissions from students
+  // 1. Listen for real-time submissions from students + toast alert
   useAdminSocket({
     target: "alumni-requests",
     onRefresh: (data) => {
-      toast.info(data?.message || "A new alumni upgrade request has been submitted!");
+      if (data?.message) {
+        toast.info(data.message);
+      } else {
+        toast.info("A new alumni upgrade request has been submitted!");
+      }
       refetchAlumniRequests();
     },
   });
@@ -580,7 +606,7 @@ In [AdminDashboard.tsx](file:///c:/Users/Kyle%20Ando/Desktop/practice/alumnai/cl
 
 ---
 
-## 5. Real-Time Chat & User Notifications (Extension Template)
+## 6. Real-Time Chat & User Notifications (Extension Template)
 
 When you are ready to implement 1-on-1 real-time chat between students and alumni:
 
@@ -641,7 +667,7 @@ export function useChatMessages(initialMessages: any[]) {
 
 ---
 
-## 6. Troubleshooting & Common Gotchas
+## 7. Troubleshooting & Common Gotchas
 
 | Issue | Cause | Fix |
 | :--- | :--- | :--- |

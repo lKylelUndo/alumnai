@@ -150,6 +150,11 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
     },
   })
 
+  // Sync state whenever router.refresh() provides new initialData
+  useEffect(() => {
+    setRequests(initialData ?? [])
+  }, [initialData])
+
   useEffect(() => {
     refetchAlumniRequests()
   }, [refetchAlumniRequests])
