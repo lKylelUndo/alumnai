@@ -24,7 +24,8 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   const handleActivate = async () => {
     const response = await adminService.activateUser(id)
     if (response.code === 200) {
-      toast("User activated successfully")
+      router.refresh();
+      toast("User activated successfully");
     } else {
       toast(response.message || "Failed to activate user")
     }
@@ -33,7 +34,8 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   const handleSuspend = async () => {
     const response = await adminService.suspendUser(id)
     if (response.code === 200) {
-      toast("User suspended successfully")
+      router.refresh();
+      toast("User suspended successfully");
     } else {
       toast(response.message || "Failed to suspend user")
     }
@@ -128,22 +130,9 @@ export const columns: ColumnDef<UserManagement>[] = [
 export default function UserManagement({ data: initialData }: { data: UserManagement[] }) {
   const [users, setUsers] = useState<UserManagement[]>(initialData ?? []);
 
-  const refetchUsers = useCallback(() => {
-   adminService.getAllUsers()
-     .then((res) => {        
-      if (res?.data?.users) 
-        setUsers(res.data.users)
-     })
-     .catch((err) => console.error("Refetch all users failed:", err))
-  }, [])
-
-  // Listen for realtime updates
-  useAdminSocket({ target: "all-users", onRefresh: refetchUsers })
-
-  // Always fetch latest when tab mounts / is clicked
   useEffect(() => {
-    refetchUsers()
-  }, [refetchUsers])
+    setUsers(initialData ?? []);
+  }, [initialData]);
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">

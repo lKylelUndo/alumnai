@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useSocketContext } from "@/context/SocketContext"
 
 type AdminRefreshTarget = "stats" | "unverified-users" | "all-users" | "alumni-requests" | "top-mentors"
@@ -12,14 +12,19 @@ interface UseAdminSocketOptions {
 
 export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
   const { socket, isConnected } = useSocketContext()
+  const onRefreshRef = useRef(onRefresh)
+
+  // Keep latest callback reference without triggering re-subscription
+  useEffect(() => {
+    onRefreshRef.current = onRefresh
+  }, [onRefresh])
 
   useEffect(() => {
     if (!socket) return
 
     const handleRefresh = (data: { targets: AdminRefreshTarget[]; message?: string }) => {
-      // Only re-fetch if this component's target is in the list
-      if (data.targets?.includes(target)) {
-        onRefresh(data)
+      if (data?.targets?.includes(target)) {
+        onRefreshRef.current?.(data)
       }
     }
 
@@ -28,7 +33,7 @@ export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
     return () => {
       socket.off("admin:refresh", handleRefresh)
     }
-  }, [socket, target, onRefresh])
+  }, [socket, target])
 
   return { isConnected }
 }
