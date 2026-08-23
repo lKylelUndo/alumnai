@@ -414,46 +414,52 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ### C. Consumer Hook (`client/hooks/useAdminSocket.ts`)
 
-Allows any admin component to subscribe to specific refresh targets with optional message payload:
+Allows any admin component to subscribe to specific refresh targets with optional message payload. Uses a mutable `useRef` to maintain the latest callback instance without triggering re-subscriptions:
 
 ```typescript
-"use client";
+"use client"
 
-import { useEffect } from "react";
-import { useSocketContext } from "@/context/SocketContext";
+import { useEffect, useRef } from "react"
+import { useSocketContext } from "@/context/SocketContext"
 
 type AdminRefreshTarget =
   | "stats"
   | "unverified-users"
   | "all-users"
   | "alumni-requests"
-  | "top-mentors";
+  | "top-mentors"
 
 interface UseAdminSocketOptions {
-  target: AdminRefreshTarget;
-  onRefresh: (data?: { targets: AdminRefreshTarget[]; message?: string }) => void;
+  target: AdminRefreshTarget
+  onRefresh: (data?: { targets: AdminRefreshTarget[]; message?: string }) => void
 }
 
 export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
-  const { socket, isConnected } = useSocketContext();
+  const { socket, isConnected } = useSocketContext()
+  const onRefreshRef = useRef(onRefresh)
+
+  // Keep latest callback reference without triggering re-subscription
+  useEffect(() => {
+    onRefreshRef.current = onRefresh
+  }, [onRefresh])
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket) return
 
     const handleRefresh = (data: { targets: AdminRefreshTarget[]; message?: string }) => {
-      if (data.targets?.includes(target)) {
-        onRefresh(data);
+      if (data?.targets?.includes(target)) {
+        onRefreshRef.current?.(data)
       }
-    };
+    }
 
-    socket.on("admin:refresh", handleRefresh);
+    socket.on("admin:refresh", handleRefresh)
 
     return () => {
-      socket.off("admin:refresh", handleRefresh);
-    };
-  }, [socket, target, onRefresh]);
+      socket.off("admin:refresh", handleRefresh)
+    }
+  }, [socket, target])
 
-  return { isConnected };
+  return { isConnected }
 }
 ```
 
@@ -465,51 +471,51 @@ export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
 **File: `client/components/features/admin/AlumniRequest.tsx`**
 
 ```tsx
-"use client";
+"use client"
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { adminService } from "@/services/admin.service";
-import { useAdminSocket } from "@/hooks/useAdminSocket";
-import { toast } from "sonner";
-import { DataTable } from "@/components/common/tables/DataTable";
+import { useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
+import { adminService } from "@/services/admin.service"
+import { useAdminSocket } from "@/hooks/useAdminSocket"
+import { toast } from "sonner"
+import type { AlumniRequest } from "@/lib/types/alumni"
+import { DataTable } from "@/components/common/tables/DataTable"
 
-export default function AlumniRequest({ data: initialData }: { data: any[] }) {
-  const [requests, setRequests] = useState<any[]>(initialData ?? []);
+export default function AlumniRequest({ data: initialData }: { data: AlumniRequest[] }) {
+  const [requests, setRequests] = useState<AlumniRequest[]>(initialData ?? [])
 
   const refetchAlumniRequests = useCallback(() => {
     adminService.getAlumniRequest()
       .then((res) => {
         if (res?.data?.requests) {
-          setRequests(res.data.requests);
+          setRequests(res.data.requests)
         }
       })
-      .catch((err) => console.error("Fetch alumni requests failed:", err));
-  }, []);
+      .catch((err) => console.error("Client fetch alumni requests failed:", err))
+  }, [])
 
-  // 1. Listen for real-time submissions from students + toast alert
+  // Listen for realtime updates when a student submits an alumni request
   useAdminSocket({
     target: "alumni-requests",
     onRefresh: (data) => {
       if (data?.message) {
-        toast.info(data.message);
+        toast.info(data.message)
       } else {
-        toast.info("A new alumni upgrade request has been submitted!");
+        toast.info("A new alumni upgrade request has been submitted!")
       }
-      refetchAlumniRequests();
+      refetchAlumniRequests()
     },
-  });
+  })
 
-  // 2. Fetch on mount
   useEffect(() => {
-    refetchAlumniRequests();
-  }, [refetchAlumniRequests]);
+    refetchAlumniRequests()
+  }, [refetchAlumniRequests])
 
   return (
     <div>
       {/* DataTable rendering requests */}
     </div>
-  );
+  )
 }
 ```
 
