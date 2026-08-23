@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext"
 import type { Metadata } from "next"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SocketProvider } from "@/context/SocketContext"
+import { Toaster } from "sonner"
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <SocketProvider>
             <TooltipProvider>
               {children}
+              <Toaster />
             </TooltipProvider>
           </SocketProvider>
         </AuthProvider>

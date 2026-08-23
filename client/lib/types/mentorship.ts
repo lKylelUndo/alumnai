@@ -33,3 +33,9 @@ export type AlumniStudentMentorshipCardTypes = {
   profilePicture: string;
   message: string;
 };
+
+export type TopMentors = {
+  ranking: string | number
+  name: string
+  mentees: string | number
+}

@@ -1,16 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { Award, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
-
-export type TopMentors = {
-  ranking: string | number
-  name: string
-  mentees: string | number
-}
+import type { TopMentors } from "@/lib/types/mentorship"
+import { useAdminSocket } from "@/hooks/useAdminSocket"
 
 export const columns: ColumnDef<TopMentors>[] = [
   {
@@ -57,6 +53,19 @@ export const columns: ColumnDef<TopMentors>[] = [
 
 export default function TopMentors({ data: initialData }: { data: TopMentors[] }) {
   const [mentors, setMentors] = useState<TopMentors[]>(initialData ?? [])
+
+  const refetchTopMentors = useCallback(() => {
+    adminService.getTopMentors()
+      .then((res) => {
+        if (res?.data?.mentors) {
+          setMentors(res.data.mentors)
+        }
+      })
+      .catch((err) => console.error("Client fetch top mentors failed:", err))
+  }, [])
+
+  // Listen for realtime updates
+  useAdminSocket({ target: "top-mentors", onRefresh: refetchTopMentors })
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {

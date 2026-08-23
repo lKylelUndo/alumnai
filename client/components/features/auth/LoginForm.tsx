@@ -23,7 +23,7 @@ export default function LoginForm() {
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
     try {
-      await login(data)
+      await login(data);
     } catch (error: any) {
       const serverError = error?.response?.data
       console.error("Login form error:", serverError)

@@ -1,11 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
+import { useAdminSocket } from "@/hooks/useAdminSocket"
+import { toast } from "sonner"
 
 export type UserManagement = {
   id: string
@@ -22,20 +24,18 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   const handleActivate = async () => {
     const response = await adminService.activateUser(id)
     if (response.code === 200) {
-      alert("User activated successfully")
-      router.refresh()
+      toast("User activated successfully")
     } else {
-      console.error(response.message || "Failed to activate user")
+      toast(response.message || "Failed to activate user")
     }
   }
 
   const handleSuspend = async () => {
     const response = await adminService.suspendUser(id)
     if (response.code === 200) {
-      alert("User suspended successfully")
-      router.refresh()
+      toast("User suspended successfully")
     } else {
-      console.error(response.message || "Failed to suspend user")
+      toast(response.message || "Failed to suspend user")
     }
   }
 
@@ -126,21 +126,24 @@ export const columns: ColumnDef<UserManagement>[] = [
 ]
 
 export default function UserManagement({ data: initialData }: { data: UserManagement[] }) {
-  const [users, setUsers] = useState<UserManagement[]>(initialData ?? [])
+  const [users, setUsers] = useState<UserManagement[]>(initialData ?? []);
 
+  const refetchUsers = useCallback(() => {
+   adminService.getAllUsers()
+     .then((res) => {        
+      if (res?.data?.users) 
+        setUsers(res.data.users)
+     })
+     .catch((err) => console.error("Refetch all users failed:", err))
+  }, [])
+
+  // Listen for realtime updates
+  useAdminSocket({ target: "all-users", onRefresh: refetchUsers })
+
+  // Always fetch latest when tab mounts / is clicked
   useEffect(() => {
-    if (initialData && initialData.length > 0) {
-      setUsers(initialData)
-    } else {
-      adminService.getAllUsers()
-        .then((res) => {
-          if (res?.data?.users) {
-            setUsers(res.data.users)
-          }
-        })
-        .catch((err) => console.error("Client fetch users failed:", err))
-    }
-  }, [initialData])
+    refetchUsers()
+  }, [refetchUsers])
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">

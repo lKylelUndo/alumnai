@@ -2,6 +2,7 @@ import { ENV } from "@/config/env";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { renderTemplate } from "@/utils/template";
 import { sendEmail } from "@/services/mail/mailer";
+import { notifyRole } from "@/lib/socket";
 
 export const VerifyUserService = async (id: string) => {
   const adminRepository = new AdminRepository();
@@ -36,6 +37,9 @@ export const VerifyUserService = async (id: string) => {
       subject: "You are now a verified user",
       html,
     });
+
+    // Notify all admin client components to refresh
+    notifyRole("admin", "admin:refresh", { targets: ["unverified-users", "stats", "all-users"] });
 
     return {
       message: `Successfully verify a user - Student ID Number: ${response.student_id_number}`,

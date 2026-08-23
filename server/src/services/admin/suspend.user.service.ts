@@ -1,3 +1,4 @@
+import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository";
 
 export const SuspendUserService = async (id: string) => {
@@ -20,6 +21,8 @@ export const SuspendUserService = async (id: string) => {
         if (!suspendedUser)
             return { status: "error", code: 500, message: "Unable to suspend a user" };
             
+        notifyRole("admin", "admin:refresh", { targets: ["all-users", "stats"] });
+
         return { status: "success", code: 200, message: "User suspended successfully", data: suspendedUser };
     } catch (error) {
         console.error("SuspendUserService", error);

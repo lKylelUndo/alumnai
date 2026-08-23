@@ -1,25 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { FileText, CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
-
-export type AlumniRequest = {
-  studentId: string
-  name: string
-  status?:
-    | "pending"
-    | "processing"
-    | "success"
-    | "approved"
-    | "rejected"
-    | "failed"
-  email: string
-  documents: string
-}
+import type { AlumniRequest } from "@/lib/types/alumni"
+import { useAdminSocket } from "@/hooks/useAdminSocket"
+import { toast } from "sonner"
 
 const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const router = useRouter()
@@ -28,20 +17,20 @@ const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const handleApprove = async () => {
     const response = await adminService.approveAlumniRequest(studentId)
     if (response.code === 200) {
-      alert("Alumni request approved successfully")
+      toast.success("Alumni request approved successfully")
       router.refresh()
     } else {
-      console.error(response.message || "Failed to approve alumni request")
+      toast.error(response.message || "Failed to approve alumni request")
     }
   }
 
   const handleReject = async () => {
     const response = await adminService.rejectAlumniRequest(studentId)
     if (response.code === 200) {
-      alert("Alumni request rejected")
+      toast.success("Alumni request rejected")
       router.refresh()
     } else {
-      console.error(response.message || "Failed to reject alumni request")
+      toast.error(response.message || "Failed to reject alumni request")
     }
   }
 
@@ -138,19 +127,32 @@ export const columns: ColumnDef<AlumniRequest>[] = [
 export default function AlumniRequest({ data: initialData }: { data: AlumniRequest[] }) {
   const [requests, setRequests] = useState<AlumniRequest[]>(initialData ?? [])
 
+  const refetchAlumniRequests = useCallback(() => {
+    adminService.getAlumniRequest()
+      .then((res) => {
+        if (res?.data?.requests) {
+          setRequests(res.data.requests)
+        }
+      })
+      .catch((err) => console.error("Client fetch alumni requests failed:", err))
+  }, [])
+
+  // Listen for realtime updates when a student submits an alumni request
+  useAdminSocket({
+    target: "alumni-requests",
+    onRefresh: (data) => {
+      if (data?.message) {
+        toast.info(data.message)
+      } else {
+        toast.info("A new alumni upgrade request has been submitted!")
+      }
+      refetchAlumniRequests()
+    },
+  })
+
   useEffect(() => {
-    if (initialData && initialData.length > 0) {
-      setRequests(initialData)
-    } else {
-      adminService.getAlumniRequest()
-        .then((res) => {
-          if (res?.data?.requests) {
-            setRequests(res.data.requests)
-          }
-        })
-        .catch((err) => console.error("Client fetch alumni requests failed:", err))
-    }
-  }, [initialData])
+    refetchAlumniRequests()
+  }, [refetchAlumniRequests])
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
