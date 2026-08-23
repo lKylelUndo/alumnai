@@ -1,25 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { FileText, CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
-
-export type AlumniRequest = {
-  studentId: string
-  name: string
-  status?:
-    | "pending"
-    | "processing"
-    | "success"
-    | "approved"
-    | "rejected"
-    | "failed"
-  email: string
-  documents: string
-}
+import type { AlumniRequest } from "@/lib/types/alumni"
+import { useAdminSocket } from "@/hooks/useAdminSocket"
 
 const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const router = useRouter()
@@ -137,6 +125,19 @@ export const columns: ColumnDef<AlumniRequest>[] = [
 
 export default function AlumniRequest({ data: initialData }: { data: AlumniRequest[] }) {
   const [requests, setRequests] = useState<AlumniRequest[]>(initialData ?? [])
+
+  const refetchAlumniRequests = useCallback(() => {
+    adminService.getAlumniRequest()
+      .then((res) => {
+        if (res?.data?.requests) {
+          setRequests(res.data.requests)
+        }
+      })
+      .catch((err) => console.error("Client fetch alumni requests failed:", err))
+  }, [])
+
+  // Listen for realtime updates
+  useAdminSocket({ target: "alumni-requests", onRefresh: refetchAlumniRequests })
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {

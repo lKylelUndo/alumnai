@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { BookOpen, GraduationCap, Handshake, Users2, TrendingUp } from "lucide-react"
 import { adminService } from "@/services/admin.service"
+import { useAdminSocket } from "@/hooks/useAdminSocket";
 
 export interface AdminDashboardStats {
   totalStudents?: number;
@@ -21,6 +22,18 @@ interface AdminStatCardsProps {
 
 const AdminStatCards = ({ data: initialData }: AdminStatCardsProps) => {
   const [stats, setStats] = useState<AdminDashboardStats | null>(initialData ?? null)
+
+  const refetchStats = useCallback(async () => {
+  await adminService
+    .getDashboardStats()
+    .then((res) => {
+      if (res?.data) setStats(res.data)
+    })
+    .catch((err) => console.error("Refetch stats failed:", err))
+  }, [])
+
+  // Listen for real-time updates
+  useAdminSocket({ target: "stats", onRefresh: refetchStats })
 
   useEffect(() => {
     if (initialData) {
@@ -119,4 +132,4 @@ const AdminStatCards = ({ data: initialData }: AdminStatCardsProps) => {
   )
 }
 
-export default AdminStatCards
+export default AdminStatCards

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
+import { useAdminSocket } from "@/hooks/useAdminSocket"
 
 export type UserManagement = {
   id: string
@@ -126,7 +127,19 @@ export const columns: ColumnDef<UserManagement>[] = [
 ]
 
 export default function UserManagement({ data: initialData }: { data: UserManagement[] }) {
-  const [users, setUsers] = useState<UserManagement[]>(initialData ?? [])
+  const [users, setUsers] = useState<UserManagement[]>(initialData ?? []);
+
+  const refetchUsers = useCallback(() => {
+   adminService.getAllUsers()
+     .then((res) => {        
+      if (res?.data?.users) 
+        setUsers(res.data.users)
+     })
+     .catch((err) => console.error("Refetch all users failed:", err))
+  }, [])
+
+  // Listen for realtime updates
+  useAdminSocket({ target: "all-users", onRefresh: refetchUsers })
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {

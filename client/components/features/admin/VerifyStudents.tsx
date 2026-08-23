@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { adminService } from "@/services/admin.service"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { CheckCircle2, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useAdminSocket } from "@/hooks/useAdminSocket"
 
 export type VerifyStudents = {
   student_id_number: string
@@ -108,7 +109,18 @@ export const columns: ColumnDef<VerifyStudents>[] = [
 ]
 
 export default function VerifyStudents({ data: initialData }: { data: VerifyStudents[] }) {
-  const [students, setStudents] = useState<VerifyStudents[]>(initialData ?? [])
+  const [students, setStudents] = useState<VerifyStudents[]>(initialData ?? []);
+
+  const refetchStudents = useCallback(() => {
+    adminService.getUnverifiedUsers()
+      .then((res) => {
+        if (res?.data?.users) setStudents(res.data.users)
+    })
+      .catch((err) => console.error("Refetch unverified users failed:", err))
+  }, [])
+
+  // Listen for realtime updates
+  useAdminSocket({ target: "unverified-users", onRefresh: refetchStudents })
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {

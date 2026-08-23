@@ -1,3 +1,4 @@
+import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository"
 
 export const RejectUserService = async (id: string) => {
@@ -11,6 +12,8 @@ export const RejectUserService = async (id: string) => {
 
         // TODO 
         // send email to user
+
+        notifyRole("admin", "admin:refresh", { targets: ["alumni-requests", "stats"] });
 
         return {
             status: "success",
