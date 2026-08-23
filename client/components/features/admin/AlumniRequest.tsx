@@ -17,18 +17,20 @@ const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const handleApprove = async () => {
     const response = await adminService.approveAlumniRequest(studentId)
     if (response.code === 200) {
-      toast("Alumni request approved successfully")
+      toast.success("Alumni request approved successfully")
+      router.refresh()
     } else {
-      toast(response.message || "Failed to approve alumni request")
+      toast.error(response.message || "Failed to approve alumni request")
     }
   }
 
   const handleReject = async () => {
     const response = await adminService.rejectAlumniRequest(studentId)
     if (response.code === 200) {
-      toast("Alumni request rejected")
+      toast.success("Alumni request rejected")
+      router.refresh()
     } else {
-      toast(response.message || "Failed to reject alumni request")
+      toast.error(response.message || "Failed to reject alumni request")
     }
   }
 
@@ -135,22 +137,22 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
       .catch((err) => console.error("Client fetch alumni requests failed:", err))
   }, [])
 
-  // Listen for realtime updates
-  useAdminSocket({ target: "alumni-requests", onRefresh: refetchAlumniRequests })
+  // Listen for realtime updates when a student submits an alumni request
+  useAdminSocket({
+    target: "alumni-requests",
+    onRefresh: (data) => {
+      if (data?.message) {
+        toast.info(data.message)
+      } else {
+        toast.info("A new alumni upgrade request has been submitted!")
+      }
+      refetchAlumniRequests()
+    },
+  })
 
   useEffect(() => {
-    if (initialData && initialData.length > 0) {
-      setRequests(initialData)
-    } else {
-      adminService.getAlumniRequest()
-        .then((res) => {
-          if (res?.data?.requests) {
-            setRequests(res.data.requests)
-          }
-        })
-        .catch((err) => console.error("Client fetch alumni requests failed:", err))
-    }
-  }, [initialData])
+    refetchAlumniRequests()
+  }, [refetchAlumniRequests])
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">

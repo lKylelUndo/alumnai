@@ -7,7 +7,7 @@ type AdminRefreshTarget = "stats" | "unverified-users" | "all-users" | "alumni-r
 
 interface UseAdminSocketOptions {
   target: AdminRefreshTarget
-  onRefresh: () => void
+  onRefresh: (data?: { targets: AdminRefreshTarget[]; message?: string }) => void
 }
 
 export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
@@ -16,10 +16,10 @@ export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
   useEffect(() => {
     if (!socket) return
 
-    const handleRefresh = (data: { targets: AdminRefreshTarget[] }) => {
+    const handleRefresh = (data: { targets: AdminRefreshTarget[]; message?: string }) => {
       // Only re-fetch if this component's target is in the list
-      if (data.targets.includes(target)) {
-        onRefresh()
+      if (data.targets?.includes(target)) {
+        onRefresh(data)
       }
     }
 

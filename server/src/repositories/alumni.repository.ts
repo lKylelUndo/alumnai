@@ -65,6 +65,7 @@ export class AlumniRepository {
     // Invalidate Redis caches
     await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
     await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
+    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
 
     return { updatedUser, request: pendingRequest };
   }

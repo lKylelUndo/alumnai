@@ -24,8 +24,11 @@ export const RequestAlumniUpgradeService = async (userId: string, documentUrl: s
 
     const request = await alumniRepository.createAlumniUpgradeRequest(userId, uploadedUrl);
 
-    // Notify admins so AlumniRequest tab updates in real-time
-    notifyRole("admin", "admin:refresh", { targets: ["alumni-requests"] });
+    // Real-time alert to all connected admins
+    notifyRole("admin", "admin:refresh", {
+      targets: ["alumni-requests"],
+      message: "A new student has submitted an alumni upgrade request!",
+    });
 
     return {
       code: 201,

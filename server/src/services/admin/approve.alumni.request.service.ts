@@ -1,6 +1,5 @@
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/cloudinary";
-import { notifyRole } from "@/lib/socket";
 
 export const ApproveAlumniRequestService = async (studentId: string) => {
   const alumniRepository = new AlumniRepository();
@@ -17,8 +16,6 @@ export const ApproveAlumniRequestService = async (studentId: string) => {
         await deleteImage(publicId);
       }
     }
-
-    notifyRole("admin", "admin:refresh", { targets: ["alumni-requests", "stats", "all-users"] });
 
     return {
       status: "success",

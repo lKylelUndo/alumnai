@@ -140,19 +140,10 @@ export default function UserManagement({ data: initialData }: { data: UserManage
   // Listen for realtime updates
   useAdminSocket({ target: "all-users", onRefresh: refetchUsers })
 
+  // Always fetch latest when tab mounts / is clicked
   useEffect(() => {
-    if (initialData && initialData.length > 0) {
-      setUsers(initialData)
-    } else {
-      adminService.getAllUsers()
-        .then((res) => {
-          if (res?.data?.users) {
-            setUsers(res.data.users)
-          }
-        })
-        .catch((err) => console.error("Client fetch users failed:", err))
-    }
-  }, [initialData])
+    refetchUsers()
+  }, [refetchUsers])
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
