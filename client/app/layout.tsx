@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 import { AuthProvider } from "@/context/AuthContext"
 import type { Metadata } from "next"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { SocketProvider } from "@/context/SocketContext"
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -21,14 +22,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("antialiased", roboto.className)} >
-      {/* <head>
-        <script src="https://unpkg.com/react-scan/dist/auto.global.js"></script>
-      </head> */}
       <body>
         <AuthProvider>
-          <TooltipProvider>
-            {children}
-          </TooltipProvider>
+          <SocketProvider>
+            <TooltipProvider>
+              {children}
+            </TooltipProvider>
+          </SocketProvider>
         </AuthProvider>
       </body>
     </html>
