@@ -8,6 +8,7 @@ import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
 import type { AlumniRequest } from "@/lib/types/alumni"
 import { useAdminSocket } from "@/hooks/useAdminSocket"
+import { toast } from "sonner"
 
 const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const router = useRouter()
@@ -16,20 +17,18 @@ const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const handleApprove = async () => {
     const response = await adminService.approveAlumniRequest(studentId)
     if (response.code === 200) {
-      alert("Alumni request approved successfully")
-      router.refresh()
+      toast("Alumni request approved successfully")
     } else {
-      console.error(response.message || "Failed to approve alumni request")
+      toast(response.message || "Failed to approve alumni request")
     }
   }
 
   const handleReject = async () => {
     const response = await adminService.rejectAlumniRequest(studentId)
     if (response.code === 200) {
-      alert("Alumni request rejected")
-      router.refresh()
+      toast("Alumni request rejected")
     } else {
-      console.error(response.message || "Failed to reject alumni request")
+      toast(response.message || "Failed to reject alumni request")
     }
   }
 

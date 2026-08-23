@@ -1,5 +1,6 @@
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { uploadImage } from "@/lib/cloudinary";
+import { notifyRole } from "@/lib/socket";
 
 export const RequestAlumniUpgradeService = async (userId: string, documentUrl: string) => {
   const alumniRepository = new AlumniRepository();
@@ -22,6 +23,9 @@ export const RequestAlumniUpgradeService = async (userId: string, documentUrl: s
     }
 
     const request = await alumniRepository.createAlumniUpgradeRequest(userId, uploadedUrl);
+
+    // Notify admins so AlumniRequest tab updates in real-time
+    notifyRole("admin", "admin:refresh", { targets: ["alumni-requests"] });
 
     return {
       code: 201,

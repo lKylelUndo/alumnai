@@ -7,6 +7,7 @@ import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
 import { useAdminSocket } from "@/hooks/useAdminSocket"
+import { toast } from "sonner"
 
 export type UserManagement = {
   id: string
@@ -23,20 +24,18 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   const handleActivate = async () => {
     const response = await adminService.activateUser(id)
     if (response.code === 200) {
-      alert("User activated successfully")
-      router.refresh()
+      toast("User activated successfully")
     } else {
-      console.error(response.message || "Failed to activate user")
+      toast(response.message || "Failed to activate user")
     }
   }
 
   const handleSuspend = async () => {
     const response = await adminService.suspendUser(id)
     if (response.code === 200) {
-      alert("User suspended successfully")
-      router.refresh()
+      toast("User suspended successfully")
     } else {
-      console.error(response.message || "Failed to suspend user")
+      toast(response.message || "Failed to suspend user")
     }
   }
 
