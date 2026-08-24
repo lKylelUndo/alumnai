@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { createContext, useContext, useEffect, useState } from "react";
+import { io as SocketIOClient, Socket } from "socket.io-client";
 import { useAuthContext } from "@/context/AuthContext";
 
 interface SocketContextType {
@@ -28,7 +28,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Create socket connection (cookies sent automatically via withCredentials)
-    const socketInstance = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000", {
+    const socketInstance = SocketIOClient(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000", {
       withCredentials: true,
       transports: ["websocket", "polling"],
     });
@@ -36,12 +36,12 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     setSocket(socketInstance);
 
     const onConnect = () => {
-      console.log("Connected to Socket.IO");
+      console.log(`Connected to Socket.IO | User: ${user?.role} - ${user?.id}`);
       setIsConnected(true);
     };
 
     const onDisconnect = () => {
-      console.log("Disconnected from Socket.IO");
+      console.log(`Disconnected from Socket.IO | User: ${user?.role} - ${user?.id}`);
       setIsConnected(false);
     };
 
@@ -49,6 +49,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Socket connection error:", err.message);
     };
 
+    // Listen to socket events and runs these functions once they are connected
     socketInstance.on("connect", onConnect);
     socketInstance.on("disconnect", onDisconnect);
     socketInstance.on("connect_error", onConnectError);

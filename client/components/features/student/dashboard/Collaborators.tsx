@@ -4,12 +4,25 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CardDataTable } from "@/components/common/tables/CardDataTable";
 import { StudentCollaboratorCardTypes } from "@/lib/types/collaboration";
 import CollaboratorCard from "./CollaboratorCard";
+import { useRouter } from "next/navigation";
+import { useStudentSocket } from "@/hooks/useStudentSocket";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<StudentCollaboratorCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ];
 
 const Collaborators = ({ collaborators }: { collaborators: StudentCollaboratorCardTypes[] }) => {
+  const router = useRouter();
+
+  useStudentSocket({
+    target: "your-collaborations",
+    onRefresh: (data) => {
+      if (data?.message) toast.info(data.message);
+      router.refresh();
+    },
+  });
+
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

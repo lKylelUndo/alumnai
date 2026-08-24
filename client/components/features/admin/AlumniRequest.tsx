@@ -127,7 +127,7 @@ export const columns: ColumnDef<AlumniRequest>[] = [
 export default function AlumniRequest({ data: initialData }: { data: AlumniRequest[] }) {
   const [requests, setRequests] = useState<AlumniRequest[]>(initialData ?? [])
 
-  const refetchAlumniRequests = useCallback(() => {
+  const refetchAlumniRequests =  () => {
     adminService.getAlumniRequest()
       .then((res) => {
         if (res?.data?.requests) {
@@ -135,17 +135,12 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
         }
       })
       .catch((err) => console.error("Client fetch alumni requests failed:", err))
-  }, [])
+  }
 
   // Listen for realtime updates when a student submits an alumni request
-  useAdminSocket({
-    target: "alumni-requests",
-    onRefresh: (data) => {
-      if (data?.message) {
-        toast.info(data.message)
-      } else {
-        toast.info("A new alumni upgrade request has been submitted!")
-      }
+  useAdminSocket({ target: "alumni-requests", onRefresh: (data) => {
+      if (data?.message) toast.info(data.message)
+      else toast.info("A new alumni upgrade request has been submitted!")
       refetchAlumniRequests()
     },
   })

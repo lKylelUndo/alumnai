@@ -24,16 +24,21 @@ export function formatYearLevel(yearLevel?: string | null) {
   return yearLevel.toUpperCase()
 }
 
-export function formatStudentCard(studentId: string, profile: StudentProfile,
+export function formatStudentCard(
+  studentId: string,
+  profile: StudentProfile,
   extra: {
     recordId: string
     status: string
     message?: string
+    idKey?: "collaborationId" | "mentorshipRecordId"
   },
 ) {
+  const key = extra.idKey ?? "mentorshipRecordId"
+
   return {
     fromStudentId: studentId,
-    mentorshipRecordId: extra.recordId,
+    [key]: extra.recordId,
     fullName: profile?.fullName || "Student User",
     track: formatTrack(profile?.work_field),
     yearLevel: formatYearLevel(profile?.yearLevel),

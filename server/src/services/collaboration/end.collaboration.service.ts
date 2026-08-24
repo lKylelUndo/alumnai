@@ -1,3 +1,4 @@
+import { notifyUser } from "@/lib/socket";
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
@@ -15,6 +16,16 @@ export const EndCollaborationService = async (collabId: string) => {
       invalidateAlumniDashboardCache(response.fromAlumniId),
       invalidateStudentDashboardCache(response.toStudentId),
     ]);
+
+    notifyUser(response.toStudentId, "student:refresh", {
+      targets: ["your-collaborations"],
+      message: `One of your collaboration has ended.`,
+    });
+
+    notifyUser(response.fromAlumniId, "alumni:refresh", {
+      targets: ["your-collaborations"],
+      message: `One of your collaboration has ended.`,
+    });
 
     return { status: "success", code: 200, message: "Successfully end a collaboration" };
   } catch (error) {

@@ -49,7 +49,7 @@ export const initSocket = (server: HttpServer, corsOrigin: string) => {
     // 2. Route Connection to Appropriate Rooms
     io.on("connection", (socket: Socket) => {
         const user = socket.data.user as JwtPayload;
-        console.log(`Connected: ${socket.id} (${user.role}: ${user.userId})`);
+        console.log(`Connected: Socket ID: ${socket.id} | User: ${user.role} - ${user.userId}`);
 
         // Personal room (for direct messages or personal alerts)
         socket.join(`user:${user.userId}`);
