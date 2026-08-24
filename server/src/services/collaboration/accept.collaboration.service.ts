@@ -1,6 +1,7 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { notifyUser } from "@/lib/socket";
 
 export const AcceptCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
@@ -15,6 +16,11 @@ export const AcceptCollaborationService = async (collaborationId: string) => {
       invalidateAlumniDashboardCache(response.fromAlumniId),
       invalidateStudentDashboardCache(response.toStudentId),
     ]);
+
+    notifyUser(response.fromAlumniId, "alumni:refresh", {
+      targets: ["your-collaborations"],
+      message: "A student has accepted your collaboration invite!"
+    });
 
     return { status: "success", code: 200, message: "Successfully accept a collaboration" };
   } catch (error) {

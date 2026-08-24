@@ -61,18 +61,19 @@ const DashboardPanel = async () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="your-mentees" className="mt-4 bg-transparent">
+        <TabsContent value="your-mentees" forceMount className="mt-4 bg-transparent data-[state=inactive]:hidden">
           <YourMentees mentees={myMentees || []} />
         </TabsContent>
 
         <TabsContent
           value="your-collaborations"
-          className="mt-4 bg-transparent"
+          forceMount
+          className="mt-4 bg-transparent data-[state=inactive]:hidden"
         >
           <YourCollaborations collaborations={myCollaborations || []} />
         </TabsContent>
 
-        <TabsContent value="manage-mentorships" className="mt-4 bg-transparent">
+        <TabsContent value="manage-mentorships" forceMount className="mt-4 bg-transparent data-[state=inactive]:hidden">
           <ManageMentorships requests={myMentorshipRequests || []} />
         </TabsContent>
       </Tabs>

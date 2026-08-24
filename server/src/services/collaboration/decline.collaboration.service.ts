@@ -1,6 +1,7 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { notifyUser } from "@/lib/socket";
 
 export const DeclineCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
@@ -15,6 +16,11 @@ export const DeclineCollaborationService = async (collaborationId: string) => {
       invalidateAlumniDashboardCache(response.fromAlumniId),
       invalidateStudentDashboardCache(response.toStudentId),
     ]);
+
+    notifyUser(response.fromAlumniId, "alumni:refresh", {
+      targets: ["your-collaborations"],
+      message: "A student has declined your collaboration invite."
+    });
 
     return { status: "success", code: 200, message: "Successfully decline a collaboration" };
   } catch (error) {

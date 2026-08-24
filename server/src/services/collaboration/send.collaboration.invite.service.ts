@@ -4,6 +4,7 @@ import { CollaborationRepository } from "@/repositories/collaboration.repository
 import { SendCollaborationInviteInputTypes } from "@/schema/collaboration";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { notifyUser } from "@/lib/socket";
 
 export const SendCollaborationInviteService = async (userId: string, data: SendCollaborationInviteInputTypes) => {
   const collaborationRepository = new CollaborationRepository();
@@ -24,6 +25,11 @@ export const SendCollaborationInviteService = async (userId: string, data: SendC
       invalidateAlumniDashboardCache(userId),
       invalidateStudentDashboardCache(data.toStudentId),
     ]);
+
+    notifyUser(data.toStudentId, "student:refresh", {
+      targets: ["collaboration-invites"],
+      message: "You have received a new collaboration invite!"
+    });
 
     return { status: "success", code: 200, message: "Successfully send an invitation" };
   } catch (error) {

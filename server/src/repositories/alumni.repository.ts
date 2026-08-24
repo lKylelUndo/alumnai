@@ -281,6 +281,7 @@ export class AlumniRepository {
         recordId: collaboration.id,
         status: collaboration.status,
         message: collaboration.message_details,
+        idKey: "collaborationId",
       }),
     )
 

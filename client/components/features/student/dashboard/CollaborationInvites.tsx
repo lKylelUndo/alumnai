@@ -5,11 +5,29 @@ import { CardDataTable } from "@/components/common/tables/CardDataTable";
 import { StudentCollabInviteCardTypes } from "@/lib/types/collaboration";
 import CollaborationInviteCard from "./CollaborationInviteCard";
 
+import { useRouter } from "next/navigation";
+import { useStudentSocket } from "@/hooks/useStudentSocket";
+import { toast } from "sonner";
+
 export const columns: ColumnDef<StudentCollabInviteCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ];
 
 const CollaborationInvites = ({ invites }: { invites: StudentCollabInviteCardTypes[] }) => {
+  const router = useRouter();
+
+  useStudentSocket({
+    target: "collaboration-invites",
+    onRefresh: (data) => {
+      if (data?.message) {
+        toast.info(data.message);
+      } else {
+        toast.info("You have a new collaboration request!");
+      }
+      router.refresh();
+    },
+  });
+
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">
