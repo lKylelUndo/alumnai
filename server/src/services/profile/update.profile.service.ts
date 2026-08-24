@@ -1,11 +1,17 @@
 import { ProfileRepository } from "@/repositories/profile.repository";
 import { CertificateRepository } from "@/repositories/certificate.repository";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
+import { AdminRepository } from "@/repositories/admin.repository";
 import { UpdateProfileInputTypes } from "@/schema/profile";
 import { uploadImage } from "@/lib/cloudinary";
 
 export const UpdateProfileService = async (data: UpdateProfileInputTypes) => {
   const profileRepository = new ProfileRepository();
   const certificateRepository = new CertificateRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
+  const adminRepository = new AdminRepository();
 
   try {
     if (data.profilePicture && data.profilePicture.startsWith("data:")) {
@@ -61,6 +67,14 @@ export const UpdateProfileService = async (data: UpdateProfileInputTypes) => {
         }
       }
     }
+
+    // Invalidate caches across domains affected by profile updates
+    await Promise.all([
+      profileRepository.invalidateCache(),
+      alumniRepository.invalidateCache(data.userId),
+      studentRepository.invalidateCache(data.userId),
+      adminRepository.invalidateCache(["all-users", "top-mentors"]),
+    ]);
 
     return { status: "success", code: 200, message: "Profile updated successfully", data: { profile } };
   } catch (error) {

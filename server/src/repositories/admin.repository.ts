@@ -3,6 +3,35 @@ import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 
 export class AdminRepository {
+  // All cache keys this repository owns
+  private static CACHE_KEYS = {
+    dashboardStats: `${ENV.ADMIN_REDIS_KEY}dashboard-stats`,
+    allUsers: `${ENV.ADMIN_REDIS_KEY}all-users`,
+    unverifiedUsers: `${ENV.ADMIN_REDIS_KEY}unverified-users`,
+    topMentors: `${ENV.ADMIN_REDIS_KEY}top-mentors`,
+    topAlumniSkills: `${ENV.ADMIN_REDIS_KEY}top-alumni-skills`,
+  };
+
+  /**
+   * Invalidate admin cache keys.
+   * Pass specific targets to clear only those, or omit to clear all.
+   */
+  async invalidateCache(targets?: ("dashboard-stats" | "all-users" | "unverified-users" | "top-mentors" | "top-alumni-skills")[]) {
+    const keyMap: Record<string, string> = {
+      "dashboard-stats": AdminRepository.CACHE_KEYS.dashboardStats,
+      "all-users": AdminRepository.CACHE_KEYS.allUsers,
+      "unverified-users": AdminRepository.CACHE_KEYS.unverifiedUsers,
+      "top-mentors": AdminRepository.CACHE_KEYS.topMentors,
+      "top-alumni-skills": AdminRepository.CACHE_KEYS.topAlumniSkills,
+    };
+
+    const keys = targets
+      ? targets.map((t) => keyMap[t]).filter(Boolean)
+      : Object.values(keyMap);
+
+    if (keys.length > 0) await redis.del(...keys);
+  }
+
   async findById(id: string) {
     return await prisma.user.findUnique({
       where: { id },
@@ -10,7 +39,7 @@ export class AdminRepository {
   }
 
   async findUnverified() {
-    const cacheKey = `${ENV.ADMIN_REDIS_KEY}unverified-users`;
+    const cacheKey = AdminRepository.CACHE_KEYS.unverifiedUsers;
 
     // try cache first
     const cached = await redis.get(cacheKey);
@@ -46,7 +75,7 @@ export class AdminRepository {
   }
 
   async findAllUsers() {
-    const cacheKey = `${ENV.ADMIN_REDIS_KEY}all-users`;
+    const cacheKey = AdminRepository.CACHE_KEYS.allUsers;
 
     // try cache first
     const cached = await redis.get(cacheKey);
@@ -83,23 +112,17 @@ export class AdminRepository {
   }
 
   async suspend(id: string) {
-    const updated = await prisma.user.update({
+    return await prisma.user.update({
       where: { id },
       data: { accountStatus: "SUSPENDED" },
     });
-    await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
-    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
-    return updated;
   }
 
   async activate(id: string) {
-    const updated = await prisma.user.update({
+    return await prisma.user.update({
       where: { id },
       data: { accountStatus: "ACTIVE" },
     });
-    await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
-    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
-    return updated;
   }
 
   async reject(id: string) {
@@ -107,33 +130,14 @@ export class AdminRepository {
       where: { student_id_number: id }
     });
 
-    const cacheKey = `${ENV.ADMIN_REDIS_KEY}unverified-users`
+    await this.invalidateCache(["unverified-users", "dashboard-stats"]);
 
-    // try cache first
-    const cached = await redis.get(cacheKey);
-    if (cached) await redis.del(cacheKey)
-    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
-
-    // fallback to DB
-    const users = await prisma.user.findMany({
-      where: { isAccountVerified: false },
-      select: {
-        id: true,
-        email: true,
-        student_id_number: true,
-        role: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    await redis.set(cacheKey, JSON.stringify(users), "PX", 1000 * 60 * 5);
-
-    return users;
+    // Re-fetch and re-cache
+    return await this.findUnverified();
   }
 
   async getDashboardStats() {
-    const cacheKey = `${ENV.ADMIN_REDIS_KEY}dashboard-stats`;
+    const cacheKey = AdminRepository.CACHE_KEYS.dashboardStats;
 
     // try cache first
     const cached = await redis.get(cacheKey);
@@ -178,6 +182,3 @@ export class AdminRepository {
     return stats;
   }
 }
-
-
-

@@ -1,10 +1,12 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
-import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
-import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
 import { notifyUser } from "@/lib/socket";
 
 export const DeclineMentorshipService = async (mentorshipId: string, alumniId: string) => {
   const mentorshipRepository = new MentorshipRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
 
   try {
     const response = await mentorshipRepository.decline(mentorshipId, alumniId);
@@ -13,8 +15,8 @@ export const DeclineMentorshipService = async (mentorshipId: string, alumniId: s
       return { status: "error", code: 400, message: "Failed to decline mentorship invite" };
 
     await Promise.all([
-      invalidateAlumniDashboardCache(alumniId),
-      invalidateStudentDashboardCache(response.fromStudentId),
+      alumniRepository.invalidateCache(alumniId),
+      studentRepository.invalidateCache(response.fromStudentId),
     ]);
 
     notifyUser(response.fromStudentId, "student:refresh", {

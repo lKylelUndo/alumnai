@@ -3,6 +3,17 @@ import { redis } from "@/lib/redis";
 import { UpdateProfileInputTypes } from "@/schema/profile";
 
 export class ProfileRepository {
+  /**
+   * Invalidate profile-related caches.
+   * Clears the global profiles list and all view-profile caches.
+   */
+  async invalidateCache() {
+    await redis.del("all-profiles");
+    // Clear all view-profile caches (pattern-based)
+    const viewKeys = await redis.keys("viewprofile:v2:*");
+    if (viewKeys.length > 0) await redis.del(...viewKeys);
+  }
+
   async all() {
     const cacheKey = "all-profiles";
 

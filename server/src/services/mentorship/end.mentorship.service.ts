@@ -1,10 +1,14 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
-import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
-import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
+import { AdminRepository } from "@/repositories/admin.repository";
 import { notifyUser } from "@/lib/socket";
 
 export const EndMentorshipService = async (mentorshipId: string) => {
   const mentorshipRepository = new MentorshipRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
+  const adminRepository = new AdminRepository();
 
   try {
     const response = await mentorshipRepository.end(mentorshipId);
@@ -13,8 +17,9 @@ export const EndMentorshipService = async (mentorshipId: string) => {
       return { status: "error", code: 400, message: "Failed to end mentorship" };
 
     await Promise.all([
-      invalidateAlumniDashboardCache(response.toAlumniId),
-      invalidateStudentDashboardCache(response.fromStudentId),
+      alumniRepository.invalidateCache(response.toAlumniId),
+      studentRepository.invalidateCache(response.fromStudentId),
+      adminRepository.invalidateCache(["dashboard-stats", "top-mentors"]),
     ]);
 
     notifyUser(response.fromStudentId, "student:refresh", {
@@ -27,7 +32,7 @@ export const EndMentorshipService = async (mentorshipId: string) => {
       message: "One of your mentorships has ended.",
     });
 
-    return { status: "success", code: 200, message: "Successfully end mentorship" };
+    return { status: "success", code: 200, message: "Successfully ended mentorship" };
   } catch (error) {
     console.error("EndMentorshipService", error);
     return { status: "error", code: 500, message: "Unable to end mentorship" };

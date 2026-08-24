@@ -1,10 +1,14 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
-import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
-import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
+import { AdminRepository } from "@/repositories/admin.repository";
 import { notifyUser } from "@/lib/socket";
 
 export const AcceptCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
+  const adminRepository = new AdminRepository();
 
   try {
     const response = await collaborationRepository.accept(collaborationId);
@@ -13,8 +17,9 @@ export const AcceptCollaborationService = async (collaborationId: string) => {
       return { status: "error", code: 400, message: "Failed to accept a collaboration" };
 
     await Promise.all([
-      invalidateAlumniDashboardCache(response.fromAlumniId),
-      invalidateStudentDashboardCache(response.toStudentId),
+      alumniRepository.invalidateCache(response.fromAlumniId),
+      studentRepository.invalidateCache(response.toStudentId),
+      adminRepository.invalidateCache(["dashboard-stats"]),
     ]);
 
     notifyUser(response.fromAlumniId, "alumni:refresh", {

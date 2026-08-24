@@ -1,15 +1,15 @@
-import { ENV } from "@/config/env";
-import { redis } from "@/lib/redis";
 import { RecognitionRepository } from "@/repositories/recognition.repository";
 import { RecognizeAlumniTypes } from "@/schema/mentorship";
-import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
-import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
 
 export const RecognizeAlumniService = async (
   fromStudentId: string,
   data: RecognizeAlumniTypes
 ) => {
   const recognitionRepository = new RecognitionRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
 
   try {
     if (!fromStudentId) {
@@ -40,9 +40,8 @@ export const RecognizeAlumniService = async (
 
     // Invalidate caches
     await Promise.all([
-      redis.del(`${ENV.STUDENT_REDIS_KEY}mentors-${fromStudentId}`),
-      invalidateStudentDashboardCache(fromStudentId),
-      invalidateAlumniDashboardCache(data.toAlumniId),
+      studentRepository.invalidateCache(fromStudentId),
+      alumniRepository.invalidateCache(data.toAlumniId),
     ]);
 
     return {
