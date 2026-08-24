@@ -5,11 +5,24 @@ import { CardDataTable } from "@/components/common/tables/CardDataTable";
 import { StudentMentorCardTypes } from "@/lib/types/mentorship";
 import MentorCard from "./MentorCard";
 
+import { useRouter } from "next/navigation";
+import { useStudentSocket } from "@/hooks/useStudentSocket";
+import { toast } from "sonner";
+
 export const columns: ColumnDef<StudentMentorCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ];
 
 const Mentors = ({ mentors }: { mentors: StudentMentorCardTypes[] }) => {
+  const router = useRouter();
+
+  useStudentSocket({
+    target: "my-mentors",
+    onRefresh: (data) => {
+      if (data?.message) toast.info(data.message);
+      router.refresh();
+    },
+  });
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

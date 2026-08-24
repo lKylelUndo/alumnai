@@ -1,6 +1,7 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { notifyUser } from "@/lib/socket";
 
 export const EndMentorshipService = async (mentorshipId: string) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -15,6 +16,16 @@ export const EndMentorshipService = async (mentorshipId: string) => {
       invalidateAlumniDashboardCache(response.toAlumniId),
       invalidateStudentDashboardCache(response.fromStudentId),
     ]);
+
+    notifyUser(response.fromStudentId, "student:refresh", {
+      targets: ["my-mentors"],
+      message: "One of your mentorships has ended.",
+    });
+
+    notifyUser(response.toAlumniId, "alumni:refresh", {
+      targets: ["your-mentees"],
+      message: "One of your mentorships has ended.",
+    });
 
     return { status: "success", code: 200, message: "Successfully end mentorship" };
   } catch (error) {

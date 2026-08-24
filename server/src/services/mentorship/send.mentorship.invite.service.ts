@@ -4,6 +4,7 @@ import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { SendMentorshipInviteTypes } from "@/schema/mentorship";
 import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
 import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { notifyUser } from "@/lib/socket";
 
 export const SendMentorshipInviteService = async (userId: string, data: SendMentorshipInviteTypes) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -24,6 +25,11 @@ export const SendMentorshipInviteService = async (userId: string, data: SendMent
       invalidateAlumniDashboardCache(data.toAlumniId),
       invalidateStudentDashboardCache(userId),
     ]);
+
+    notifyUser(data.toAlumniId, "alumni:refresh", {
+      targets: ["manage-mentorships"],
+      message: "You have received a new mentorship request!",
+    });
 
     return { status: "success", code: 200, message: "Successfully send mentorship invite" };
   } catch (error) {

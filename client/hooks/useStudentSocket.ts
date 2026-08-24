@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 import { useSocketContext } from "@/context/SocketContext"
 
-type StudentRefreshTarget = "collaboration-invites" | "your-collaborations"
+type StudentRefreshTarget = "collaboration-invites" | "your-collaborations" | "my-mentors"
 
 interface UseStudentSocketOptions {
   target: StudentRefreshTarget
