@@ -12,38 +12,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useDebounce } from "@/hooks/useDebounce"
 import { aiService } from "@/services/ai.service"
-
-
-export type Collaborator = {
-  id: string
-  name: string
-  aboutMe: string
-  profilePicture: string | null
-  alreadyInvited: boolean
-
-  skills: {
-    name: string
-    level: number
-    description: string
-  }[]
-}
-
-// Shape returned by the AI smart search endpoint
-export type RecommendedStudent = {
-  id: string
-  name: string
-  bio: string
-  profilePicture?: string | null
-  skills: {
-    name: string
-    level: number
-    description: string
-    match: boolean
-  }[]
-  score: number
-  contextScore?: number
-  reason: string
-}
+import { Collaborator } from "@/lib/types/collaboration"
+import { RecommendedStudent } from "@/lib/types/student"
 
 export const columns: ColumnDef<Collaborator>[] = [
   {
@@ -55,9 +25,7 @@ export const columns: ColumnDef<Collaborator>[] = [
 export default function FindCollaborators() {
   const router = useRouter()
   const [collaborators, setCollaborators] = useState<Collaborator[]>([])
-  const [recommendedStudents, setRecommendedStudents] = useState<
-    RecommendedStudent[]
-  >([])
+  const [recommendedStudents, setRecommendedStudents] = useState<RecommendedStudent[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const debounceSearchQuery = useDebounce(searchQuery, 2000)

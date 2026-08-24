@@ -31,3 +31,17 @@ export type AlumniStudentCollaborationCardTypes = {
   status: "ACTIVE" | "INACTIVE" | "PENDING";
   profilePicture: string;
 };
+
+export type Collaborator = {
+  id: string
+  name: string
+  aboutMe: string
+  profilePicture: string | null
+  alreadyInvited: boolean
+
+  skills: {
+    name: string
+    level: number
+    description: string
+  }[]
+}
