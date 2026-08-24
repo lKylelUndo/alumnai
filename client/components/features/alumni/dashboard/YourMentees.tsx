@@ -5,11 +5,24 @@ import { CardDataTable } from "@/components/common/tables/CardDataTable"
 import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship"
 import MenteeCard from "./MenteeCard"
 
+import { useRouter } from "next/navigation"
+import { useAlumniSocket } from "@/hooks/useAlumniSocket"
+import { toast } from "sonner"
+
 export const columns: ColumnDef<AlumniStudentMentorshipCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
 const YourMentees = ({ mentees }: { mentees: AlumniStudentMentorshipCardTypes[] }) => {
+  const router = useRouter()
+
+  useAlumniSocket({
+    target: "your-mentees",
+    onRefresh: (data) => {
+      if (data?.message) toast.info(data.message)
+      router.refresh()
+    },
+  })
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

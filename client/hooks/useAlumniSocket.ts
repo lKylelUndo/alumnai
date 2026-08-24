@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 import { useSocketContext } from "@/context/SocketContext"
 
-type AlumniRefreshTarget = "find-collaborators" | "your-collaborations"
+type AlumniRefreshTarget = "find-collaborators" | "your-collaborations" | "your-mentees" | "manage-mentorships"
 
 interface UseAlumniSocketOptions {
   target: AlumniRefreshTarget
