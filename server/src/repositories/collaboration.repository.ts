@@ -31,6 +31,7 @@ export class CollaborationRepository {
       where: {
         fromAlumniId,
         toStudentId,
+        status: { in: ["PENDING", "ACTIVE"] }
       },
     });
   }
@@ -43,9 +44,10 @@ export class CollaborationRepository {
   }
 
   async decline(collaborationId: string) {
-    return await prisma.collaboration.delete({
+    return await prisma.collaboration.update({
       where: { id: collaborationId },
-    });
+      data: { status: "INACTIVE" },
+    })
   }
 
   async end(collaborationId: string) {
