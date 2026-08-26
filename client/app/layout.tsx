@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { SocketProvider } from "@/context/SocketContext"
 import { Toaster } from "sonner"
 import { RegisterSW } from "@/components/pwa/register-sw"
+import { SITE_URL } from "@/lib/site"
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -14,6 +15,7 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AlumnAI - AI-Powered Alumni-Student Matching And Skill Gap Analysis System",
     template: "%s | AlumnAI",

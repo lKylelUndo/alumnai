@@ -4,6 +4,9 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Forgot Password",
   description: "Request a password reset link to regain access to your AlumnAI account.",
+  alternates: {
+    canonical: "/forgot-password",
+  },
 }
 
 export default function ForgotPasswordPage() {
