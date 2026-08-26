@@ -2,10 +2,11 @@ import { Roboto } from "next/font/google"
 import "@/styles/globals.css"
 import { cn } from "@/lib/utils"
 import { AuthProvider } from "@/context/AuthContext"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SocketProvider } from "@/context/SocketContext"
 import { Toaster } from "sonner"
+import { RegisterSW } from "@/components/pwa/register-sw"
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -18,6 +19,15 @@ export const metadata: Metadata = {
     template: "%s | AlumnAI",
   },
   description: "Bridge the gap between education and career. AlumnAI connects students with alumni for mentorship, career guidance, and skill analysis.",
+  appleWebApp: {
+    capable: true,
+    title: "AlumnAI",
+    statusBarStyle: "default",
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#1A216D",
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -29,6 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <TooltipProvider>
               {children}
               <Toaster />
+              <RegisterSW />
             </TooltipProvider>
           </SocketProvider>
         </AuthProvider>

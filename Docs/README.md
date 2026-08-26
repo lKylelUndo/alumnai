@@ -12,8 +12,9 @@ Welcome to the official developer documentation for the **AlumnAI** platform.
 4. [Authentication & Security Flow](#authentication--security-flow)
 5. [Caching Strategy (Redis)](#caching-strategy-redis)
 6. [Real-Time WebSocket Architecture (Socket.IO)](#real-time-websocket-architecture-socketio)
-7. [API Route Modules](#api-route-modules)
-8. [Environment Variables Reference](#environment-variables-reference)
+7. [Progressive Web App (PWA)](#progressive-web-app-pwa)
+8. [API Route Modules](#api-route-modules)
+9. [Environment Variables Reference](#environment-variables-reference)
 
 ---
 
@@ -77,7 +78,8 @@ AlumnAI is a full-stack platform connecting students and alumni with real-time m
 alumnai/
 ├── Docs/
 │   ├── README.md                      # Central Documentation Index
-│   └── SOCKET_IO_IMPLEMENTATION.md    # In-depth Socket.IO guide & reference
+│   ├── SOCKET_IO_IMPLEMENTATION.md    # In-depth Socket.IO guide & reference
+│   └── PWA_IMPLEMENTATION.md          # In-depth PWA (manifest, service worker, headers) guide
 ├── client/
 │   ├── app/                           # Next.js App Router pages and layouts
 │   ├── components/                    # UI & Feature components (admin, auth, etc.)
@@ -137,6 +139,19 @@ For detailed code patterns, connection lifecycles, and troubleshooting, refer to
   - `"all-users"`: Triggers refetching user management table.
   - `"alumni-requests"`: Triggers refetching alumni upgrade requests table.
   - `"top-mentors"`: Triggers refetching top-rated alumni mentors list.
+
+---
+
+## 📱 Progressive Web App (PWA)
+
+The client is an **installable PWA** built strictly with Next.js' official guide — web app manifest, generated icon set (including maskable + Apple Touch Icon), a minimal service worker, and hardened security headers. No extra dependencies.
+
+For the full step-by-step implementation, icon safe-zone strategy, verification results, and troubleshooting, refer to [Docs/PWA_IMPLEMENTATION.md](file:///c:/Users/Kyle%20Ando/Desktop/practice/alumnai/Docs/PWA_IMPLEMENTATION.md).
+
+### PWA Building Blocks
+- **Manifest**: `client/app/manifest.ts` → serves `/manifest.webmanifest` (brand navy `#1A216D`, standalone display).
+- **Service Worker**: `client/public/sw.js` (network-passthrough; no offline caching by design), registered via `client/components/pwa/register-sw.tsx` in the root layout.
+- **Icons**: `client/public/icons/*` + `client/app/apple-icon.png` (auto-emitted `apple-touch-icon` link).
 
 ---
 
