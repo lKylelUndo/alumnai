@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import StudentHeader from "@/components/features/student/dashboard/StudentHeader";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
+import ChatBox from "@/components/common/ChatBox";
 
 export const metadata: Metadata = {
   title: "AlumnAI - Student Dashboard",
@@ -20,6 +21,7 @@ export default function StudentDashboardLayout({ children }: { children: React.R
                     <p> © {new Date().getFullYear()} <span className="font-bold">alumnAI</span>. All rights reserved.</p>
                 </footer>
             </main>
+            <ChatBox />
         </AuthGuard>
     )
 }
