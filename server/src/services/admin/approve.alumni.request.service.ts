@@ -1,8 +1,10 @@
 import { AlumniRepository } from "@/repositories/alumni.repository";
+import { AdminRepository } from "@/repositories/admin.repository";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/cloudinary";
 
 export const ApproveAlumniRequestService = async (studentId: string) => {
   const alumniRepository = new AlumniRepository();
+  const adminRepository = new AdminRepository();
   try {
     const result = await alumniRepository.approveAlumniRequest(studentId);
 
@@ -16,6 +18,11 @@ export const ApproveAlumniRequestService = async (studentId: string) => {
         await deleteImage(publicId);
       }
     }
+
+    await Promise.all([
+      alumniRepository.invalidateCache(result.updatedUser.id, ["alumni-requests"]),
+      adminRepository.invalidateCache(["all-users", "dashboard-stats"]),
+    ]);
 
     return {
       status: "success",

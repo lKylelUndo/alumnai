@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
+import { ENV } from "@/config/env";
 import { SignupInputTypes } from "@/schema/auth/signup.schema";
 
 export class UserRepository {
   async all() {
-    const cacheKey = "all-users";
+    const cacheKey = `${ENV.ADMIN_REDIS_KEY}all-users`;
 
     const cached = await redis.get(cacheKey);
     if (cached) return JSON.parse(cached);
@@ -67,6 +68,23 @@ export class UserRepository {
             skills: true,
             certifications: true,
           },
+        },
+        receivedRecognitions: {
+          include: {
+            fromStudent: {
+              select: {
+                id: true,
+                profile: {
+                  select: {
+                    fullName: true,
+                    profilePicture: true,
+                    work_field: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
         },
         student_id_number: true,
         email: true,

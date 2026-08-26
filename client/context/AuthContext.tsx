@@ -32,6 +32,22 @@ export interface User {
     }>
     skills?: Skill[]
   } | null
+  receivedRecognitions?: Array<{
+    id: string
+    fromStudentId: string
+    toAlumniId: string
+    message: string
+    createdAt: string
+    updatedAt: string
+    fromStudent?: {
+      id: string
+      profile?: {
+        fullName?: string | null
+        profilePicture?: string | null
+        work_field?: string | null
+      } | null
+    } | null
+  }>
 }
 
 interface AuthContextType {

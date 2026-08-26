@@ -33,6 +33,4 @@ export const alumniService = {
     const response = await getInstance().get("/api/alumni/v1/get-my-collaborations");
     return response.data;
   },
-
-
 };

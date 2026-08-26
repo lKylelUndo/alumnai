@@ -1,41 +1,18 @@
-export type UserRole = "Student" | "Alumni";
+import { UserRole, RecognitionItem } from "./auth";
+import { Skill, SkillLevel, SkillCategory } from "./skill";
 
-export type SkillLevel =
-  | "Beginner"
-  | "Basic"
-  | "Intermediate"
-  | "Advanced"
-  | "Expert";
-
-export interface Skill {
-  id: string;
-  name?: string;
-  title?: string;
-  type?: string;
-  level?: SkillLevel | number;
-  description?: string;
-}
-
-export interface SkillCategory {
-  title: string;
-  skills: Skill[];
-}
-
-export interface Mentor {
-  id: string;
-  name: string;
-  position: string;
-  company: string;
-  avatar: string;
-}
+export type { UserRole, SkillLevel, SkillCategory, Skill };
 
 export interface Certification {
   id: string;
+  profileId?: string;
   name?: string;
   title?: string;
   issuer: string;
   fileUrl?: string;
   issueDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Profile {
@@ -54,11 +31,13 @@ export interface Profile {
   updatedAt: string;
   skills: Skill[];
   certifications: Certification[];
+  mentorshipStatus?: "PENDING" | "ACTIVE" | null;
   user?: {
     id: string;
     email?: string | null;
     student_id_number?: string | null;
     role?: "STUDENT" | "ALUMNI" | "ADMIN" | string;
+    receivedRecognitions?: RecognitionItem[];
   };
 }
 

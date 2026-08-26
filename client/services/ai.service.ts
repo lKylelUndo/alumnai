@@ -1,9 +1,8 @@
 import { axiosInstance } from "@/lib/axios";
-import { SmartSearchInput } from "@/schema/ai";
 
 export const aiService = {
-  smartSearch: async (data: SmartSearchInput) => {
-    const response = await axiosInstance.post("/api/ai/v1/find-collaborators", data);
+  smartSearch: async (searchQuery: string) => {
+    const response = await axiosInstance.post("/api/ai/v1/find-collaborators", { searchQuery });
     return response.data;
   },
 };

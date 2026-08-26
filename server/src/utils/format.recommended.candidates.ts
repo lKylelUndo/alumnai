@@ -30,7 +30,8 @@ export function formatCandidates(students: any[], querySkills: string[] = []) {
       return {
         id: profile.userId,
         name: profile.fullName,
-        bio: profile.work_field ?? profile.current_position ?? "",
+        bio: profile.aboutMe || profile.work_field || profile.current_position || "",
+        profilePicture: profile.profilePicture ?? null,
         skills: querySkills.length ? skills.filter((s: any) => s.match) : skills,
         score: Math.min(score, 100),
       };

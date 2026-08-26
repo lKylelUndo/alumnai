@@ -1,11 +1,11 @@
 "use client";
 
-import { StudentCollabInviteCardTypes } from "@/constants/student";
 import { collaborationService } from "@/services/collaboration.service";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Row } from "@tanstack/react-table";
 import { MessageSquare, User, UserCircle2 } from "lucide-react";
+import { StudentCollabInviteCardTypes } from "@/lib/types/collaboration";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

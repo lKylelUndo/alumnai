@@ -2,14 +2,31 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { CardDataTable } from "@/components/common/tables/CardDataTable"
-import { AlumniStudentCollaborationCardTypes } from "@/constants/alumni"
+import { AlumniStudentCollaborationCardTypes } from "@/lib/types/collaboration"
 import CollaborationCard from "./CollaborationCard"
+
+import { useRouter } from "next/navigation"
+import { useAlumniSocket } from "@/hooks/useAlumniSocket"
+import { toast } from "sonner"
 
 export const columns: ColumnDef<AlumniStudentCollaborationCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
 const YourCollaborations = ({ collaborations }: { collaborations: AlumniStudentCollaborationCardTypes[] }) => {
+  const router = useRouter()
+
+  useAlumniSocket({
+    target: "your-collaborations",
+    onRefresh: (data) => {
+      if (data?.message) {
+        toast.info(data.message)
+      } else {
+        toast.info("Your collaboration status has been updated.")
+      }
+      router.refresh()
+    },
+  })
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

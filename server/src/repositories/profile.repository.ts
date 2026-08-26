@@ -3,6 +3,17 @@ import { redis } from "@/lib/redis";
 import { UpdateProfileInputTypes } from "@/schema/profile";
 
 export class ProfileRepository {
+  /**
+   * Invalidate profile-related caches.
+   * Clears the global profiles list and all view-profile caches.
+   */
+  async invalidateCache() {
+    await redis.del("all-profiles");
+    // Clear all view-profile caches (pattern-based)
+    const viewKeys = await redis.keys("viewprofile:v2:*");
+    if (viewKeys.length > 0) await redis.del(...viewKeys);
+  }
+
   async all() {
     const cacheKey = "all-profiles";
 
@@ -24,7 +35,7 @@ export class ProfileRepository {
   }
 
   async findById(profileId: string, userIdWhoRequested: string) {
-    const cacheKey = `viewprofile:${userIdWhoRequested}:${profileId}`;
+    const cacheKey = `viewprofile:v2:${userIdWhoRequested}:${profileId}`;
 
     // try cache first
     const cached = await redis.get(cacheKey);
@@ -40,6 +51,23 @@ export class ProfileRepository {
             email: true,
             student_id_number: true,
             role: true,
+            receivedRecognitions: {
+              include: {
+                fromStudent: {
+                  select: {
+                    id: true,
+                    profile: {
+                      select: {
+                        fullName: true,
+                        profilePicture: true,
+                        work_field: true,
+                      },
+                    },
+                  },
+                },
+              },
+              orderBy: { createdAt: "desc" },
+            },
           },
         },
         skills: true,
@@ -47,9 +75,26 @@ export class ProfileRepository {
       },
     });
 
-    await redis.set(cacheKey, JSON.stringify(profile), "PX", 1000 * 60 * 2);
+    if (!profile) return null;
 
-    return profile;
+    const mentorship = await prisma.mentorship.findFirst({
+      where: {
+        fromStudentId: userIdWhoRequested,
+        toAlumniId: profileId,
+        status: { in: ["PENDING", "ACTIVE"] },
+      },
+      orderBy: { updatedAt: "desc" },
+      select: { status: true },
+    });
+
+    const profileWithMentorshipStatus = {
+      ...profile,
+      mentorshipStatus: mentorship?.status ?? null,
+    };
+
+    await redis.set(cacheKey, JSON.stringify(profileWithMentorshipStatus), "PX", 1000 * 60 * 2);
+
+    return profileWithMentorshipStatus;
   }
 
   async update(data: UpdateProfileInputTypes) {
@@ -84,6 +129,10 @@ export class ProfileRepository {
   async matchSkill(skills: string[]) {
     return await prisma.profile.findMany({
       where: {
+        user: {
+          role: "STUDENT",
+          accountStatus: "ACTIVE",
+        },
         skills: {
           some: {
             name: {

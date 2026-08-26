@@ -1,8 +1,8 @@
 import { Row } from "@tanstack/react-table"
-import { Collaborator } from "@/components/features/alumni/find-collaborators/FindCollaborators"
 import { Eye, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation";
+import { Collaborator } from "@/lib/types/collaboration";
 
 const VISIBLE_SKILLS = 2
 

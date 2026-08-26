@@ -1,5 +1,6 @@
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { uploadImage } from "@/lib/cloudinary";
+import { notifyRole } from "@/lib/socket";
 
 export const RequestAlumniUpgradeService = async (userId: string, documentUrl: string) => {
   const alumniRepository = new AlumniRepository();
@@ -22,6 +23,15 @@ export const RequestAlumniUpgradeService = async (userId: string, documentUrl: s
     }
 
     const request = await alumniRepository.createAlumniUpgradeRequest(userId, uploadedUrl);
+
+    // Invalidate alumni requests cache
+    await alumniRepository.invalidateCache(userId, ["alumni-requests"]);
+
+    // Real-time alert to all connected admins
+    notifyRole("admin", "admin:refresh", {
+      targets: ["alumni-requests"],
+      message: "A new student has submitted an alumni upgrade request!",
+    });
 
     return {
       code: 201,

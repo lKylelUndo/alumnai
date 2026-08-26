@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AlumniHeader from "@/components/features/alumni/dashboard/AlumniHeader";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
+import ChatBox from "@/components/common/ChatBox";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
@@ -19,7 +20,8 @@ export default function AlumniDashboardLayout({ children }: { children: ReactNod
         <footer className="text-primary text-center text-xs">
           <p>Copyright © {new Date().getFullYear()} <span className="font-bold">alumnAI</span>. All rights reserved.</p>
         </footer>
-      </main>   
+      </main>
+      <ChatBox />
     </AuthGuard>
   )
 }

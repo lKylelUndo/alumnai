@@ -3,8 +3,8 @@ import { Request, Response } from "express";
 
 class AIController {
   public smartSearch = async (req: Request, res: Response) => {
-    const { rawSearch } = req.body ?? {};
-    const response = await SmartSearchService(rawSearch);
+    const { searchQuery } = req.body ?? {};
+    const response = await SmartSearchService(searchQuery);
     return res.status(response.code).json(response);
   };
 }

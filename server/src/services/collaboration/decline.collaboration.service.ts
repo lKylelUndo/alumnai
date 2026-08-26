@@ -1,9 +1,12 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
-import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
-import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
+import { notifyUser } from "@/lib/socket";
 
 export const DeclineCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
 
   try {
     const response = await collaborationRepository.decline(collaborationId);
@@ -12,9 +15,14 @@ export const DeclineCollaborationService = async (collaborationId: string) => {
       return { status: "error", code: 400, message: "Failed to decline a collaboration" };
 
     await Promise.all([
-      invalidateAlumniDashboardCache(response.fromAlumniId),
-      invalidateStudentDashboardCache(response.toStudentId),
+      alumniRepository.invalidateCache(response.fromAlumniId),
+      studentRepository.invalidateCache(response.toStudentId),
     ]);
+
+    notifyUser(response.fromAlumniId, "alumni:refresh", {
+      targets: ["your-collaborations"],
+      message: "A student has declined your collaboration invite."
+    });
 
     return { status: "success", code: 200, message: "Successfully decline a collaboration" };
   } catch (error) {

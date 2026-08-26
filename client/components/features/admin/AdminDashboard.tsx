@@ -85,23 +85,23 @@ const DashboardPanel = async () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="verify-students" className="mt-4 bg-transparent">
+        <TabsContent value="verify-students" forceMount className="mt-4 data-[state=inactive]:hidden">
           <VerifyStudents data={unverifiedUsers?.data?.users ?? []} />
         </TabsContent>
 
-        <TabsContent value="top-mentors" className="mt-4 bg-transparent">
+        <TabsContent value="top-mentors" forceMount className="mt-4 data-[state=inactive]:hidden">
           <TopMentors data={topMentors?.data?.mentors ?? []} />
         </TabsContent>
 
-        <TabsContent value="alumni-request" className="mt-4 bg-transparent">
+        <TabsContent value="alumni-request" forceMount className="mt-4 data-[state=inactive]:hidden">
           <AlumniRequest data={alumniRequest?.data?.requests ?? []} />
         </TabsContent>
 
-        <TabsContent value="manage-users" className="mt-4 bg-transparent">
+        <TabsContent value="manage-users" forceMount className="mt-4 data-[state=inactive]:hidden">
           <UserManagement data={allUsers?.data?.users ?? []} />
         </TabsContent>
-
-        <TabsContent value="analytics" className="mt-4 bg-transparent">
+        
+        <TabsContent value="analytics" forceMount className="mt-4 data-[state=inactive]:hidden">
           <Analytics data={skillTrendAnalytics?.data?.skills} />
         </TabsContent>
       </Tabs>

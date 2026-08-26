@@ -6,7 +6,8 @@ import Collaborators from "./Collaborators"
 import Mentors from "./Mentors"
 import { mentorshipService } from "@/services/mentorship.service"
 import { collaborationService } from "@/services/collaboration.service"
-import { StudentMentorCardTypes, StudentCollaboratorCardTypes, StudentCollabInviteCardTypes } from "@/constants/student"
+import { StudentMentorCardTypes } from "@/lib/types/mentorship"
+import { StudentCollaboratorCardTypes, StudentCollabInviteCardTypes } from "@/lib/types/collaboration"
 
 const DashboardPanel = async () => {
   let myCollaborationInvites: StudentCollabInviteCardTypes[] = []
@@ -68,19 +69,19 @@ const DashboardPanel = async () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="gap-analysis" className="mt-4">
+        <TabsContent value="gap-analysis" forceMount className="mt-4 data-[state=inactive]:hidden">
           <SkillGapAnalysis />
         </TabsContent>
 
-        <TabsContent value="collaboration-invites" className="mt-4">
+        <TabsContent value="collaboration-invites" forceMount className="mt-4 data-[state=inactive]:hidden">
           <CollaborationInvites invites={myCollaborationInvites || []} />
         </TabsContent>
 
-        <TabsContent value="my-mentors" className="mt-4">
+        <TabsContent value="my-mentors" forceMount className="mt-4 data-[state=inactive]:hidden">
           <Mentors mentors={myMentors || []} />
         </TabsContent>
 
-        <TabsContent value="my-collaborators" className="mt-4">
+        <TabsContent value="my-collaborators" forceMount className="mt-4 data-[state=inactive]:hidden">
           <Collaborators collaborators={myCollaborators || []} />
         </TabsContent>
       </Tabs>

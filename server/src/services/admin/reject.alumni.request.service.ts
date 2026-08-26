@@ -17,6 +17,8 @@ export const RejectAlumniRequestService = async (studentId: string) => {
       }
     }
 
+    await alumniRepository.invalidateCache(result.user.id, ["alumni-requests"]);
+
     return {
       status: "success",
       code: 200,

@@ -1,4 +1,4 @@
-import type { Feature } from "@/constants/feature"
+import type { Feature } from "@/lib/types/feature"
 import Image from "next/image"
 
 type FeatureCardProps = Pick<Feature, "title" | "description" | "icon">

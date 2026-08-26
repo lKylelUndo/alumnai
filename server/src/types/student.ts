@@ -3,4 +3,6 @@ export type RecommendedStudentTypes = {
   name: string;
   skills: Array<{ name: string; level: number; description: string; match?: boolean }>;
   bio: string;
+  score?: number;
 };
+
