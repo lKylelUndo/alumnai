@@ -1,13 +1,13 @@
-import { ENV } from "@/config/env";
-import { redis } from "@/lib/redis";
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { SendMentorshipInviteTypes } from "@/schema/mentorship";
-import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
-import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
 import { notifyUser } from "@/lib/socket";
 
 export const SendMentorshipInviteService = async (userId: string, data: SendMentorshipInviteTypes) => {
   const mentorshipRepository = new MentorshipRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
 
   try {
     const alreadyInvited = await mentorshipRepository.findIfInviteExisted(userId, data.toAlumniId);
@@ -21,9 +21,8 @@ export const SendMentorshipInviteService = async (userId: string, data: SendMent
       return { status: "error", code: 400, message: "Failed to send mentorship invite" };
 
     await Promise.all([
-      redis.del(`${ENV.STUDENT_REDIS_KEY}find-mentors-${userId}`),
-      invalidateAlumniDashboardCache(data.toAlumniId),
-      invalidateStudentDashboardCache(userId),
+      studentRepository.invalidateCache(userId, ["find-mentors", "dashboard-stats"]),
+      alumniRepository.invalidateCache(data.toAlumniId),
     ]);
 
     notifyUser(data.toAlumniId, "alumni:refresh", {
@@ -37,4 +36,3 @@ export const SendMentorshipInviteService = async (userId: string, data: SendMent
     return { status: "error", code: 500, message: "Unable to send mentorship invite" };
   }
 };
-

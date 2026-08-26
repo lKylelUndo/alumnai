@@ -19,6 +19,8 @@ export const ActivateUserService = async (id: string) => {
     if (!activatedUser)
       return { status: "error", code: 500, message: "Unable to activate user" };
 
+    await adminRepository.invalidateCache(["all-users", "dashboard-stats"]);
+
     notifyRole("admin", "admin:refresh", { targets: ["all-users", "stats"] });
 
     return { status: "success", code: 200, message: "User activated successfully", data: activatedUser };

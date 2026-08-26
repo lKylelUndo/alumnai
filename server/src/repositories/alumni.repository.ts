@@ -4,8 +4,39 @@ import { redis } from "@/lib/redis";
 import { formatStudentCard } from "@/utils/format-student-card";
 
 export class AlumniRepository {
+  // All cache keys this repository owns
+  private static CACHE_KEYS = {
+    alumniRequests: `${ENV.ALUMNI_REDIS_KEY}alumni-requests`,
+    dashboardStats: (userId: string) => `${ENV.ALUMNI_REDIS_KEY}dashboard-stats-${userId}`,
+    mentees: (userId: string) => `${ENV.ALUMNI_REDIS_KEY}mentees-${userId}`,
+    collaborations: (userId: string) => `${ENV.ALUMNI_REDIS_KEY}collaborations-${userId}`,
+    mentorshipRequests: (userId: string) => `${ENV.ALUMNI_REDIS_KEY}mentorship-requests-${userId}`,
+    findCollaborators: (userId: string) => `${ENV.ALUMNI_REDIS_KEY}find-collaborators-${userId}`,
+  };
+
+  /**
+   * Invalidate alumni cache keys.
+   * Pass specific targets to clear only those, or omit to clear all.
+   */
+  async invalidateCache(userId: string, targets?: ("alumni-requests" | "dashboard-stats" | "mentees" | "collaborations" | "mentorship-requests" | "find-collaborators")[]) {
+    const keyMap: Record<string, string> = {
+      "alumni-requests": AlumniRepository.CACHE_KEYS.alumniRequests,
+      "dashboard-stats": AlumniRepository.CACHE_KEYS.dashboardStats(userId),
+      "mentees": AlumniRepository.CACHE_KEYS.mentees(userId),
+      "collaborations": AlumniRepository.CACHE_KEYS.collaborations(userId),
+      "mentorship-requests": AlumniRepository.CACHE_KEYS.mentorshipRequests(userId),
+      "find-collaborators": AlumniRepository.CACHE_KEYS.findCollaborators(userId),
+    };
+
+    const keys = targets
+      ? targets.map((t) => keyMap[t]).filter(Boolean)
+      : Object.values(keyMap);
+
+    if (keys.length > 0) await redis.del(...keys);
+  }
+
   async findAlumniRequests() {
-    const cacheKey = `${ENV.ALUMNI_REDIS_KEY}alumni-requests`;
+    const cacheKey = AlumniRepository.CACHE_KEYS.alumniRequests;
 
     // try cache first
     const cached = await redis.get(cacheKey);
@@ -62,11 +93,6 @@ export class AlumniRepository {
       data: { role: "ALUMNI" },
     });
 
-    // Invalidate Redis caches
-    await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
-    await redis.del(`${ENV.ADMIN_REDIS_KEY}all-users`);
-    await redis.del(`${ENV.ADMIN_REDIS_KEY}dashboard-stats`);
-
     return { updatedUser, request: pendingRequest };
   }
 
@@ -87,8 +113,6 @@ export class AlumniRepository {
       });
     }
 
-    await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
-
     return { user, request: pendingRequest };
   }
 
@@ -99,16 +123,13 @@ export class AlumniRepository {
   }
 
   async createAlumniUpgradeRequest(userId: string, documentUrl: string) {
-    const request = await prisma.alumniUpgradeRequest.create({
+    return await prisma.alumniUpgradeRequest.create({
       data: {
         userId,
         documentUrl,
         status: "PENDING",
       },
     });
-
-    await redis.del(`${ENV.ALUMNI_REDIS_KEY}alumni-requests`);
-    return request;
   }
 
   async getDashboardStats(userId: string) {

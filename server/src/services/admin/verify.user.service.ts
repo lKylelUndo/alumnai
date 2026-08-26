@@ -25,6 +25,9 @@ export const VerifyUserService = async (id: string) => {
         code: 400,
       };
 
+    // Invalidate admin caches
+    await adminRepository.invalidateCache(["unverified-users", "all-users", "dashboard-stats"]);
+
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 
     const html = renderTemplate("verified-email.html", {

@@ -1,13 +1,14 @@
 import { ENV } from "@/config/env";
-import { redis } from "@/lib/redis";
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { SendCollaborationInviteInputTypes } from "@/schema/collaboration";
-import { invalidateAlumniDashboardCache } from "@/utils/invalidate-alumni-cache";
-import { invalidateStudentDashboardCache } from "@/utils/invalidate-student-cache";
+import { AlumniRepository } from "@/repositories/alumni.repository";
+import { StudentRepository } from "@/repositories/student.repository";
 import { notifyUser } from "@/lib/socket";
 
 export const SendCollaborationInviteService = async (userId: string, data: SendCollaborationInviteInputTypes) => {
   const collaborationRepository = new CollaborationRepository();
+  const alumniRepository = new AlumniRepository();
+  const studentRepository = new StudentRepository();
 
   try {
     const alreadyInvited = await collaborationRepository.findInviteIfExisted(userId, data.toStudentId);
@@ -21,9 +22,8 @@ export const SendCollaborationInviteService = async (userId: string, data: SendC
       return { status: "error", code: 400, message: "Failed to send an invitation" };
 
     await Promise.all([
-      redis.del(`${ENV.ALUMNI_REDIS_KEY}find-collaborators-${userId}`),
-      invalidateAlumniDashboardCache(userId),
-      invalidateStudentDashboardCache(data.toStudentId),
+      alumniRepository.invalidateCache(userId, ["find-collaborators", "dashboard-stats"]),
+      studentRepository.invalidateCache(data.toStudentId),
     ]);
 
     notifyUser(data.toStudentId, "student:refresh", {

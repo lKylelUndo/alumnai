@@ -3,8 +3,37 @@ import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 
 export class StudentRepository {
+    // All cache keys this repository owns
+    private static CACHE_KEYS = {
+        dashboardStats: (userId: string) => `${ENV.STUDENT_REDIS_KEY}student-dashboard-stats-${userId}`,
+        mentors: (userId: string) => `${ENV.STUDENT_REDIS_KEY}mentors-${userId}`,
+        collaborations: (userId: string) => `${ENV.STUDENT_REDIS_KEY}collaborations-${userId}`,
+        collabRequests: (userId: string) => `${ENV.STUDENT_REDIS_KEY}collab-requests-${userId}`,
+        findMentors: (userId: string) => `${ENV.STUDENT_REDIS_KEY}find-mentors-${userId}`,
+    };
+
+    /**
+     * Invalidate student cache keys.
+     * Pass specific targets to clear only those, or omit to clear all.
+     */
+    async invalidateCache(userId: string, targets?: ("dashboard-stats" | "mentors" | "collaborations" | "collab-requests" | "find-mentors")[]) {
+        const keyMap: Record<string, string> = {
+            "dashboard-stats": StudentRepository.CACHE_KEYS.dashboardStats(userId),
+            "mentors": StudentRepository.CACHE_KEYS.mentors(userId),
+            "collaborations": StudentRepository.CACHE_KEYS.collaborations(userId),
+            "collab-requests": StudentRepository.CACHE_KEYS.collabRequests(userId),
+            "find-mentors": StudentRepository.CACHE_KEYS.findMentors(userId),
+        };
+
+        const keys = targets
+            ? targets.map((t) => keyMap[t]).filter(Boolean)
+            : Object.values(keyMap);
+
+        if (keys.length > 0) await redis.del(...keys);
+    }
+
     async getStudentDashboardStats(userId: string) {
-        const cacheKey = `${ENV.STUDENT_REDIS_KEY}student-dashboard-stats-${userId}`
+        const cacheKey = StudentRepository.CACHE_KEYS.dashboardStats(userId)
 
         const cached = await redis.get(cacheKey)
         if (cached) return JSON.parse(cached)

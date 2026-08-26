@@ -20,6 +20,8 @@ export const SuspendUserService = async (id: string) => {
 
         if (!suspendedUser)
             return { status: "error", code: 500, message: "Unable to suspend a user" };
+
+        await adminRepository.invalidateCache(["all-users", "dashboard-stats"]);
             
         notifyRole("admin", "admin:refresh", { targets: ["all-users", "stats"] });
 
@@ -29,4 +31,3 @@ export const SuspendUserService = async (id: string) => {
         return { status: "error", code: 500, message: "Unable to suspend a user" };
     }
 };
-
