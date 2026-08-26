@@ -8,6 +8,7 @@ import skillRoutes from "@/routes/skill.routes";
 import collaborationRoutes from "@/routes/collaboration.routes";
 import mentorshipRoutes from "@/routes/mentorship.routes";
 import aiRoutes from "@/routes/ai.routes";
+import chatRoutes from "@/routes/chat.routes";
 
 const router = Router();
 
@@ -20,7 +21,6 @@ router.use("/skill", skillRoutes);
 router.use("/collaboration", collaborationRoutes);
 router.use("/mentorship", mentorshipRoutes);
 router.use("/ai", aiRoutes);
+router.use("/chat", chatRoutes);
 
 export default router;
-
-

@@ -2,6 +2,7 @@ import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
+import { ChatRepository } from "@/repositories/chat.repository";
 import { notifyUser } from "@/lib/socket";
 
 export const AcceptMentorshipService = async (mentorshipId: string, alumniId: string) => {
@@ -9,6 +10,7 @@ export const AcceptMentorshipService = async (mentorshipId: string, alumniId: st
   const alumniRepository = new AlumniRepository();
   const studentRepository = new StudentRepository();
   const adminRepository = new AdminRepository();
+  const chatRepository = new ChatRepository();
 
   try {
     const response = await mentorshipRepository.accept(mentorshipId, alumniId);
@@ -20,6 +22,7 @@ export const AcceptMentorshipService = async (mentorshipId: string, alumniId: st
       alumniRepository.invalidateCache(alumniId),
       studentRepository.invalidateCache(response.fromStudentId),
       adminRepository.invalidateCache(["dashboard-stats", "top-mentors"]),
+      chatRepository.invalidateCache([alumniId, response.fromStudentId]),
     ]);
 
     notifyUser(response.fromStudentId, "student:refresh", {
