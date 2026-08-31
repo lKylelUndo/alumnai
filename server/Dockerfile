@@ -26,7 +26,10 @@ COPY --from=builder /app/node_modules ./node_modules
 # Prisma needs the schema at runtime
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
+
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["node", "dist/server.mjs"]
+ENTRYPOINT ["./entrypoint.sh"]

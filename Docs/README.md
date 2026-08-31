@@ -16,6 +16,7 @@ Welcome to the official developer documentation for the **AlumnAI** platform.
 8. [API Route Modules](#api-route-modules)
 9. [Environment Variables Reference](#environment-variables-reference)
 10. [VPS Deployment (Hostinger)](#vps-deployment-hostinger)
+11. [All-in-One VPS Deployment](#all-in-one-vps-deployment)
 
 ---
 
@@ -84,7 +85,8 @@ alumnai/
 │   ├── README.md                      # Central Documentation Index
 │   ├── SOCKET_IO_IMPLEMENTATION.md    # In-depth Socket.IO guide & reference
 │   ├── PWA_IMPLEMENTATION.md          # In-depth PWA (manifest, service worker, headers) guide
-│   └── VPS_DEPLOYMENT.md             # VPS deployment guide (Hostinger)
+│   ├── VPS_DEPLOYMENT.md             # VPS deployment guide (managed services)
+│   └── ALL_IN_ONE_VPS_DEPLOYMENT.md  # VPS deployment guide (all-in-one: Postgres + Redis + pgAdmin)
 ├── nginx/
 │   └── conf.d/
 │       └── default.conf               # Nginx reverse proxy + SSL config
@@ -95,9 +97,10 @@ alumnai/
 │   ├── hooks/                         # Custom hooks (useAdminSocket, etc.)
 │   ├── services/                      # Axios/fetch API service callers
 │   └── lib/                           # Helpers, types, and utilities
-├── docker-compose.yaml                # Docker Compose (production: Nginx + Certbot + Server)
+├── docker-compose.yaml                # Docker Compose (Nginx + Certbot + Postgres + Redis + pgAdmin + Server)
 └── server/
     ├── Dockerfile                     # Production Docker build for Express
+    ├── entrypoint.sh                  # Auto-run migrations then start server
     ├── prisma/                        # Database schema & migrations
     └── src/
         ├── config/                    # Environment variables & constants
@@ -236,4 +239,27 @@ For the complete guide, refer to [Docs/VPS_DEPLOYMENT.md](file:///c:/Users/Kyle%
 - **Backend**: VPS — Nginx + Express + Socket.IO (Port 8000)
 - **Database**: Neon PostgreSQL (managed)
 - **Cache**: Upstash Redis (managed)
+- **Storage**: Cloudinary (managed)
+
+---
+
+## 🖥️ All-in-One VPS Deployment
+
+Everything runs on a single VPS — PostgreSQL, Redis, pgAdmin, Express, Nginx. No managed database/cache services.
+
+For the complete guide, refer to [Docs/ALL_IN_ONE_VPS_DEPLOYMENT.md](file:///c:/Users/Kyle%20Ando/Desktop/practice/alumnai/Docs/ALL_IN_ONE_VPS_DEPLOYMENT.md).
+
+### Quick Summary
+1. Set up VPS (Ubuntu), install Docker
+2. Clone `all-in-one-vps` branch, configure `.env` files
+3. Start all services: `docker compose up -d`
+4. Request SSL certificates for API + pgAdmin subdomains
+5. Deploy frontend to Vercel
+
+### Production Architecture
+- **Frontend**: Vercel (Next.js)
+- **Backend**: VPS — Nginx + Express + Socket.IO
+- **Database**: PostgreSQL 16 (self-hosted, Docker volume)
+- **Cache**: Redis 7 (self-hosted, Docker volume)
+- **DB Admin**: pgAdmin 4 (self-hosted, `pgadmin.yourdomain.com`)
 - **Storage**: Cloudinary (managed)
