@@ -1,10 +1,44 @@
 services:
-    server:
-        build:
-            context: ./server
-            dockerfile: Dockerfile
-        container_name: alumnai-server-api
-        # env_file:
-        #     - ./server/.env # local dev only
-        ports:
-            - "8000:8000"
+  nginx:
+    image: nginx:alpine
+    container_name: alumnai-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - server
+    networks:
+      - alumnai-net
+
+  certbot:
+    image: certbot/certbot
+    container_name: alumnai-certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - alumnai-net
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: alumnai-server
+    restart: unless-stopped
+    env_file:
+      - ./server/.env
+    networks:
+      - alumnai-net
+
+volumes:
+  certbot-etc:
+  certbot-var:
+
+networks:
+  alumnai-net:

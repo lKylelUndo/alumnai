@@ -15,6 +15,7 @@ Welcome to the official developer documentation for the **AlumnAI** platform.
 7. [Progressive Web App (PWA)](#progressive-web-app-pwa)
 8. [API Route Modules](#api-route-modules)
 9. [Environment Variables Reference](#environment-variables-reference)
+10. [VPS Deployment (Hostinger)](#vps-deployment-hostinger)
 
 ---
 
@@ -76,10 +77,17 @@ AlumnAI is a full-stack platform connecting students and alumni with real-time m
 
 ```
 alumnai/
+├── .github/
+│   └── workflows/
+│       └── deploy-server.yml          # GitHub Actions: auto-deploy backend to VPS
 ├── Docs/
 │   ├── README.md                      # Central Documentation Index
 │   ├── SOCKET_IO_IMPLEMENTATION.md    # In-depth Socket.IO guide & reference
-│   └── PWA_IMPLEMENTATION.md          # In-depth PWA (manifest, service worker, headers) guide
+│   ├── PWA_IMPLEMENTATION.md          # In-depth PWA (manifest, service worker, headers) guide
+│   └── VPS_DEPLOYMENT.md             # VPS deployment guide (Hostinger)
+├── nginx/
+│   └── conf.d/
+│       └── default.conf               # Nginx reverse proxy + SSL config
 ├── client/
 │   ├── app/                           # Next.js App Router pages and layouts
 │   ├── components/                    # UI & Feature components (admin, auth, etc.)
@@ -87,7 +95,9 @@ alumnai/
 │   ├── hooks/                         # Custom hooks (useAdminSocket, etc.)
 │   ├── services/                      # Axios/fetch API service callers
 │   └── lib/                           # Helpers, types, and utilities
+├── docker-compose.yaml                # Docker Compose (production: Nginx + Certbot + Server)
 └── server/
+    ├── Dockerfile                     # Production Docker build for Express
     ├── prisma/                        # Database schema & migrations
     └── src/
         ├── config/                    # Environment variables & constants
@@ -175,7 +185,12 @@ For the full step-by-step implementation, icon safe-zone strategy, verification 
 
 ### Client (`client/.env`)
 ```env
+# Development
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+
+# Production (Vercel) — set these in Vercel dashboard
+# NEXT_PUBLIC_BACKEND_URL=https://api.yourdomain.com
+# NEXT_PUBLIC_BASE_URL=https://yourproject.vercel.app
 ```
 
 ### Server (`server/.env`)
@@ -187,12 +202,38 @@ BACKEND_URL=http://localhost:8000
 FRONTEND_URL=http://localhost:3000
 DATABASE_URL=postgresql://user:password@localhost:5432/alumnai
 REDIS_URL=redis://localhost:6379
-JWT_ACCESS_SECRET=your_jwt_access_secret
-JWT_REFRESH_SECRET=your_jwt_refresh_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
+JWT_SECRET=your_jwt_secret
+GEMINI_KEY=your_gemini_key
+GITHUB_PAT=your_github_pat
+CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-ADMIN_REDIS_KEY=admin:
-ALUMNI_REDIS_KEY=alumni:
-STUDENT_REDIS_KEY=student:
+CLOUDINARY_SECRET_KEY=your_api_secret
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_gmail_app_password
+SMTP_FROM=your_email@gmail.com
 ```
+
+---
+
+## 🖥️ VPS Deployment (Hostinger)
+
+Full step-by-step guide to deploy the backend on a Hostinger VPS using Docker Compose, Nginx reverse proxy, and Let's Encrypt SSL. The frontend is deployed separately on Vercel.
+
+For the complete guide, refer to [Docs/VPS_DEPLOYMENT.md](file:///c:/Users/Kyle%20Ando/Desktop/practice/alumnai/Docs/VPS_DEPLOYMENT.md).
+
+### Quick Summary
+1. Set up VPS (Ubuntu), install Docker
+2. Clone repo, configure `server/.env` with production URLs
+3. Set up Nginx reverse proxy with SSL (Let's Encrypt)
+4. `docker compose up -d` to start backend services
+5. Configure GitHub Actions for auto-deploy on push to `main`
+6. Deploy frontend to Vercel separately
+
+### Production Architecture
+- **Frontend**: Deployed on Vercel (Next.js, free tier)
+- **Backend**: VPS — Nginx + Express + Socket.IO (Port 8000)
+- **Database**: Neon PostgreSQL (managed)
+- **Cache**: Upstash Redis (managed)
+- **Storage**: Cloudinary (managed)
