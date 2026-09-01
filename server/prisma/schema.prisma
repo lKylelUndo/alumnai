@@ -62,6 +62,8 @@ model Certification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
 }
 
 model CanonicalSkill {
@@ -85,6 +87,8 @@ model Skill {
   updatedAt        DateTime        @updatedAt
   profile          Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
   canonicalSkill   CanonicalSkill? @relation(fields: [canonicalSkillId], references: [id])
+
+  @@index([profileId])
 }
 
 model Token {
@@ -97,6 +101,8 @@ model Token {
   revokedAt  DateTime?
   userId     String
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Collaboration {
@@ -112,6 +118,9 @@ model Collaboration {
   fromAlumni      User          @relation("CollaborationFrom", fields: [fromAlumniId], references: [id])
   toStudent       User          @relation("CollaborationTo", fields: [toStudentId], references: [id])
   conversation    Conversation?
+
+  @@index([fromAlumniId])
+  @@index([toStudentId])
 }
 
 model Mentorship {
@@ -126,6 +135,9 @@ model Mentorship {
   conversation    Conversation?
   fromStudent     User          @relation("MentorshipFrom", fields: [fromStudentId], references: [id])
   toAlumni        User          @relation("MentorshipTo", fields: [toAlumniId], references: [id])
+
+  @@index([fromStudentId])
+  @@index([toAlumniId])
 }
 
 model Recognition {
@@ -137,6 +149,9 @@ model Recognition {
   updatedAt     DateTime @updatedAt
   fromStudent   User     @relation("RecognitionFrom", fields: [fromStudentId], references: [id])
   toAlumni      User     @relation("RecognitionTo", fields: [toAlumniId], references: [id])
+
+  @@index([fromStudentId])
+  @@index([toAlumniId])
 }
 
 model Conversation {
@@ -158,6 +173,8 @@ model Message {
   createdAt      DateTime     @default(now())
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   sender         User         @relation(fields: [senderId], references: [id])
+
+  @@index([conversationId])
 }
 
 enum RoleType {

@@ -187,6 +187,8 @@ export class AlumniRepository {
             fullName: true,
             profilePicture: true,
             aboutMe: true,
+            work_field: true,
+            current_position: true,
             skills: {
               select: {
                 name: true,
@@ -212,6 +214,8 @@ export class AlumniRepository {
         aboutMe: student.profile?.aboutMe || "No bio available.",
         profilePicture: student.profile?.profilePicture ?? null,
         alreadyInvited: hasInvite,
+        work_field: student.profile?.work_field || null,
+        current_position: student.profile?.current_position || null,
         skills: (student.profile?.skills ?? []).map((skill) => ({
           name: skill.name || "General",
           level: skill.level ?? 0,
