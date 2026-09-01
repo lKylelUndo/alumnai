@@ -12,6 +12,7 @@ import { useDebounce } from "@/hooks/useDebounce"
 import { aiService } from "@/services/ai.service"
 import { Collaborator } from "@/lib/types/collaboration"
 import { RecommendedStudent } from "@/lib/types/student"
+import { IT_FIELDS } from "@/lib/constants"
 
 export const columns: ColumnDef<Collaborator>[] = [
   {
@@ -26,7 +27,7 @@ export default function FindCollaborators() {
   const [recommendedStudents, setRecommendedStudents] = useState<RecommendedStudent[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedField, setSelectedField] = useState("All")
+  const [selectedField, setSelectedField] = useState("")
   const debounceSearchQuery = useDebounce(searchQuery, 2000)
   const isSearching = debounceSearchQuery.trim().length > 0
 
@@ -70,18 +71,12 @@ export default function FindCollaborators() {
     intelligentSearch()
   }, [debounceSearchQuery, isSearching])
 
-  const fieldOptions = useMemo(() => {
-    const fields = new Set<string>()
-    collaborators.forEach((c) => {
-      if (c.work_field) fields.add(c.work_field)
-    })
-    return ["All", ...Array.from(fields).sort()]
-  }, [collaborators])
+  const fieldOptions = useMemo(() => [...IT_FIELDS], [])
 
   const filteredCollaborators = useMemo(() => {
     return collaborators.filter((collaborator) => {
       const matchesField =
-        selectedField === "All" || collaborator.work_field === selectedField
+        selectedField === "" || collaborator.work_field === selectedField
       return matchesField
     })
   }, [collaborators, selectedField])
@@ -119,10 +114,9 @@ export default function FindCollaborators() {
               onChange={(e) => setSelectedField(e.target.value)}
               className="appearance-none pl-10 pr-10 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-sm text-[#131b2e] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-pointer"
             >
+              <option value="" disabled hidden>Field / Specialization</option>
               {fieldOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt === "All" ? "Field / Specialization" : opt}
-                </option>
+                <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC] pointer-events-none" />

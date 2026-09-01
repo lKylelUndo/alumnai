@@ -1,133 +1,103 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { BookOpen, GraduationCap, Handshake, Users2, TrendingUp } from "lucide-react"
+import { BookOpen, GraduationCap, Handshake, Users2 } from "lucide-react"
 import { adminService } from "@/services/admin.service"
-import { useAdminSocket } from "@/hooks/useAdminSocket";
+import { useAdminSocket } from "@/hooks/useAdminSocket"
 
 export interface AdminDashboardStats {
   totalStudents?: number;
-  newStudentsThisMonth?: number;
   verifiedAlumni?: number;
-  newAlumniThisMonth?: number;
   activeMentorships?: number;
-  newMentorshipsThisMonth?: number;
   activeCollaborations?: number;
-  newCollaborationsThisMonth?: number;
 }
 
 interface AdminStatCardsProps {
   data?: AdminDashboardStats | null;
 }
 
+const stats = [
+  {
+    key: "students" as const,
+    label: "Total Students",
+    sublabel: "Students",
+    icon: Users2,
+    bannerBg: "bg-primary/10",
+    count: (s: AdminDashboardStats) => s?.totalStudents ?? 0,
+  },
+  {
+    key: "alumni" as const,
+    label: "Verified Alumni",
+    sublabel: "Alumni",
+    icon: GraduationCap,
+    bannerBg: "bg-primary/15",
+    count: (s: AdminDashboardStats) => s?.verifiedAlumni ?? 0,
+  },
+  {
+    key: "mentorships" as const,
+    label: "Active Mentorships",
+    sublabel: "Mentors",
+    icon: BookOpen,
+    bannerBg: "bg-primary/8",
+    count: (s: AdminDashboardStats) => s?.activeMentorships ?? 0,
+  },
+  {
+    key: "collaborations" as const,
+    label: "Active Collaborations",
+    sublabel: "Collaborators",
+    icon: Handshake,
+    bannerBg: "bg-primary/12",
+    count: (s: AdminDashboardStats) => s?.activeCollaborations ?? 0,
+  },
+]
+
 const AdminStatCards = ({ data: initialData }: AdminStatCardsProps) => {
-  const [stats, setStats] = useState<AdminDashboardStats | null>(initialData ?? null)
+  const [statsData, setStatsData] = useState<AdminDashboardStats | null>(initialData ?? null)
 
   const refetchStats = useCallback(async () => {
-  await adminService
-    .getDashboardStats()
-    .then((res) => {
-      if (res?.data) setStats(res.data)
-    })
-    .catch((err) => console.error("Refetch stats failed:", err))
+    await adminService
+      .getDashboardStats()
+      .then((res) => {
+        if (res?.data) setStatsData(res.data)
+      })
+      .catch((err) => console.error("Refetch stats failed:", err))
   }, [])
 
-  // Listen for real-time updates
   useAdminSocket({ target: "stats", onRefresh: refetchStats })
 
   useEffect(() => {
     if (initialData) {
-      setStats(initialData)
+      setStatsData(initialData)
     } else {
       adminService.getDashboardStats()
         .then((res) => {
-          if (res?.data) {
-            setStats(res.data)
-          }
+          if (res?.data) setStatsData(res.data)
         })
         .catch((err) => console.error("Client fetch stats failed:", err))
     }
   }, [initialData])
 
-  const formatNumber = (num?: number) => (num ?? 0).toLocaleString();
-
   return (
-    <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {/* Card 1: Total Students */}
-      <div className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-        <div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
-            <Users2 className="h-5 w-5" />
+    <section className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {stats.map((stat) => (
+        <div
+          key={stat.key}
+          className="group rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 overflow-hidden"
+        >
+          <div className={`${stat.bannerBg} px-5 py-4`}>
+            <div className="flex items-center gap-2">
+              <stat.icon className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">{stat.label}</span>
+            </div>
           </div>
-          <h2 className="mt-3 text-sm font-semibold text-primary">Total Students</h2>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">
-              {formatNumber(stats?.totalStudents)}
+          <div className="px-5 py-4">
+            <span className="text-4xl font-extrabold text-foreground block">
+              {stat.count(statsData!)}
             </span>
-            <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{stats?.newStudentsThisMonth ?? 0} this month
-            </span>
-          </div>
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground">Students</p>
-      </div>
-
-      {/* Card 2: Verified Alumni */}
-      <div className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-        <div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform">
-            <GraduationCap className="h-5 w-5" />
-          </div>
-          <h2 className="mt-3 text-sm font-semibold text-primary">Verified Alumni</h2>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">
-              {formatNumber(stats?.verifiedAlumni)}
-            </span>
-            <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{stats?.newAlumniThisMonth ?? 0} this month
-            </span>
+            <span className="text-xs text-muted-foreground mt-1 block">{stat.sublabel}</span>
           </div>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">Alumni</p>
-      </div>
-
-      {/* Card 3: Active Mentorships */}
-      <div className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-        <div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 group-hover:scale-105 transition-transform">
-            <BookOpen className="h-5 w-5" />
-          </div>
-          <h2 className="mt-3 text-sm font-semibold text-primary">Active Mentorships</h2>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">
-              {formatNumber(stats?.activeMentorships)}
-            </span>
-            <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{stats?.newMentorshipsThisMonth ?? 0} this month
-            </span>
-          </div>
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground">Mentors</p>
-      </div>
-
-      {/* Card 4: Active Collaborations */}
-      <div className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-        <div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
-            <Handshake className="h-5 w-5" />
-          </div>
-          <h2 className="mt-3 text-sm font-semibold text-primary">Active Collaborations</h2>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">
-              {formatNumber(stats?.activeCollaborations)}
-            </span>
-            <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              <TrendingUp className="h-3 w-3" /> +{stats?.newCollaborationsThisMonth ?? 0} this month
-            </span>
-          </div>
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground">Collaborators</p>
-      </div>
+      ))}
     </section>
   )
 }

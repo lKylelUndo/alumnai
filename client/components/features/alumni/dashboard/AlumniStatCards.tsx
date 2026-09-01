@@ -13,8 +13,7 @@ const stats = [
     label: "Active Collaborators",
     sublabel: "Users",
     icon: Handshake,
-    borderColor: "border-t-primary",
-    iconBg: "bg-primary/10 text-primary",
+    bannerBg: "bg-primary/10",
     count: (s: DashboardStats) => s?.activeCollaborators || 0,
   },
   {
@@ -22,8 +21,7 @@ const stats = [
     label: "Pending Requests",
     sublabel: "Requests",
     icon: Mail,
-    borderColor: "border-t-primary/40",
-    iconBg: "bg-primary/10 text-primary",
+    bannerBg: "bg-primary/15",
     count: (s: DashboardStats) => s?.pendingRequests || 0,
   },
   {
@@ -31,8 +29,7 @@ const stats = [
     label: "Active Mentorships",
     sublabel: "Mentees",
     icon: Users,
-    borderColor: "border-t-primary/70",
-    iconBg: "bg-primary/10 text-primary",
+    bannerBg: "bg-primary/8",
     count: (s: DashboardStats) => s?.activeMentorships || 0,
   },
 ]
@@ -45,19 +42,19 @@ const AlumniStatCards = ({ dashboardStats }: { dashboardStats: DashboardStats | 
         {stats.map((stat) => (
           <div
             key={stat.key}
-            className={`group flex flex-col gap-4 rounded-2xl border border-border/80 border-t-[3px] ${stat.borderColor} bg-card p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
+            className="group rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 overflow-hidden"
           >
-            <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.iconBg} group-hover:scale-105 transition-transform`}>
-              <stat.icon className="h-5 w-5" />
-            </div>
-            <div className="space-y-1">
-              <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                {stat.label}
-              </h2>
-              <div className="flex items-baseline gap-x-2">
-                <span className="text-4xl font-extrabold text-foreground">{stat.count(dashboardStats!)}</span>
-                <span className="text-xs text-muted-foreground">{stat.sublabel}</span>
+            <div className={`${stat.bannerBg} px-5 py-4`}>
+              <div className="flex items-center gap-2">
+                <stat.icon className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold text-primary">{stat.label}</span>
               </div>
+            </div>
+            <div className="px-5 py-4">
+              <span className="text-4xl font-extrabold text-foreground block">
+                {stat.count(dashboardStats!)}
+              </span>
+              <span className="text-xs text-muted-foreground mt-1 block">{stat.sublabel}</span>
             </div>
           </div>
         ))}

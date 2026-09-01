@@ -7,6 +7,7 @@ import { Search, Briefcase, ChevronDown } from "lucide-react"
 import { CardDataTable } from "@/components/common/tables/CardDataTable"
 import MentorCard from "./MentorCard"
 import { studentService } from "@/services/student.service"
+import { IT_FIELDS } from "@/lib/constants"
 
 export type Mentor = {
   id: string
@@ -36,7 +37,7 @@ export default function FindMentors() {
   const [mentors, setMentors] = useState<Mentor[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedExpertise, setSelectedExpertise] = useState("All")
+  const [selectedField, setSelectedField] = useState("")
 
   useEffect(() => {
     const fetchMentors = async () => {
@@ -55,13 +56,7 @@ export default function FindMentors() {
     fetchMentors()
   }, [])
 
-  const expertiseOptions = useMemo(() => {
-    const fields = new Set<string>()
-    mentors.forEach((m) => {
-      if (m.work_field) fields.add(m.work_field)
-    })
-    return ["All", ...Array.from(fields).sort()]
-  }, [mentors])
+  const fieldOptions = useMemo(() => [...IT_FIELDS], [])
 
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
@@ -71,12 +66,12 @@ export default function FindMentors() {
         mentor.current_position?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         mentor.companyName?.toLowerCase().includes(searchQuery.toLowerCase())
 
-      const matchesExpertise =
-        selectedExpertise === "All" || mentor.work_field === selectedExpertise
+      const matchesField =
+        selectedField === "" || mentor.work_field === selectedField
 
-      return matchesSearch && matchesExpertise
+      return matchesSearch && matchesField
     })
-  }, [mentors, searchQuery, selectedExpertise])
+  }, [mentors, searchQuery, selectedField])
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen">
@@ -105,14 +100,13 @@ export default function FindMentors() {
           <div className="relative">
             <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC] pointer-events-none" />
             <select
-              value={selectedExpertise}
-              onChange={(e) => setSelectedExpertise(e.target.value)}
+              value={selectedField}
+              onChange={(e) => setSelectedField(e.target.value)}
               className="appearance-none pl-10 pr-10 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-sm text-[#131b2e] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-pointer"
             >
-              {expertiseOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt === "All" ? "Expertise" : opt}
-                </option>
+              <option value="" disabled hidden>Field / Specialization</option>
+              {fieldOptions.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC] pointer-events-none" />
