@@ -103,6 +103,9 @@ export class StudentRepository {
                     where: { fromStudentId: studentUserId },
                     select: { id: true, status: true },
                 },
+                receivedRecognitions: {
+                    select: { id: true },
+                },
             },
         });
 
@@ -118,6 +121,7 @@ export class StudentRepository {
                 work_field: mentor.profile?.work_field || "Field not specified",
                 companyName: mentor.profile?.companyName || null,
                 current_position: mentor.profile?.current_position || null,
+                recognitionCount: mentor.receivedRecognitions?.length ?? 0,
                 skills: (mentor.profile?.skills ?? []).map((skill) => ({
                     name: skill.name || "General",
                     level: skill.level ?? 0,
