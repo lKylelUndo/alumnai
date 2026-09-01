@@ -1,32 +1,16 @@
 "use client"
 
-import ProfiecienyScale from "@/components/common/skills/ProficiencyScale"
 import { Card } from "@/components/ui/card"
-import AlumniCoreSkills from "./AlumniCoreSkills"
-import AlumniToolsTechnology from "./AlumniToolsTechnology"
 import { useAuthContext } from "@/context/AuthContext"
 
 const AlumniProfileAbout = () => {
   const { user } = useAuthContext();
   return (
-    <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm md:p-8">
-      <h2 className="mb-4 text-2xl font-bold text-[#1A216D]">About</h2>
-      <p className="mb-8 text-sm leading-relaxed text-gray-700">
-       {user?.profile?.aboutMe || ""}
+    <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 md:p-8">
+      <h2 className="font-bold text-[#131b2e] text-2xl mb-4">About</h2>
+      <p className="text-[#434657] leading-relaxed">
+       {user?.profile?.aboutMe || "No bio provided."}
       </p>
-
-      <h2 className="mb-6 text-2xl font-bold text-[#1A216D]">Skills</h2>
-
-      <div className="space-y-6">
-        {/* Core Skills */}
-        <AlumniCoreSkills skills={user?.profile?.skills || []} />
-
-        {/* Tools & Technology */}
-        <AlumniToolsTechnology skills={user?.profile?.skills || []} />
-      </div>
-
-      {/* Proficiency Scale */}
-      <ProfiecienyScale />
     </Card>
   )
 }

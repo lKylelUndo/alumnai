@@ -13,44 +13,44 @@ type DashboardQuickActionTypes = {
   featureLabel: string;
 };
 
+const actions = [
+  { key: "profile", icon: SquareUserRound, label: "View My Profile" },
+  { key: "edit", icon: Briefcase, label: "Edit Profile" },
+  { key: "feature", icon: Users, label: "featureLabel" },
+] as const;
+
 const DashboardQuickAction = ({
   profileRoute,
   updateProfileRoute,
   featureRoute,
   featureLabel,
 }: DashboardQuickActionTypes) => {
+  const routeMap: Record<string, string> = {
+    profile: profileRoute,
+    edit: updateProfileRoute,
+    feature: featureRoute,
+  };
+
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs lg:col-span-1">
-      <div className="space-y-4">
-        <div className="flex items-center gap-x-2 font-semibold text-foreground">
-          <Target className="h-5 w-5 text-primary" />
-          <h2 className="text-base font-bold">
-            Quick Actions
-          </h2>
+    <div className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs">
+      <div className="mb-4 flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <Target className="h-4 w-4" />
         </div>
+        <h2 className="text-sm font-bold text-foreground">Quick Actions</h2>
+      </div>
 
-        <div className="flex flex-col gap-y-2">
-          <Link href={profileRoute}>
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <SquareUserRound className="h-4 w-4 text-muted-foreground" />
-              <span>View My Profile</span>
-            </button>
+      <div className="flex flex-col gap-2">
+        {actions.map((action) => (
+          <Link
+            key={action.key}
+            href={routeMap[action.key]}
+            className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-primary/20 hover:bg-primary/[0.03]"
+          >
+            <action.icon className="h-4 w-4 text-muted-foreground" />
+            <span>{action.key === "feature" ? featureLabel : action.label}</span>
           </Link>
-
-          <Link href={updateProfileRoute}>
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-              <span>Edit Profile</span>
-            </button>
-          </Link>
-
-          <Link href={featureRoute}>
-            <button className="flex w-full cursor-pointer items-center gap-x-3 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-muted-foreground/35 hover:bg-muted">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span>{featureLabel}</span>
-            </button>
-          </Link>
-        </div>
+        ))}
       </div>
     </div>
   );

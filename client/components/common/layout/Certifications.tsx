@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FileBadge, Download, ChevronLeft, ChevronRight } from "lucide-react"
+import { Award, Download, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card } from "../../ui/card"
 import { useAuthContext } from "@/context/AuthContext"
 
@@ -24,68 +24,66 @@ const Certifications = ({ certifications }: CertificationsProps) => {
   const goToNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
 
   return (
-    <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm">
-      <div className="mb-2 flex items-start gap-3">
-        <div className="rounded-full bg-[#F0F4FF] p-2 text-[#1A216D]">
-          <FileBadge className="h-5 w-5" />
+    <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 min-h-[250px] flex flex-col">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-full bg-[#e0e0ff] text-[#1877F2] flex items-center justify-center">
+          <Award className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-[#1A216D]">Certifications</h2>
-          <p className="mt-0 text-xs text-gray-500">
-            Certifications from verified organizations
-          </p>
+          <h2 className="font-bold text-[#131b2e]">Certifications</h2>
+          <p className="text-sm text-[#434657]">Certifications from verified organizations</p>
         </div>
       </div>
 
-      <div className="space-y-3">
-        {paginatedCerts.length > 0 ? (
-          paginatedCerts.map((cert) => (
+      {paginatedCerts.length > 0 ? (
+        <div className="space-y-3 flex-grow">
+          {paginatedCerts.map((cert) => (
             <div
               key={cert.id}
-              className="flex items-center justify-between rounded-lg bg-[#F5F5F5] p-4"
+              className="flex items-center justify-between rounded-lg bg-[#F8FAFC] p-4"
             >
               <div>
                 <p className="text-sm font-bold text-[#1A216D]">{cert.name}</p>
-                <p className="mt-1 text-xs text-gray-600">{cert.issuer}</p>
+                <p className="mt-1 text-xs text-[#434657]">{cert.issuer}</p>
               </div>
               {cert.fileUrl && (
                 <a
                   href={cert.fileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:text-primary/80 transition"
+                  className="text-primary hover:text-primary/80 transition cursor-pointer"
                   title="View/Download Certificate"
                 >
                   <Download className="h-4 w-4" />
                 </a>
               )}
             </div>
-          ))
-        ) : (
-          <p className="py-4 text-center text-xs text-muted-foreground">
-            No certifications added yet.
-          </p>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex-grow flex flex-col items-center justify-center text-center p-6 text-[#434657]">
+          <Award className="h-10 w-10 mb-2 text-[#A4B1CC]/50" />
+          <p className="text-sm italic">No certifications added yet.</p>
+        </div>
+      )}
 
-      {/* Pagination controls — only show if more than 1 page */}
       {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-4 flex items-center justify-between border-t border-[#E2E8F0] pt-3">
+          <p className="text-xs text-[#434657]">
             {startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, certs.length)} of {certs.length}
           </p>
           <div className="flex items-center gap-1.5">
             <button
               onClick={goToPrevious}
               disabled={currentPage === 0}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E2E8F0] text-[#434657] transition cursor-pointer hover:border-[#1A216D] hover:text-[#1A216D] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={goToNext}
               disabled={currentPage === totalPages - 1}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#E2E8F0] text-[#434657] transition cursor-pointer hover:border-[#1A216D] hover:text-[#1A216D] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
