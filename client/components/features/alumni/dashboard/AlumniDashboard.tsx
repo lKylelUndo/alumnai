@@ -31,7 +31,7 @@ const DashboardPanel = async () => {
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
         <TabsList
-          className="flex h-auto w-full items-center justify-between gap-1 rounded-2xl border-none bg-[#eaf5f6] p-1.5 shadow-none dark:bg-muted"
+          className="flex h-auto w-full items-center justify-between gap-1 rounded-2xl border-none bg-[#eaf5f6] bg-transparent p-1.5 shadow-none dark:bg-muted"
         >
           <TabsTrigger
             value="your-mentees"

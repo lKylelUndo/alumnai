@@ -37,7 +37,7 @@ const DashboardPanel = async () => {
       <Tabs defaultValue="verify-students" className="w-full bg-transparent">
         <TabsList
           variant="none"
-          className="flex w-full items-center justify-between bg-[#eaf5f6] dark:bg-muted p-1.5 rounded-2xl h-auto gap-1 border-none shadow-none"
+          className="w-full"
         >
           <TabsTrigger
             value="verify-students"

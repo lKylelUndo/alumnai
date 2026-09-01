@@ -2,10 +2,13 @@
 
 import { useAuthContext } from "@/context/AuthContext";
 import { useSocketContext } from "@/context/SocketContext";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { chatService } from "@/services/chat.service";
 import { Conversation, ChatMessage } from "@/schema/chat";
+import { formatChatTime, formatSidebarTime, getDateLabel } from "@/lib/format-date";
+
+/* ───────── Main Component ───────── */
 
 export default function ChatBox() {
   const { user } = useAuthContext();
@@ -40,7 +43,7 @@ export default function ChatBox() {
     }
   }, [user]);
 
-  /* ───────── Fetch Messages for Active Conversation ───────── */
+  /* ───────── Fetch Messages ───────── */
   const fetchMessages = useCallback(async (conversationId: string) => {
     try {
       setLoadingMessages(true);
@@ -55,33 +58,27 @@ export default function ChatBox() {
     }
   }, []);
 
-  /* ───────── Load conversations on mount & when opened ───────── */
+  /* ───────── Load conversations on open ───────── */
   useEffect(() => {
-    if (isOpen) {
-      fetchConversations();
-    }
+    if (isOpen) fetchConversations();
   }, [isOpen, fetchConversations]);
 
-  /* ───────── Load messages when active conversation changes ───────── */
+  /* ───────── Load messages on active conversation ───────── */
   useEffect(() => {
-    if (activeConversation) {
-      fetchMessages(activeConversation.id);
-    } else {
-      setMessages([]);
-    }
+    if (activeConversation) fetchMessages(activeConversation.id);
+    else setMessages([]);
   }, [activeConversation, fetchMessages]);
 
-  /* ───────── Auto-scroll to bottom of message feed ───────── */
+  /* ───────── Auto-scroll ───────── */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loadingMessages]);
 
-  /* ───────── Socket.IO Real-time Messages Listener ───────── */
+  /* ───────── Socket.IO listener ───────── */
   useEffect(() => {
     if (!socket) return;
 
     const handleNewMessage = (data: { conversationId: string; message: ChatMessage }) => {
-      // If the message is for the currently open conversation, append it
       if (activeConversation && activeConversation.id === data.conversationId) {
         setMessages((prev) => {
           if (prev.some((m) => m.id === data.message.id)) return prev;
@@ -89,11 +86,9 @@ export default function ChatBox() {
         });
       }
 
-      // Update the last message in the conversations list and re-sort
       setConversations((prev) => {
         const index = prev.findIndex((c) => c.id === data.conversationId);
         if (index === -1) {
-          // If conversation is new, refetch all
           fetchConversations();
           return prev;
         }
@@ -107,17 +102,13 @@ export default function ChatBox() {
           createdAt: data.message.createdAt,
         };
         target.updatedAt = data.message.createdAt;
-
         updated.splice(index, 1);
         return [target, ...updated];
       });
     };
 
     socket.on("chat:new_message", handleNewMessage);
-
-    return () => {
-      socket.off("chat:new_message", handleNewMessage);
-    };
+    return () => { socket.off("chat:new_message", handleNewMessage); };
   }, [socket, activeConversation, fetchConversations]);
 
   /* ───────── Close on outside click ───────── */
@@ -137,18 +128,15 @@ export default function ChatBox() {
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        if (activeConversation) {
-          setActiveConversation(null);
-        } else {
-          setIsOpen(false);
-        }
+        if (activeConversation) setActiveConversation(null);
+        else setIsOpen(false);
       }
     }
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
   }, [activeConversation]);
 
-  /* ───────── Send Message Handler ───────── */
+  /* ───────── Send Message ───────── */
   const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!activeConversation || !messageInput.trim() || sending) return;
@@ -167,7 +155,6 @@ export default function ChatBox() {
         const newMsg = res.data.message;
         setMessages((prev) => [...prev, newMsg]);
 
-        // Update conversation in list
         setConversations((prev) => {
           const index = prev.findIndex((c) => c.id === activeConversation.id);
           if (index === -1) return prev;
@@ -186,28 +173,37 @@ export default function ChatBox() {
       }
     } catch (err) {
       console.error("Failed to send message:", err);
-      // restore unsent message text on failure
       setMessageInput(content);
     } finally {
       setSending(false);
     }
   };
 
-  const formatTime = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    } catch {
-      return "";
-    }
-  };
-
+  /* ───────── Derived state ───────── */
   const filteredChats = conversations.filter((c) =>
     c.otherUser.fullName.toLowerCase().includes(search.toLowerCase())
   );
 
   const displayName = user?.profile?.fullName ?? user?.email ?? "User";
   const initials = displayName.charAt(0).toUpperCase();
+
+  /* Group messages by date for separators */
+  const messagesWithDates = useMemo(() => {
+    type DateSep = { type: "date"; label: string; key: string };
+    type MsgItem = { type: "message"; msg: ChatMessage; key: string };
+    type Item = DateSep | MsgItem;
+    const result: Item[] = [];
+    let lastDate = "";
+    for (const msg of messages) {
+      const dateKey = new Date(msg.createdAt).toDateString();
+      if (dateKey !== lastDate) {
+        result.push({ type: "date", label: getDateLabel(msg.createdAt), key: `date-${dateKey}` });
+        lastDate = dateKey;
+      }
+      result.push({ type: "message", msg, key: msg.id });
+    }
+    return result;
+  }, [messages]);
 
   return (
     <>
@@ -216,32 +212,7 @@ export default function ChatBox() {
         id="chatbox-trigger"
         onClick={() => setIsOpen((p) => !p)}
         aria-label="Open chat"
-        style={{
-          position: "fixed",
-          bottom: 24,
-          right: 24,
-          zIndex: 9998,
-          width: 52,
-          height: 52,
-          borderRadius: "50%",
-          background: "var(--primary)",
-          color: "var(--primary-foreground)",
-          border: "none",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "scale(1.08)";
-          e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.25)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-          e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.18)";
-        }}
+        className="fixed bottom-6 right-6 z-[9998] flex h-[52px] w-[52px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
       >
         {isOpen ? (
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -258,56 +229,20 @@ export default function ChatBox() {
       {/* ── Chat Panel ── */}
       <div
         ref={panelRef}
-        style={{
-          position: "fixed",
-          bottom: 88,
-          right: 24,
-          zIndex: 9999,
-          width: 360,
-          height: 520,
-          maxHeight: "calc(100vh - 120px)",
-          borderRadius: 16,
-          background: "var(--card)",
-          color: "var(--card-foreground)",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.16), 0 2px 12px rgba(0,0,0,0.08)",
-          border: "1px solid var(--border)",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          opacity: isOpen ? 1 : 0,
-          transform: isOpen ? "translateY(0) scale(1)" : "translateY(12px) scale(0.96)",
-          pointerEvents: isOpen ? "auto" : "none",
-          transition: "opacity 0.25s ease, transform 0.25s ease",
-        }}
+        className={`fixed bottom-[88px] right-6 z-[9999] flex h-[520px] w-[360px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-250 ${
+          isOpen ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" : "opacity-0 translate-y-3 scale-95 pointer-events-none"
+        }`}
       >
         {activeConversation ? (
-          /* ══════════════════════════════════════════════
-             ACTIVE CHAT THREAD VIEW
-             ══════════════════════════════════════════════ */
-          <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-            {/* Header with Back button */}
-            <div
-              style={{
-                padding: "12px 16px",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                borderBottom: "1px solid var(--border)",
-                background: "var(--card)",
-              }}
-            >
+          /* ════════════════════════════════════
+             MESSAGE THREAD VIEW
+             ════════════════════════════════════ */
+          <div className="flex h-full flex-col">
+            {/* Header */}
+            <div className="flex items-center gap-3 border-b border-border bg-card px-4 py-3">
               <button
                 onClick={() => setActiveConversation(null)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "var(--primary)",
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "4px 6px",
-                  borderRadius: 6,
-                }}
+                className="flex items-center justify-center rounded-md p-1 text-primary transition-colors hover:bg-muted"
                 aria-label="Back to chat list"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -315,165 +250,100 @@ export default function ChatBox() {
                 </svg>
               </button>
 
-              <div
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: 700,
-                  fontSize: 14,
-                  flexShrink: 0,
-                }}
-              >
+              <div className="relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
                 {activeConversation.otherUser.profilePicture ? (
                   <Image
                     src={activeConversation.otherUser.profilePicture}
                     alt={activeConversation.otherUser.fullName}
                     width={36}
                     height={36}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   activeConversation.otherUser.fullName.charAt(0).toUpperCase()
                 )}
               </div>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontWeight: 600,
-                    fontSize: 14,
-                    color: "var(--foreground)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold text-foreground">
                   {activeConversation.otherUser.fullName}
                 </div>
-                <div style={{ fontSize: 11, color: "var(--muted-foreground)" }}>
+                <div className="text-[11px] text-muted-foreground">
                   {activeConversation.type === "MENTORSHIP" ? "Mentorship" : "Collaboration"}
                 </div>
               </div>
             </div>
 
             {/* Message Thread */}
-            <div
-              style={{
-                flex: 1,
-                overflowY: "auto",
-                padding: "16px 14px",
-                display: "flex",
-                flexDirection: "column",
-                gap: 10,
-                background: "var(--muted)",
-              }}
-            >
+            <div className="flex-1 overflow-y-auto bg-muted/50 px-3 py-4">
               {loadingMessages ? (
-                <div style={{ textAlign: "center", color: "var(--muted-foreground)", fontSize: 13, marginTop: 40 }}>
-                  Loading messages...
-                </div>
+                <div className="mt-16 text-center text-sm text-muted-foreground">Loading messages...</div>
               ) : messages.length === 0 ? (
-                <div style={{ textAlign: "center", color: "var(--muted-foreground)", fontSize: 13, marginTop: 40 }}>
-                  No messages yet. Say hello! 👋
-                </div>
+                <div className="mt-16 text-center text-sm text-muted-foreground">No messages yet. Say hello! 👋</div>
               ) : (
-                messages.map((msg) => {
-                  const isMine = msg.senderId === user?.id;
-                  return (
-                    <div
-                      key={msg.id}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: isMine ? "flex-end" : "flex-start",
-                      }}
-                    >
-                      <div
-                        style={{
-                          maxWidth: "80%",
-                          padding: "8px 12px",
-                          borderRadius: isMine ? "14px 14px 2px 14px" : "14px 14px 14px 2px",
-                          background: isMine ? "var(--primary)" : "var(--card)",
-                          color: isMine ? "var(--primary-foreground)" : "var(--card-foreground)",
-                          fontSize: 13,
-                          lineHeight: 1.4,
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                          border: isMine ? "none" : "1px solid var(--border)",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {msg.content}
+                <div className="flex flex-col gap-1">
+                  {messagesWithDates.map((item) => {
+                    if (item.type === "date") {
+                      return (
+                        <div key={item.key} className="my-3 flex items-center gap-3">
+                          <div className="h-px flex-1 bg-border" />
+                          <span className="whitespace-nowrap text-[11px] font-medium text-muted-foreground">
+                            {item.label}
+                          </span>
+                          <div className="h-px flex-1 bg-border" />
+                        </div>
+                      );
+                    }
+
+                    const msg = item.msg;
+                    const isMine = msg.senderId === user?.id;
+
+                    return (
+                      <div key={item.key} className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}>
+                        {/* Sender name for other users */}
+                        {!isMine && (
+                          <span className="mb-0.5 px-1 text-[11px] font-medium text-muted-foreground">
+                            {activeConversation.otherUser.fullName}
+                          </span>
+                        )}
+                        <div
+                          className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
+                            isMine
+                              ? "rounded-br-sm bg-primary text-primary-foreground"
+                              : "rounded-bl-sm border border-border bg-card text-card-foreground shadow-sm"
+                          }`}
+                        >
+                          {msg.content}
+                        </div>
+                        <span className="mt-1 px-1 text-[10px] text-muted-foreground">
+                          {formatChatTime(msg.createdAt)}
+                        </span>
                       </div>
-                      <span
-                        style={{
-                          fontSize: 10,
-                          color: "var(--muted-foreground)",
-                          marginTop: 3,
-                          padding: "0 4px",
-                        }}
-                      >
-                        {formatTime(msg.createdAt)}
-                      </span>
-                    </div>
-                  );
-                })
+                    );
+                  })}
+                </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Message Input Box */}
-            <form
-              onSubmit={handleSendMessage}
-              style={{
-                padding: "10px 12px",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                borderTop: "1px solid var(--border)",
-                background: "var(--card)",
-              }}
-            >
+            {/* Message Input */}
+            <form onSubmit={handleSendMessage} className="flex items-center gap-2 border-t border-border bg-card px-3 py-2.5">
               <input
                 type="text"
                 placeholder="Type a message..."
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 disabled={sending}
-                style={{
-                  flex: 1,
-                  padding: "8px 12px",
-                  borderRadius: 20,
-                  border: "1px solid var(--border)",
-                  background: "var(--muted)",
-                  color: "var(--foreground)",
-                  fontSize: 13,
-                  outline: "none",
-                }}
+                className="flex-1 rounded-full border border-border bg-muted px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <button
                 type="submit"
                 disabled={!messageInput.trim() || sending}
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  background: messageInput.trim() && !sending ? "var(--primary)" : "var(--muted)",
-                  color: messageInput.trim() && !sending ? "var(--primary-foreground)" : "var(--muted-foreground)",
-                  border: "none",
-                  cursor: messageInput.trim() && !sending ? "pointer" : "default",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  transition: "background 0.15s ease",
-                }}
+                className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors ${
+                  messageInput.trim() && !sending
+                    ? "bg-primary text-primary-foreground cursor-pointer"
+                    : "bg-muted text-muted-foreground cursor-default"
+                }`}
                 aria-label="Send message"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -484,69 +354,32 @@ export default function ChatBox() {
             </form>
           </div>
         ) : (
-          /* ══════════════════════════════════════════════
-             CONVERSATIONS LIST VIEW (FIGMA DESIGN)
-             ══════════════════════════════════════════════ */
-          <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-            {/* ─── Header ─── */}
-            <div
-              style={{
-                padding: "20px 20px 16px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 10,
-                borderBottom: "1px solid var(--border)",
-                background: "var(--card)",
-              }}
-            >
-              {/* Avatar */}
-              <div
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  border: "2.5px solid var(--primary)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                  fontWeight: 700,
-                  fontSize: 22,
-                  flexShrink: 0,
-                }}
-              >
+          /* ════════════════════════════════════
+             CONVERSATIONS LIST VIEW
+             ════════════════════════════════════ */
+          <div className="flex h-full flex-col">
+            {/* Header */}
+            <div className="flex flex-col items-center gap-2.5 border-b border-border bg-card px-5 pb-4 pt-5">
+              <div className="flex h-[60px] w-[60px] items-center justify-center overflow-hidden rounded-full border-[2.5px] border-primary bg-primary text-primary-foreground text-2xl font-bold">
                 {user?.profile?.profilePicture ? (
                   <Image
                     src={user.profile.profilePicture}
                     alt="Profile"
                     width={60}
                     height={60}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   initials
                 )}
               </div>
-              <span style={{ fontWeight: 600, fontSize: 15 }}>{displayName}</span>
+              <span className="text-[15px] font-semibold">{displayName}</span>
             </div>
 
-            {/* ─── Search ─── */}
-            <div style={{ padding: "12px 16px 8px" }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  background: "var(--muted)",
-                  borderRadius: 10,
-                  padding: "8px 12px",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Search */}
+            <div className="px-4 pt-3 pb-2">
+              <div className="flex items-center gap-2 rounded-xl border border-border bg-muted px-3 py-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
@@ -555,117 +388,51 @@ export default function ChatBox() {
                   placeholder="Search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  style={{
-                    flex: 1,
-                    border: "none",
-                    outline: "none",
-                    background: "transparent",
-                    fontSize: 13,
-                    color: "var(--foreground)",
-                  }}
+                  className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
               </div>
             </div>
 
-            {/* ─── Last Chats Header ─── */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "8px 20px 4px",
-              }}
-            >
-              <span style={{ fontWeight: 600, fontSize: 13, color: "var(--foreground)" }}>
-                Last chats
-              </span>
-              <div style={{ display: "flex", gap: 4 }}>
-                <button
-                  onClick={() => fetchConversations()}
-                  title="Refresh chats"
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 4,
-                    borderRadius: 6,
-                    display: "flex",
-                    alignItems: "center",
-                    color: "var(--muted-foreground)",
-                  }}
-                  aria-label="Refresh chats"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-                  </svg>
-                </button>
-              </div>
+            {/* Last Chats Header */}
+            <div className="flex items-center justify-between px-5 py-2">
+              <span className="text-[13px] font-semibold text-foreground">Last chats</span>
+              <button
+                onClick={() => fetchConversations()}
+                title="Refresh chats"
+                className="rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Refresh chats"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                </svg>
+              </button>
             </div>
 
-            {/* ─── Chat List ─── */}
-            <div
-              style={{
-                flex: 1,
-                overflowY: "auto",
-                padding: "4px 8px 12px",
-              }}
-            >
+            {/* Chat List */}
+            <div className="flex-1 overflow-y-auto px-2 pb-3">
               {loadingConversations ? (
-                <p style={{ textAlign: "center", color: "var(--muted-foreground)", fontSize: 13, padding: "32px 0" }}>
-                  Loading chats...
-                </p>
+                <p className="py-8 text-center text-[13px] text-muted-foreground">Loading chats...</p>
               ) : filteredChats.length === 0 ? (
-                <div style={{ textAlign: "center", color: "var(--muted-foreground)", fontSize: 13, padding: "32px 16px" }}>
-                  <p style={{ fontWeight: 500, marginBottom: 4 }}>No active chats</p>
-                  <p style={{ fontSize: 11 }}>
-                    Chat is available once a mentorship or collaboration is accepted!
-                  </p>
+                <div className="px-4 py-8 text-center text-muted-foreground">
+                  <p className="text-[13px] font-medium">No active chats</p>
+                  <p className="mt-1 text-[11px]">Chat is available once a mentorship or collaboration is accepted!</p>
                 </div>
               ) : (
                 filteredChats.map((chat) => (
                   <button
                     key={chat.id}
                     onClick={() => setActiveConversation(chat)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      width: "100%",
-                      padding: "10px 12px",
-                      borderRadius: 12,
-                      border: "none",
-                      background: "transparent",
-                      cursor: "pointer",
-                      transition: "background 0.15s ease",
-                      textAlign: "left",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--muted)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    className="flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-muted"
                   >
-                    {/* Chat avatar */}
-                    <div
-                      style={{
-                        width: 42,
-                        height: 42,
-                        borderRadius: "50%",
-                        background: "var(--primary)",
-                        color: "var(--primary-foreground)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: 700,
-                        fontSize: 15,
-                        flexShrink: 0,
-                        overflow: "hidden",
-                      }}
-                    >
+                    {/* Avatar */}
+                    <div className="relative h-[42px] w-[42px] flex-shrink-0 overflow-hidden rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[15px] font-bold">
                       {chat.otherUser.profilePicture ? (
                         <Image
                           src={chat.otherUser.profilePicture}
                           alt={chat.otherUser.fullName}
                           width={42}
                           height={42}
-                          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+                          className="h-full w-full rounded-full object-cover"
                         />
                       ) : (
                         chat.otherUser.fullName.charAt(0).toUpperCase()
@@ -673,60 +440,20 @@ export default function ChatBox() {
                     </div>
 
                     {/* Chat info */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontWeight: 600,
-                            fontSize: 13,
-                            color: "var(--foreground)",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="truncate text-[13px] font-semibold text-foreground">
                           {chat.otherUser.fullName}
                         </span>
-                        <span
-                          style={{
-                            fontSize: 11,
-                            color: "var(--muted-foreground)",
-                            flexShrink: 0,
-                            marginLeft: 8,
-                          }}
-                        >
-                          {chat.lastMessage ? formatTime(chat.lastMessage.createdAt) : ""}
+                        <span className="ml-2 flex-shrink-0 text-[11px] text-muted-foreground">
+                          {chat.lastMessage ? formatSidebarTime(chat.lastMessage.createdAt) : ""}
                         </span>
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
-                        <span
-                          style={{
-                            fontSize: 12,
-                            color: "var(--muted-foreground)",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            flex: 1,
-                          }}
-                        >
+                      <div className="mt-0.5 flex items-center gap-1.5">
+                        <span className="min-w-0 flex-1 truncate text-[12px] text-muted-foreground">
                           {chat.lastMessage?.content || `Active ${chat.type.toLowerCase()}`}
                         </span>
-                        <span
-                          style={{
-                            fontSize: 10,
-                            padding: "2px 6px",
-                            borderRadius: 6,
-                            background: "var(--muted)",
-                            color: "var(--muted-foreground)",
-                            fontWeight: 500,
-                          }}
-                        >
+                        <span className="flex-shrink-0 rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                           {chat.type === "MENTORSHIP" ? "Mentor" : "Collab"}
                         </span>
                       </div>
