@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
+import { Loader2 } from "lucide-react"
 
 export default function RegisterForm() {
   const { signup } = useAuthContext();
@@ -23,6 +24,8 @@ export default function RegisterForm() {
       password: "",
     },
   })
+
+  const { formState: { isSubmitting } } = form;
 
   async function onSubmit(data: z.infer<typeof signupSchema>) {
     try {
@@ -141,8 +144,12 @@ export default function RegisterForm() {
         </FieldGroup>
       </form>
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-signup" className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
-          Register
+        <Button type="submit" form="form-rhf-signup" disabled={isSubmitting} className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
+          {isSubmitting ? (
+            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating account...</>
+          ) : (
+            "Register"
+          )}
         </Button>
       </Field>
 

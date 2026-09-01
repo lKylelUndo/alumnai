@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
+import { Loader2 } from "lucide-react"
 
 export default function LoginForm() {
   const { login } = useAuthContext();
@@ -20,6 +21,8 @@ export default function LoginForm() {
       password: "",
     },
   })
+
+  const { formState: { isSubmitting } } = form;
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
     try {
@@ -94,8 +97,12 @@ export default function LoginForm() {
       </form>
 
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-login" className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
-          Login
+        <Button type="submit" form="form-rhf-login" disabled={isSubmitting} className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
+          {isSubmitting ? (
+            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...</>
+          ) : (
+            "Login"
+          )}
         </Button>
       </Field>
 
