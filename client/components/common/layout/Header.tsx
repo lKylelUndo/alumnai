@@ -9,10 +9,11 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo/logoalumnai.png"
-            width={100}
-            height={100}
+            width={140}
+            height={76}
             alt="alumnAI"
             priority
+            className="h-8 w-auto"
           />
         </Link>
 

@@ -23,10 +23,11 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-2">
             <Image
               src="/logo/logoalumnai.png"
-              width={160}
-              height={64}
+              width={140}
+              height={76}
               alt="alumnAI"
               loading="lazy"
+              className="h-10 w-auto"
             />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
               AI-powered institutional platform connecting CPC computing students
