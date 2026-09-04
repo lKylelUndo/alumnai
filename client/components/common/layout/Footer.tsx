@@ -27,6 +27,7 @@ export default function Footer() {
               height={76}
               alt="alumnAI"
               loading="lazy"
+              sizes="140px"
               className="h-10 w-auto"
             />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">

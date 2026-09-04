@@ -20,6 +20,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               className="object-cover opacity-65"
               sizes="50vw"
               priority
+              fetchPriority="high"
             />
           </div>
 

@@ -1,7 +1,7 @@
 import ViewProfileServerCmp from "@/components/common/profile/ViewProfileServerCmp"
 import { profileService } from "@/services/profile.service"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 3600
 
 export default async function ViewUserProfileAdminPage({ params }: {params: Promise<{ userId: string }>}) {
   const { userId } = await params

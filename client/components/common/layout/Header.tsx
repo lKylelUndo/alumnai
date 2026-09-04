@@ -13,6 +13,8 @@ export default function Header() {
             height={76}
             alt="alumnAI"
             priority
+            fetchPriority="high"
+            sizes="140px"
             className="h-8 w-auto"
           />
         </Link>
