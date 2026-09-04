@@ -23,6 +23,8 @@ export interface User {
     companyName?: string | null
     socialLink?: string
     current_position?: string | null
+    isAvailableForMentorship?: boolean | null
+    isAvailableForCollaboration?: boolean | null
     certifications?: Array<{
       id: string
       profileId: string

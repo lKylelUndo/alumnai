@@ -33,12 +33,14 @@ const AlumniProfileHeader = () => {
             </span>
           </div>
 
-          <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-4">
-            <span className="flex items-center gap-1 text-[#004e71] text-xs bg-[#006794]/10 px-2 py-1 rounded-full border border-[#004e71]/20">
-              <CheckCircle className="h-4 w-4" />
-              Available for Mentoring
-            </span>
-          </div>
+          {user?.profile?.isAvailableForMentorship !== false && (
+            <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-4">
+              <span className="flex items-center gap-1 text-[#004e71] text-xs bg-[#006794]/10 px-2 py-1 rounded-full border border-[#004e71]/20">
+                <CheckCircle className="h-4 w-4" />
+                Available for Mentoring
+              </span>
+            </div>
+          )}
 
           <div className="flex flex-col sm:flex-row items-center gap-4 text-[#434657] text-sm">
             {user?.profile?.current_position && (

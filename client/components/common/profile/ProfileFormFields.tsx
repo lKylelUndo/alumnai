@@ -2,6 +2,7 @@
 
 import { Controller, type Control } from "react-hook-form"
 import { Link2Icon, PlusIcon } from "lucide-react"
+import { useCallback, useState } from "react"
 import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import {
@@ -20,6 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useAuthContext } from "@/context/AuthContext"
+import { profileService } from "@/services/profile.service"
+import { authService } from "@/services/auth.service"
+import { toast } from "sonner"
 
 interface ProfileFormFieldsProps {
   userRole: string
@@ -34,8 +39,57 @@ export default function ProfileFormFields({
   skills,
   onOpenDialog,
 }: ProfileFormFieldsProps) {
+  const { user, setUser } = useAuthContext()
+  const [savingAvailability, setSavingAvailability] = useState(false)
+
   // split skills by type for display purposes ikaw og ganahan ka i apil softskills
   const hardSkills = skills.filter((s) => s.type === "HARD_SKILL")
+
+  const isAlumni = userRole === "ALUMNI"
+  const availabilityFieldName = isAlumni ? "isAvailableForMentorship" : "isAvailableForCollaboration"
+  const availabilityLabel = isAlumni ? "Available for Mentoring" : "Available for Collaboration"
+  const availabilityHelper = isAlumni
+    ? "Turn off to pause new mentorship/collaboration requests"
+    : "Turn off to pause new collaboration requests"
+
+  const handleAvailabilityToggle = useCallback(
+    async (
+      next: boolean,
+      fieldOnChange: (value: boolean) => void,
+    ) => {
+      const undoneLabel = next
+        ? availabilityLabel
+        : `unavailable for ${isAlumni ? "mentoring" : "collaboration"}`
+      // optimistic update
+      fieldOnChange(next)
+      setSavingAvailability(true)
+      try {
+        if (!user) throw new Error("No user")
+        const updateResponse = await profileService.updateProfile({ userId: user.id, [availabilityFieldName]: next })
+        // the server allowlists updatable fields — verify the flag actually persisted before celebrating
+        if (
+          !updateResponse ||
+          updateResponse.status === "error" ||
+          updateResponse?.data?.profile?.[availabilityFieldName] !== next
+        ) {
+          throw new Error("Availability not persisted")
+        }
+        const meResponse = await authService.getMe()
+        if (meResponse.code === 200) {
+          const updatedUser = meResponse.data.user
+          setUser(updatedUser)
+          localStorage.setItem("user", JSON.stringify(updatedUser))
+        }
+        toast.success(`You are now ${undoneLabel}`)
+      } catch {
+        fieldOnChange(!next)
+        toast.error("Couldn't update availability")
+      } finally {
+        setSavingAvailability(false)
+      }
+    },
+    [user, setUser, availabilityFieldName, availabilityLabel, isAlumni],
+  )
 
   return (
     <FieldGroup className="grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -304,6 +358,44 @@ export default function ProfileFormFields({
               <Link2Icon size={16} className="shrink-0 text-muted-foreground" />
             </div>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+
+      <Controller
+        name={availabilityFieldName}
+        control={control}
+        render={({ field }) => (
+          <Field className="lg:col-span-2">
+            <div className="flex items-center justify-between rounded-lg border border-input bg-transparent px-4 py-3">
+              <div className="flex flex-col gap-0.5">
+                <FieldLabel className="font-semibold text-primary cursor-pointer">
+                  {availabilityLabel}
+                </FieldLabel>
+                <span className="text-xs text-muted-foreground">
+                  {availabilityHelper}
+                </span>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={field.value !== false}
+                onClick={() => {
+                  const next = field.value === false ? true : false
+                  handleAvailabilityToggle(next, field.onChange)
+                }}
+                disabled={savingAvailability}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                  field.value !== false ? "bg-primary" : "bg-input"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    field.value !== false ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
           </Field>
         )}
       />

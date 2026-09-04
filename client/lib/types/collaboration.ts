@@ -40,6 +40,7 @@ export type Collaborator = {
   alreadyInvited: boolean
   work_field?: string | null
   current_position?: string | null
+  isAvailableForCollaboration?: boolean | null
 
   skills: {
     name: string

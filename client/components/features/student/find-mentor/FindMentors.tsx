@@ -16,6 +16,7 @@ export type Mentor = {
   profilePicture: string | null
   alreadyInvited: boolean
   work_field?: string | null
+  isAvailableForMentorship?: boolean | null
   companyName?: string | null
   current_position?: string | null
   recognitionCount: number
@@ -60,6 +61,8 @@ export default function FindMentors() {
 
   const filteredMentors = useMemo(() => {
     return mentors.filter((mentor) => {
+      if (mentor.isAvailableForMentorship === false) return false
+
       const matchesSearch =
         !searchQuery ||
         mentor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

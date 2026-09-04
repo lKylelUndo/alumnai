@@ -23,7 +23,8 @@ export default function ViewProfileHeaderCard({
   mentorshipStatus,
   onOpenInviteModal,
 }: ViewProfileHeaderCardProps) {
-  const mentorshipUnavailable = mentorshipStatus === "ACTIVE" || mentorshipStatus === "PENDING"
+  const mentorshipUnavailable = mentorshipStatus === "ACTIVE" || mentorshipStatus === "PENDING" || profile.isAvailableForMentorship === false
+  const collaborationUnavailable = isStudent && profile.isAvailableForCollaboration === false
 
   return (
     <Card className="relative bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 overflow-hidden">
@@ -59,7 +60,7 @@ export default function ViewProfileHeaderCard({
                   <GraduationCap className="inline h-4 w-4 mr-1" />
                   Alumni {profile.graduatedYear ? `(${profile.graduatedYear})` : ""}
                 </span>
-                {profile.mentorshipStatus !== "ACTIVE" && profile.mentorshipStatus !== "PENDING" && (
+                {profile.mentorshipStatus !== "ACTIVE" && profile.mentorshipStatus !== "PENDING" && profile.isAvailableForMentorship !== false && (
                   <span className="flex items-center gap-1 text-[#004e71] text-xs bg-[#006794]/10 px-2 py-1 rounded-full border border-[#004e71]/20">
                     <CheckCircle className="h-4 w-4" />
                     Available for Mentoring
@@ -67,10 +68,18 @@ export default function ViewProfileHeaderCard({
                 )}
               </>
             ) : (
-              <span className="bg-[#0035c5]/10 text-[#0035c5] text-xs font-semibold px-2 py-1 rounded-sm uppercase tracking-wider">
-                <GraduationCap className="inline h-4 w-4 mr-1" />
-                Student
-              </span>
+              <>
+                <span className="bg-[#0035c5]/10 text-[#0035c5] text-xs font-semibold px-2 py-1 rounded-sm uppercase tracking-wider">
+                  <GraduationCap className="inline h-4 w-4 mr-1" />
+                  Student
+                </span>
+                {profile.isAvailableForCollaboration !== false && (
+                  <span className="flex items-center gap-1 text-[#004e71] text-xs bg-[#006794]/10 px-2 py-1 rounded-full border border-[#004e71]/20">
+                    <CheckCircle className="h-4 w-4" />
+                    Available for Collaboration
+                  </span>
+                )}
+              </>
             )}
           </div>
 
@@ -136,7 +145,7 @@ export default function ViewProfileHeaderCard({
         <Button
           id="profile-action-invite-btn"
           onClick={onOpenInviteModal}
-          disabled={alreadyInvited || mentorshipUnavailable}
+          disabled={alreadyInvited || mentorshipUnavailable || collaborationUnavailable}
           className="flex items-center justify-center gap-2 px-6 py-2 rounded font-semibold text-sm text-white shadow-sm disabled:opacity-50"
           style={{ background: "linear-gradient(135deg, #0047FF, #002994)" }}
         >

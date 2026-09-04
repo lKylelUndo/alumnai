@@ -38,13 +38,12 @@ const StudentProfileHeader = () => {
             <span className="bg-[#0035c5]/10 text-[#0035c5] text-xs font-semibold px-2 py-1 rounded-sm uppercase tracking-wider">
               Student
             </span>
-          </div>
-
-          <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-4">
-            <span className="flex items-center gap-1 text-[#004e71] text-xs bg-[#006794]/10 px-2 py-1 rounded-full border border-[#004e71]/20">
-              <CheckCircle className="h-4 w-4" />
-              Available for Mentoring
-            </span>
+            {user?.profile?.isAvailableForCollaboration !== false && (
+              <span className="flex items-center gap-1 text-[#004e71] text-xs bg-[#006794]/10 px-2 py-1 rounded-full border border-[#004e71]/20">
+                <CheckCircle className="h-4 w-4" />
+                Available for Collaboration
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 text-[#434657] text-sm">

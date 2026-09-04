@@ -61,6 +61,8 @@ export class ProfileRepository {
                         fullName: true,
                         profilePicture: true,
                         work_field: true,
+                        isAvailableForMentorship: true,
+                        isAvailableForCollaboration: true,
                       },
                     },
                   },

@@ -11,6 +11,8 @@ export const updateProfileSchema = z.object({
   socialLink: z.string().optional(),
   companyName: z.string().optional(),
   current_position: z.string().optional(),
+  isAvailableForMentorship: z.boolean().optional(),
+  isAvailableForCollaboration: z.boolean().optional(),
   certifications: z
     .array(
       z.object({
