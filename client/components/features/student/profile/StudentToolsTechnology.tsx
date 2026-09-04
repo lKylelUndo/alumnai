@@ -1,12 +1,13 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { Skill } from "@/schema/skill"
 import { getProficiencyColor } from "@/utils/skill"
 
-const StudentToolsTechnology = ({ skills }: { skills: Skill[] }) => {
+const StudentToolsTechnology = ({
+  skills,
+  onSelect,
+}: {
+  skills: Skill[]
+  onSelect: (skill: Skill) => void
+}) => {
   const hardSkills = skills.filter(( skill ) => skill.type === "HARD_SKILL")
   const otherHardSkills = skills.filter(( skill ) => skill.type === "OTHER_HARD_SKILL")
 
@@ -20,20 +21,18 @@ const StudentToolsTechnology = ({ skills }: { skills: Skill[] }) => {
         {hardSkills.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {hardSkills.map((skill) => (
-              <span
+              <button
                 key={skill.id}
-                className="inline-flex items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-1.5 text-xs font-semibold text-[#434657]"
+                type="button"
+                onClick={() => onSelect(skill)}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-2 text-xs font-semibold text-[#434657] transition hover:bg-[#E2E8F0] active:scale-95"
               >
                 {skill.name}
-                {skill.description && (
-                  <Tooltip>
-                    <TooltipTrigger className="h-2 w-2 rounded-full" style={{backgroundColor: getProficiencyColor(skill.level)}} />
-                    <TooltipContent>
-                      <p>{skill.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </span>
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ backgroundColor: getProficiencyColor(skill.level) }}
+                />
+              </button>
             ))}
           </div>
         ) : (
@@ -47,19 +46,14 @@ const StudentToolsTechnology = ({ skills }: { skills: Skill[] }) => {
         {otherHardSkills.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {otherHardSkills.map((skill) => (
-              <span
+              <button
                 key={skill.id}
-                className="inline-flex items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-1.5 text-xs font-semibold text-[#434657]"
+                type="button"
+                onClick={() => onSelect(skill)}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-2 text-xs font-semibold text-[#434657] transition hover:bg-[#E2E8F0] active:scale-95"
               >
                 {skill.name}
-                {skill.description && (
-                  <Tooltip>
-                    <TooltipContent>
-                      <p>{skill.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </span>
+              </button>
             ))}
           </div>
         ) : (

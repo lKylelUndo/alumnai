@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Field } from "@/components/ui/field"
 import { updateProfileSchema } from "@/schema/profile"
 import AddTechOrToolsDialog from "@/components/common/dialogs/AddTechOrToolsDialog"
+import { Loader2 } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
 
 import ProfilePictureUpload from "./ProfilePictureUpload"
@@ -33,6 +34,8 @@ const UpdateProfileForm = () => {
     resolver: zodResolver(updateProfileSchema),
     defaultValues: getProfileFormDefaultValues(user as User),
   })
+
+  const { formState: { isSubmitting } } = form
 
   // butngan og initial values ang form once finished loading na ang user authcontext from the DB
   useEffect(() => {
@@ -172,6 +175,7 @@ const UpdateProfileForm = () => {
               type="button"
               variant="outline"
               className="flex-1"
+              disabled={isSubmitting}
               onClick={() => {
                 form.reset()
                 setSkills([])
@@ -183,8 +187,13 @@ const UpdateProfileForm = () => {
               type="submit"
               form="form-rhf-updateprofileform"
               className="flex-1"
+              disabled={isSubmitting}
             >
-              Update
+              {isSubmitting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</>
+              ) : (
+                "Update"
+              )}
             </Button>
           </Field>
         </CardFooter>
