@@ -5,13 +5,18 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field } from "@/components/ui/field"
 import { updateProfileSchema } from "@/schema/profile"
-import AddTechOrToolsDialog from "@/components/common/dialogs/AddTechOrToolsDialog"
 import { Loader2 } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
+
+const AddTechOrToolsDialog = dynamic(
+  () => import("@/components/common/dialogs/AddTechOrToolsDialog"),
+  { loading: () => null }
+)
 
 import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
@@ -174,7 +179,7 @@ const UpdateProfileForm = () => {
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="h-11 flex-1"
               disabled={isSubmitting}
               onClick={() => {
                 form.reset()
@@ -186,7 +191,7 @@ const UpdateProfileForm = () => {
             <Button
               type="submit"
               form="form-rhf-updateprofileform"
-              className="flex-1"
+              className="h-11 flex-1"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

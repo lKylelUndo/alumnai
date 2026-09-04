@@ -38,7 +38,7 @@ export default function ProfileFormFields({
   const hardSkills = skills.filter((s) => s.type === "HARD_SKILL")
 
   return (
-    <FieldGroup className="grid lg:grid-cols-2">
+    <FieldGroup className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       <Controller
         name="fullName"
         control={control}
@@ -236,7 +236,7 @@ export default function ProfileFormFields({
         name="aboutMe"
         control={control}
         render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid} className="col-span-2">
+          <Field data-invalid={fieldState.invalid} className="lg:col-span-2">
             <FieldLabel
               htmlFor="update-profile-about-me"
               className="font-semibold text-primary"
@@ -270,7 +270,7 @@ export default function ProfileFormFields({
             type="button"
             id="open-tech-tools-dialog-btn"
             onClick={onOpenDialog}
-            className="flex h-6 w-6 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
             title="Add Tech or Tools"
           >
             <PlusIcon size={14} />
