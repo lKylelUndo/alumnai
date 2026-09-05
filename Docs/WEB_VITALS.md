@@ -431,6 +431,18 @@ sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 
 **Fix:** `const Chart = dynamic(() => import('./Chart'), { ssr: false })`
 
+### 8. Do NOT Remove `forceMount` From Dashboard Tabs
+
+**Problem:** All 12 `TabsContent` panels across `StudentDashboard.tsx`, `AlumniDashboard.tsx`, and `AdminDashboard.tsx` use `forceMount`, so every tab mounts on page load. This looks like a wasted-mount optimization opportunity — it is not.
+
+**Why it must stay:** the realtime notification system depends on mounted listeners. Each tab component subscribes via `useAdminSocket` / `useStudentSocket` / `useAlumniSocket` (`socket.on("admin:refresh" | "student:refresh" | "alumni:refresh")`, see `hooks/useAdminSocket.ts:31-35`) with `socket.off` cleanup on unmount. The handlers both refetch data AND fire visible toasts (e.g. `AlumniRequest.tsx:142-143`, `Mentors.tsx:22`). Removing `forceMount` unmounts inactive tabs, which detaches their listeners, causing:
+1. **Missed toast notifications** — events firing while a tab is inactive are silently lost.
+2. **Stale data with no recovery** — tabs without a mount-refetch (e.g. `Mentors.tsx`, props + socket only) show stale lists when revisited until the next event or full reload.
+
+The socket connection itself (`SocketContext`, root layout) is unaffected — only the tab-scoped listeners break. `ChatBox` (`chat:new_message`, layout-level) is also unaffected.
+
+**If tab mount ever measures slow**, the correct fix is lifting listeners to a persistent per-dashboard component outside `TabsContent` (one always-mounted `DashboardRealtimeListener` owning all subscriptions + toasts), NOT removing `forceMount`. That requires a mount-refetch audit on all 12 panels — only do it with profiler evidence.
+
 ---
 
 ## Quick Reference Commands

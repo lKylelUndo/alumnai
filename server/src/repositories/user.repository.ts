@@ -74,13 +74,15 @@ export class UserRepository {
             fromStudent: {
               select: {
                 id: true,
-                profile: {
-                  select: {
-                    fullName: true,
-                    profilePicture: true,
-                    work_field: true,
-                  },
-                },
+                    profile: {
+                      select: {
+                        fullName: true,
+                        profilePicture: true,
+                        work_field: true,
+                        isAvailableForMentorship: true,
+                        isAvailableForCollaboration: true,
+                      },
+                    },
               },
             },
           },

@@ -11,7 +11,7 @@ const AdminHeader = () => {
   return (
     <nav className="flex items-center justify-between">
       <div className="flex items-center gap-x-8">
-        <Image src="/logo/logoalumnai.png" alt="Alumnai Logo" width={110} height={40} priority className="h-8 w-auto object-contain" />
+        <Image src="/logo/logoalumnai.png" alt="Alumnai Logo" width={110} height={40} priority fetchPriority="high" sizes="110px" className="h-8 w-auto object-contain" />
         <span className="text-sm font-semibold text-primary/90 hidden sm:inline-block cursor-pointer hover:text-primary transition-colors">
           Dashboard
         </span>

@@ -19,7 +19,13 @@ export type CertificationRow = z.infer<typeof certificationRowSchema>
 
 export const addTechOrToolsSchema = z.object({
   name: z.string().optional(),
-  level: z.string().optional(),
+  level: z
+    .string()
+    .optional()
+    .refine(
+      (v) => v === undefined || v === "" || (Number(v) >= 1 && Number(v) <= 5),
+      { message: "Level must be between 1 and 5" }
+    ),
   description: z.string().optional(),
   certifications: z.array(certificationRowSchema).optional(),
 })

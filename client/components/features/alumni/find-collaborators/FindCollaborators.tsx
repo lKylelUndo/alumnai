@@ -75,6 +75,7 @@ export default function FindCollaborators() {
 
   const filteredCollaborators = useMemo(() => {
     return collaborators.filter((collaborator) => {
+      if (collaborator.isAvailableForCollaboration === false) return false
       const matchesField =
         selectedField === "" || collaborator.work_field === selectedField
       return matchesField

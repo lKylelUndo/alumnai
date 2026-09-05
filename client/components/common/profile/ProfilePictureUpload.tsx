@@ -51,9 +51,9 @@ export default function ProfilePictureUpload({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-primary/90"
-        >
-          <CameraIcon size={12} />
+            className="absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-primary/90"
+          >
+            <CameraIcon size={14} />
         </button>
       </div>
 

@@ -1,6 +1,12 @@
 import { Skill } from "@/schema/skill"
 
-const StudentCoreSkills = ({ skills }: { skills: Skill[] }) => {
+const StudentCoreSkills = ({
+  skills,
+  onSelect,
+}: {
+  skills: Skill[]
+  onSelect: (skill: Skill) => void
+}) => {
   const coreSkills = skills.filter((skill) => skill.type === "SOFT_SKILL")
 
   return (
@@ -13,12 +19,14 @@ const StudentCoreSkills = ({ skills }: { skills: Skill[] }) => {
       ) : (
         <div className="flex flex-wrap gap-2">
           {coreSkills.map((skill) => (
-            <span
+            <button
               key={skill.id}
-              className="inline-flex rounded-md bg-[#dde1ff] px-4 py-1.5 text-xs font-semibold text-[#1A216D]"
+              type="button"
+              onClick={() => onSelect(skill)}
+              className="inline-flex cursor-pointer rounded-md bg-[#dde1ff] px-4 py-2 text-xs font-semibold text-[#1A216D] transition hover:bg-[#c9d1ff] active:scale-95"
             >
               {skill.name}
-            </span>
+            </button>
           ))}
         </div>
       )}

@@ -11,7 +11,7 @@ const AlumniHeader = () => {
   return (
     <nav className="flex items-center justify-between">
       <div className="flex items-center gap-x-8">
-        <Image src="/logo/logoalumnai.png" alt="Logo" width={110} height={40} priority className="h-8 w-auto object-contain" />
+        <Image src="/logo/logoalumnai.png" alt="Logo" width={110} height={40} priority fetchPriority="high" sizes="110px" className="h-8 w-auto object-contain" />
         <div className="hidden sm:flex items-center gap-x-10">
           <Link href="/alumni/dashboard" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
             Home
