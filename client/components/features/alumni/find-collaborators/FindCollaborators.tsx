@@ -103,17 +103,17 @@ export default function FindCollaborators() {
               placeholder="Search by name, skills, or role... (AI-powered)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-sm text-[#131b2e] placeholder:text-[#A4B1CC] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-text"
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-base sm:text-sm text-[#131b2e] placeholder:text-[#A4B1CC] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-text"
             />
           </div>
 
           {/* Field Dropdown */}
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC] pointer-events-none" />
             <select
               value={selectedField}
               onChange={(e) => setSelectedField(e.target.value)}
-              className="appearance-none pl-10 pr-10 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-sm text-[#131b2e] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-pointer"
+              className="w-full appearance-none pl-10 pr-10 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-base sm:text-sm text-[#131b2e] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-pointer"
             >
               <option value="" disabled hidden>Field / Specialization</option>
               {fieldOptions.map((opt) => (
