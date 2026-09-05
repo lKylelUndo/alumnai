@@ -30,9 +30,7 @@ const DashboardPanel = async () => {
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
-        <TabsList
-          className="flex h-auto w-full items-center justify-between gap-1 rounded-2xl border-none bg-[#eaf5f6] bg-transparent p-1.5 shadow-none dark:bg-muted"
-        >
+        <TabsList variant="none" className="w-full">
           <TabsTrigger
             value="your-mentees"
             className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
