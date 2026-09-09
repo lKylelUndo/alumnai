@@ -68,6 +68,7 @@ export default function RegisterForm() {
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                     type="text"
+                    placeholder="2018-00001"
                     required
                   />
                   {fieldState.invalid && (
@@ -89,6 +90,7 @@ export default function RegisterForm() {
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                     type="text"
+                    placeholder="John Doe"
                     required
                   />
                   {fieldState.invalid && (
@@ -106,14 +108,15 @@ export default function RegisterForm() {
                 <FieldLabel htmlFor="form-rhf-email-address">
                   Email Address
                 </FieldLabel>
-                <Input
-                  {...field}
-                  id="form-rhf-email-address"
-                  aria-invalid={fieldState.invalid}
-                  autoComplete="off"
-                  type="email"
-                  required
-                />
+                  <Input
+                    {...field}
+                    id="form-rhf-email-address"
+                    aria-invalid={fieldState.invalid}
+                    autoComplete="off"
+                    type="email"
+                    placeholder="name@example.com"
+                    required
+                  />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -144,7 +147,7 @@ export default function RegisterForm() {
         </FieldGroup>
       </form>
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-signup" disabled={isSubmitting} className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
+        <Button type="submit" form="form-rhf-signup" disabled={isSubmitting} className="h-11 w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
           {isSubmitting ? (
             <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating account...</>
           ) : (

@@ -13,8 +13,7 @@ const trustPoints = [
 function BrowserWindowCard({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`product-mockup-float rounded-2xl border border-[#E2E8F0] bg-white shadow-xl ${className}`}
-      style={{ animationDuration: "7s", animationDelay: "0s" }}
+      className={`rounded-2xl border border-[#E2E8F0] bg-white shadow-xl ${className}`}
     >
       {/* Browser chrome bar */}
       <div className="flex items-center gap-2 border-b border-[#E2E8F0] px-4 py-2.5">
@@ -110,7 +109,7 @@ export default function HeroSection() {
           </span>
 
           <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-[#131b2e] sm:text-5xl lg:text-6xl">
-            Where verified skill data meets real mentorship.
+            Where verified skill meets real mentorship.
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-[#434657] sm:text-lg lg:mx-0">

@@ -42,7 +42,7 @@ export default function LoginForm() {
 
   return (
     <AuthCard
-      title="Welcome back"
+      title="Welcome Back"
       subtitle="Sign in to continue building real connections."
     >
       <form id="form-rhf-login" onSubmit={form.handleSubmit(onSubmit)}>
@@ -58,6 +58,7 @@ export default function LoginForm() {
                   id="form-rhf-email"
                   aria-invalid={fieldState.invalid}
                   type="email"
+                  placeholder="name@example.com"
                   required
                 />
                 {fieldState.invalid && (
@@ -88,16 +89,18 @@ export default function LoginForm() {
             )}
           />
         </FieldGroup>
-        <Link
-          href={"/forgot-password"}
-          className="text-xs text-slate-500 hover:text-[#1A216D] hover:underline"
-        >
-          Forgot password?
-        </Link>
+        <div className="flex justify-end">
+          <Link
+            href={"/forgot-password"}
+            className="text-xs text-slate-500 hover:text-[#1A216D] hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
       </form>
 
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-login" disabled={isSubmitting} className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
+        <Button type="submit" form="form-rhf-login" disabled={isSubmitting} className="h-11 w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
           {isSubmitting ? (
             <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...</>
           ) : (
