@@ -1,3 +1,12 @@
+import {
+  BrainCircuit,
+  BarChart3,
+  Users,
+  PieChart,
+  Award,
+  ShieldCheck,
+  Handshake,
+} from "lucide-react";
 import { Feature } from "@/lib/types/feature";
 
 export type { Feature };
@@ -6,43 +15,43 @@ export const features = [
   {
     title: "AI-Powered Skill Indexing",
     description:
-      "Analyze GitHub repositories using GitHub REST API and Gemini AI to generate verified skill profiles.",
-    icon: "/images/aifeature.png",
+      "Your GitHub repos are analyzed by AI to build a verified skill profile — no manual entry needed.",
+    icon: BrainCircuit,
   },
   {
     title: "Skill Gap Analysis",
     description:
-      "Compare student skills with alumni trends to generate personalized learning recommendations.",
-    icon: "/images/gaps.png",
+      "See exactly where your skills stand compared to alumni in your field, with personalized learning paths.",
+    icon: BarChart3,
   },
   {
     title: "Intelligent Talent Matching",
     description:
-      "Natural language search powered by AI to find perfect student-alumni collaborations.",
-    icon: "/images/match.png",
+      "Natural language search that connects students with the right alumni collaborators and mentors.",
+    icon: Users,
   },
   {
     title: "Curriculum Analytics",
     description:
-      "Data-driven insights into alumni skill trends to support curriculum enhancement.",
-    icon: "/images/analytics.png",
+      "Data-driven insights into alumni skill trends so departments can strengthen their programs.",
+    icon: PieChart,
   },
   {
     title: "Mentorship Recognition",
     description:
-      "Recognizes outstanding mentorship performance based on student feedback.",
-    icon: "/images/recognition.png",
+      "Outstanding mentors are recognized through real student feedback and measurable impact.",
+    icon: Award,
   },
   {
     title: "School-Verified System",
     description:
-      "Institutional verification ensures credibility and trust within the academic ecosystem.",
-    icon: "/images/verified.png",
+      "Every profile is institution-verified, so you know the people you connect with are who they say they are.",
+    icon: ShieldCheck,
   },
   {
     title: "Mentorship & Collaboration",
     description:
-      "Structured mentorship requests and collaboration invitations between students and alumni.",
-    icon: "/images/mentorship.png",
+      "Structured requests and invitations that make it easy to start meaningful mentorships and projects.",
+    icon: Handshake,
   },
-]
+];

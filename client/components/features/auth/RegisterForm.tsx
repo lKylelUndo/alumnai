@@ -48,8 +48,8 @@ export default function RegisterForm() {
 
   return (
     <AuthCard
-      title="Create an Account"
-      subtitle="Register as a student to get started"
+      title="Start your journey"
+      subtitle="Create your verified skill profile in minutes."
     >
       <form id="form-rhf-signup" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>

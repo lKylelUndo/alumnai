@@ -23,7 +23,7 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <AuthCard title="Forgot Password" subtitle="Enter your email well send you a link for reset password">
+    <AuthCard title="Forgot password?" subtitle="Enter your email and we'll send you a reset link.">
       <form id="form-rhf-resetpass" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <Controller

@@ -42,8 +42,8 @@ export default function LoginForm() {
 
   return (
     <AuthCard
-      title="Welcome Back"
-      subtitle="Sign in to your account to continue"
+      title="Welcome back"
+      subtitle="Sign in to continue building real connections."
     >
       <form id="form-rhf-login" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
