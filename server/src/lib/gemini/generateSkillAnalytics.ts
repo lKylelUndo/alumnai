@@ -1,4 +1,65 @@
-import { AVAILABLE_GEMINI_MODELS, genAI } from ".";
+import { genAI } from ".";
+
+// Single fast model attempt: analytics must never hold the dashboard hostage.
+const ANALYTICS_MODEL = "gemini-3.5-flash-lite";
+const ANALYTICS_TIMEOUT_MS = 25_000;
+
+const LOCAL_PALETTE = ["#2563EB", "#F59E0B", "#10B981", "#8B5CF6", "#06B6D4"];
+
+function toAbbreviation(name: string): string {
+  const words = name.replace(/[^A-Za-z0-9 ]/g, "").split(" ").filter(Boolean);
+  const code =
+    words.length > 1
+      ? words
+          .slice(0, 3)
+          .map((w) => w[0])
+          .join("")
+      : name.replace(/[^A-Za-z0-9]/g, "").slice(0, 3);
+  return (code || "SK").toUpperCase();
+}
+
+// Deterministic fallback built from REAL counts — no AI, no invented numbers.
+export function buildLocalSkillAnalytics(
+  skillsData: Array<{ name: string; count: number; fields: string[] }>
+): SkillAnalyticsResult {
+  if (!skillsData || skillsData.length === 0) {
+    return {
+      pieChart: [],
+      topSkills: [],
+      recommendation:
+        "No alumni hard skills recorded yet. Insights will appear once alumni add skills to their profiles.",
+    };
+  }
+
+  const total = skillsData.reduce((sum, s) => sum + s.count, 0) || 1;
+  const ranked = [...skillsData].sort((a, b) => b.count - a.count);
+  const pct = (count: number) => Math.round((count / total) * 100);
+
+  return {
+    pieChart: ranked.slice(0, 5).map((s, i) => ({
+      name: s.name,
+      value: pct(s.count),
+      color: LOCAL_PALETTE[i % LOCAL_PALETTE.length],
+    })),
+    topSkills: ranked.slice(0, 3).map((s, i) => ({
+      field: s.fields[0] ?? "General",
+      skill: s.name,
+      percentage: pct(s.count),
+      abbreviation: toAbbreviation(s.name),
+      bgColor: LOCAL_PALETTE[i % LOCAL_PALETTE.length],
+    })),
+    recommendation:
+      "Showing live skill counts from alumni profiles. Refresh for AI-generated trend insights.",
+  };
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 export type SkillAnalyticsResult = {
   pieChart: Array<{
@@ -20,38 +81,7 @@ export type SkillAnalyticsResult = {
 export async function generateSkillAnalytics(
   skillsData: Array<{ name: string; count: number; fields: string[] }>
 ): Promise<SkillAnalyticsResult> {
-  const fallbackResult: SkillAnalyticsResult = {
-    pieChart: [
-      { name: "TypeScript", value: 40, color: "#2563EB" },
-      { name: "JavaScript", value: 20, color: "#F59E0B" },
-      { name: "React", value: 20, color: "#06B6D4" },
-      { name: "PHP", value: 10, color: "#8B5CF6" },
-      { name: "C#", value: 10, color: "#EF4444" },
-    ],
-    topSkills: [
-      {
-        field: "Fullstack Web Development",
-        skill: "TypeScript",
-        percentage: 40,
-        abbreviation: "TS",
-        bgColor: "#2563EB",
-      },
-      {
-        field: "Backend Web Development",
-        skill: "PHP",
-        percentage: 10,
-        abbreviation: "PHP",
-        bgColor: "#8B5CF6",
-      },
-    ],
-    recommendation:
-      "TypeScript continues to lead industry adoption. Consider adding advanced Fullstack TypeScript workshops for graduating students.",
-  };
-
-  if (!skillsData || skillsData.length === 0) {
-    return fallbackResult;
-  }
-
+  // Throws on timeout/AI failure — the caller serves buildLocalSkillAnalytics instead.
   const prompt = `
 You are an IT Skill Trend & Career Insights AI Engine for an Alumni Platform.
 
@@ -90,31 +120,28 @@ Output Rules:
 }
 `;
 
-  for (const model of AVAILABLE_GEMINI_MODELS) {
-    try {
-      console.log(`Generating skill analytics with Gemini model: ${model}`);
+  console.log(`Generating skill analytics with Gemini model: ${ANALYTICS_MODEL}`);
 
+  const text = await withTimeout(
+    (async () => {
       const result = await genAI.models.generateContent({
-        model,
+        model: ANALYTICS_MODEL,
         contents: prompt,
       });
+      return result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+    })(),
+    ANALYTICS_TIMEOUT_MS,
+    "Skill analytics AI timed out"
+  );
 
-      const text = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+  // Clean up markdown code blocks if Gemini returns them despite prompt rules
+  const cleanedJson = text.replace(/^```(json)?/i, "").replace(/```$/, "").trim();
 
-      // Clean up markdown code blocks if Gemini returns them despite prompt rules
-      const cleanedJson = text.replace(/^```(json)?/i, "").replace(/```$/, "").trim();
+  const parsed = JSON.parse(cleanedJson) as SkillAnalyticsResult;
 
-      const parsed = JSON.parse(cleanedJson) as SkillAnalyticsResult;
-
-      if (parsed?.pieChart && parsed?.topSkills && parsed?.recommendation) {
-        return parsed;
-      }
-    } catch (error) {
-      console.warn(`Skill Analytics model failed: ${model}`, error);
-      continue;
-    }
+  if (!parsed?.pieChart || !parsed?.topSkills || !parsed?.recommendation) {
+    throw new Error("Skill analytics AI returned an unexpected shape");
   }
 
-  console.error("All Gemini models failed for Skill Analytics, using fallback.");
-  return fallbackResult;
+  return parsed;
 }

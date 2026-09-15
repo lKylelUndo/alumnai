@@ -12,7 +12,6 @@ const DashboardPanel = async () => {
   let topMentors: any = null
   let alumniRequest: any = null
   let allUsers: any = null
-  let skillTrendAnalytics: any = null
 
   try {
     const results = await Promise.allSettled([
@@ -20,14 +19,12 @@ const DashboardPanel = async () => {
       adminService.getTopMentors(),
       adminService.getAlumniRequest(),
       adminService.getAllUsers(),
-      adminService.getSkillTrendAnalytics(),
     ])
 
     if (results[0].status === "fulfilled") unverifiedUsers = results[0].value
     if (results[1].status === "fulfilled") topMentors = results[1].value
     if (results[2].status === "fulfilled") alumniRequest = results[2].value
     if (results[3].status === "fulfilled") allUsers = results[3].value
-    if (results[4].status === "fulfilled") skillTrendAnalytics = results[4].value
   } catch (error) {
     console.error("Failed to load admin dashboard panel data:", error)
   }
@@ -102,7 +99,8 @@ const DashboardPanel = async () => {
         </TabsContent>
         
         <TabsContent value="analytics" forceMount className="mt-4 data-[state=inactive]:hidden">
-          <Analytics data={skillTrendAnalytics?.data?.skills} />
+          {/* Loads on its own so slow AI analytics never blocks the other tabs */}
+          <Analytics />
         </TabsContent>
       </Tabs>
     </section>
