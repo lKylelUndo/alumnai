@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 import { generateSkillAnalytics } from "@/lib/gemini";
 import { AddSkillInputTypes } from "@/schema/skill";
-import { RoleType } from "@/generated/prisma/enums";
+import { RoleType, SkillType } from "@/generated/prisma/enums";
 
 export class SkillRepository {
   async add(data: AddSkillInputTypes) {
@@ -25,6 +25,7 @@ export class SkillRepository {
   async findAlumniSkillsByWorkField(workField?: string | null) {
     const alumniSkills = await prisma.skill.findMany({
       where: {
+        type: { in: [SkillType.HARD_SKILL, SkillType.OTHER_HARD_SKILL] },
         profile: {
           user: {
             role: RoleType.ALUMNI,
@@ -48,6 +49,7 @@ export class SkillRepository {
     if (skillsToProcess.length === 0 && workField) {
       skillsToProcess = await prisma.skill.findMany({
         where: {
+          type: { in: [SkillType.HARD_SKILL, SkillType.OTHER_HARD_SKILL] },
           profile: {
             user: {
               role: RoleType.ALUMNI,
@@ -73,7 +75,7 @@ export class SkillRepository {
   }
 
   async findTopAlumniSkills(forceRefresh: boolean = false) {
-    const cacheKey = `${ENV.ADMIN_REDIS_KEY}top-alumni-skills`;
+    const cacheKey = `${ENV.ADMIN_REDIS_KEY}top-alumni-skills:v2`;
 
     // try cache first unless force refresh requested
     if (!forceRefresh) {
@@ -81,8 +83,16 @@ export class SkillRepository {
       if (cached) return JSON.parse(cached);
     }
 
-    // fallback to DB — fetch skills with profile work fields
+    // fallback to DB — fetch hard skills from alumni profiles with work fields
     const skills = await prisma.skill.findMany({
+      where: {
+        type: { in: [SkillType.HARD_SKILL, SkillType.OTHER_HARD_SKILL] },
+        profile: {
+          user: {
+            role: RoleType.ALUMNI,
+          },
+        },
+      },
       include: {
         profile: {
           select: {

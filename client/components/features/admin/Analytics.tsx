@@ -20,7 +20,7 @@ const Analytics = ({ data }: { data?: SkillAnalyticsData }) => {
   const handleRefreshAnalytics = async () => {
     try {
       setIsRefreshing(true)
-      const res = await axiosInstance.get("/api/admin/v1/get-analytics?refresh=true")
+      const res = await axiosInstance.get("/api/skill/v1/get-top-alumni-skills?refresh=true")
       if (res.data?.data?.skills) {
         setAnalytics(res.data.data.skills)
       }

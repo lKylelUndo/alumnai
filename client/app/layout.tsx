@@ -8,7 +8,6 @@ import { SocketProvider } from "@/context/SocketContext"
 import { Toaster } from "sonner"
 import { RegisterSW } from "@/components/pwa/register-sw"
 import { SITE_URL } from "@/lib/site"
-import { WebVitals } from "@/components/common/WebVitals"
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -44,7 +43,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AuthProvider>
           <SocketProvider>
             <TooltipProvider>
-              <WebVitals />
               {children}
               <Toaster />
               <RegisterSW />
