@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable,  getPaginationRowModel, ColumnFiltersState, getFilteredRowModel } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PaginationControls } from "./PaginationControls"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface DataTableProps<TData, TValue> {
@@ -17,7 +17,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder, statusFilterColumn, statusOptions }: DataTableProps<TData, TValue>) {
-  const [pageSize] = useState(5); // default 10 per page
+  const [pageSize] = useState(5); // fixed page size for admin tables
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const table = useReactTable({
     data,
@@ -37,6 +37,9 @@ export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPl
       columnFilters,
     },
   })
+
+  const totalPages = table.getPageCount()
+  const currentPage = table.getState().pagination.pageIndex
 
   return (
     <div>
@@ -76,7 +79,7 @@ export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPl
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
-                    return (
+                      return (
                       <TableHead key={header.id}>
                         {header.isPlaceholder
                           ? null
@@ -114,24 +117,20 @@ export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPl
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+        {/* Pagination — compact sliding window shared with alumni/student tables */}
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-center gap-2 py-4">
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              canPreviousPage={table.getCanPreviousPage()}
+              canNextPage={table.getCanNextPage()}
+              onPreviousPage={() => table.previousPage()}
+              onNextPage={() => table.nextPage()}
+              onSelectPage={(pageIdx) => table.setPageIndex(pageIdx)}
+            />
+          </div>
+        )}
     </div>
   )
 }
