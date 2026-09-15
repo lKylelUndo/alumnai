@@ -1,6 +1,6 @@
 import Header from "@/components/common/layout/Header";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
-import Image from "next/image";
+import AuthVisual from "@/components/features/auth/AuthVisual";
 import { ReactNode } from "react";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
@@ -11,17 +11,13 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         {/* Content */}
         <main className="flex-1 grid grid-cols-1 lg:grid-cols-2 w-full">
-          {/* Left Column: Image Background - Hidden on mobile, full width on desktop */}
-          <div className="hidden lg:block relative w-full h-full min-h-[calc(100vh-80px)] bg-[#1A216D]">
-            <Image
-              src="/images/login4.jpg"
-              alt="Auth Background"
-              fill
-              className="object-cover opacity-65"
-              sizes="50vw"
-              priority
-              fetchPriority="high"
-            />
+          {/* ── Left Column: product-mockup visual ── */}
+          <div className="hidden lg:flex relative w-full h-full min-h-[calc(100vh-80px)] bg-[#1A216D] items-center justify-center overflow-hidden">
+            {/* Route-aware photographic backdrop (decorative) */}
+            <AuthVisual />
+            {/* Small decorative dots */}
+            <div className="absolute left-12 top-16 h-1.5 w-1.5 rounded-full bg-white opacity-15" aria-hidden="true" />
+            <div className="absolute bottom-20 right-10 h-2 w-2 rounded-full bg-white opacity-10" aria-hidden="true" />
           </div>
 
           {/* Right Column: Form Container */}

@@ -17,7 +17,7 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#1A216D]/8 bg-white py-12">
+    <footer className="border-t border-[#E2E8F0] bg-white py-12">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-2">
@@ -30,20 +30,20 @@ export default function Footer() {
               sizes="140px"
               className="h-10 w-auto"
             />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
-              AI-powered institutional platform connecting CPC computing students
-              and alumni through verified, evidence-based skill profiles.
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#434657]">
+              AI-powered platform connecting CPC computing students and alumni
+              through verified, evidence-based skill profiles.
             </p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-[#1A216D]">Platform</h3>
+            <h3 className="text-sm font-semibold text-[#131b2e]">Platform</h3>
             <ul className="mt-4 space-y-2.5">
               {footerLinks.platform.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-slate-500 transition-colors hover:text-[#2D7EE2]"
+                    className="text-sm text-[#434657] transition-colors hover:text-[#1A216D]"
                   >
                     {link.label}
                   </Link>
@@ -53,7 +53,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-[#1A216D]">Connect</h3>
+            <h3 className="text-sm font-semibold text-[#131b2e]">Connect</h3>
             <ul className="mt-4 space-y-2.5">
               {footerLinks.connect.map((link) => (
                 <li key={link.label}>
@@ -62,7 +62,7 @@ export default function Footer() {
                     {...(link.external
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className="text-sm text-slate-500 transition-colors hover:text-[#2D7EE2]"
+                    className="text-sm text-[#434657] transition-colors hover:text-[#1A216D]"
                   >
                     {link.label}
                   </a>
@@ -72,9 +72,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-[#1A216D]/8 pt-6 text-center text-sm text-slate-500">
-          © {new Date().getFullYear()}{" "}
-          <span className="font-semibold text-[#1A216D]">alumnAI</span>. All
+        <div className="mt-10 border-t border-[#E2E8F0] pt-6 text-center text-sm text-[#434657]">
+          &copy; {new Date().getFullYear()}{" "}
+          <span className="font-semibold text-[#131b2e]">alumnAI</span>. All
           rights reserved.
         </div>
       </div>
