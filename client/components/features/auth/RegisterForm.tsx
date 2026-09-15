@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import AuthCard from "./AuthCard"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { Input, PasswordInput } from "@/components/ui/input"
 import { signupSchema } from "@/schema/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
@@ -130,12 +130,11 @@ export default function RegisterForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="form-rhf-password">Password</FieldLabel>
-                <Input
+                <PasswordInput
                   {...field}
                   id="form-rhf-password"
                   aria-invalid={fieldState.invalid}
                   autoComplete="off"
-                  type="password"
                   required
                 />
                 {fieldState.invalid && (
