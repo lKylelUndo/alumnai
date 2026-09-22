@@ -1,24 +1,32 @@
 import type { Request, Response } from "express";
 import { AuthSignupService, AuthLoginService, AuthForgetPasswordRequestService, AuthResetPasswordService, AuthVerifyResetPasswordTokenService, GetMeService, RefreshTokenService } from "@/services/auth";
+import { TokenRepository } from "@/repositories/token.repository";
 import { ENV } from "@/config/env";
 import { ms } from "@/lib/jwt";
 
 class AuthController {
-  private setAuthCookies = async (res: Response, tokens: { accessToken: string, refreshToken: string}) => {
+  // Single source of truth for cookie attributes — set and clear must match
+  // or browsers keep the cookie (logout silently fails).
+  private getCookieOptions = () => {
     const isProduction = ENV.NODE_ENV === "production";
-    //const domain = isProduction ? "/" : undefined;
-
-    res.cookie("accessToken", tokens.accessToken, {
+    return {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
+      path: "/",
+    };
+  };
+
+  private setAuthCookies = async (res: Response, tokens: { accessToken: string, refreshToken: string}) => {
+    const base = this.getCookieOptions();
+
+    res.cookie("accessToken", tokens.accessToken, {
+      ...base,
       maxAge: ms(15, "minutes")
     })
 
     res.cookie("refreshToken", tokens.refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      ...base,
       maxAge: ms(7, "days")
     })
   }
@@ -40,11 +48,19 @@ class AuthController {
   };
 
   public logout = async (req: Request, res: Response) => {
-    const isProduction = ENV.NODE_ENV === "production";
-    const domain = isProduction ? ".cloomero.cloud" : undefined;
+    // Revoke server-side so a stolen refresh token dies with the session.
+    const userId = req.user?.userId;
+    if (userId) {
+      try {
+        await new TokenRepository().revokeAllRefreshTokens(userId);
+      } catch (error) {
+        console.error("Logout token revocation failed:", error);
+      }
+    }
 
-    res.clearCookie("accessToken", { domain });
-    res.clearCookie("refreshToken", { domain });
+    const clearOptions = this.getCookieOptions();
+    res.clearCookie("accessToken", clearOptions);
+    res.clearCookie("refreshToken", clearOptions);
 
     return res.status(200).json({ code: 200, status: "success", message: "Logged out successfully" });
   };

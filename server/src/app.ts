@@ -3,14 +3,21 @@ import routes from "@/routes/index"
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { ENV } from '@/config/env';
+import { globalRateLimiter } from '@/middlewares/rateLimiter';
 
 const app = express();
+
+// Trust the first hop (nginx reverse proxy) so rate limiters see the real client IP.
+app.set("trust proxy", 1);
 
 // --- Core Middleware ---
 app.use(cors({
   origin: ENV.FRONTEND_URL,
   credentials: true
 }));
+
+// Global abuse backstop — runs before body parsing and all routers.
+app.use(globalRateLimiter);
 
 app.use((req, res, next) => {
   if (req.path === '/api/profile/v1/update-profile') {
