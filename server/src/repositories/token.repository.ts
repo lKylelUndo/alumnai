@@ -55,6 +55,18 @@ export class TokenRepository {
         })
     }
 
+    // Revokes every live refresh token for a user (used on logout).
+    async revokeAllRefreshTokens(userId: string) {
+        return prisma.token.updateMany({
+            where: {
+                userId,
+                type: TokenType.REFRESH,
+                revokedAt: null,
+            },
+            data: { revokedAt: new Date() }
+        })
+    }
+
     async revokeAllResetTokens(userId: string, exceptToken?: string) {
         return prisma.token.updateMany({
             where: {

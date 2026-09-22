@@ -3,7 +3,8 @@ import { z } from "zod";
 export const updateProfileSchema = z
   .object({
     body: z.object({
-      userId: z.string().min(1, "User id is required"),
+      // Optional legacy field — the server always uses the token's userId.
+      userId: z.string().min(1, "User id is required").optional(),
       profilePicture: z.string().optional(),
       aboutMe: z.string().optional(),
       graduatedYear: z.string().optional(),

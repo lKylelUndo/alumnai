@@ -13,7 +13,7 @@ export function signAccessToken(userId: string, email: string | null, role: stri
 }
 
 export function signRefreshToken(userId: string, email: string | null, role: string) {
-    return jwt.sign({ userId, email, role, type: "refresh"}, ENV.JWT_SECRET, { expiresIn: TokenExpiry.REFRESH_TOKEN_EXPIRES })
+    return jwt.sign({ userId, email, role, type: "refresh"}, ENV.JWT_REFRESH_SECRET, { expiresIn: TokenExpiry.REFRESH_TOKEN_EXPIRES })
 }
 
 export function verifyAccessToken(token: string) {
@@ -30,7 +30,7 @@ export function verifyAccessToken(token: string) {
 export function verifyRefreshToken(token: string) {
      if (!token) return null;
      try {
-        const payload = jwt.verify(token, ENV.JWT_SECRET) as JwtPayload;
+        const payload = jwt.verify(token, ENV.JWT_REFRESH_SECRET) as JwtPayload;
         return payload.type === "refresh" ? payload : null;
     } catch (error) {
         console.error("VerifyRefreshTokenError", error);
