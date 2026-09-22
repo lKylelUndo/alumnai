@@ -167,8 +167,8 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-2xl gap-0 overflow-y-auto p-0 lg:max-w-[800px]"
-        style={{ maxHeight: "90vh" }}
+        className="max-w-2xl gap-0 overflow-y-auto p-0 w-[calc(100vw-2rem)] sm:w-full lg:max-w-[800px]"
+        style={{ maxHeight: "90dvh" }}
         showCloseButton={false}
       >
         <DialogHeader className="border-b px-4 pt-6 pb-4">
@@ -176,7 +176,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-5 px-6 py-5">
+          <div className="space-y-5 px-4 py-5 sm:px-6">
             {/* Soft Skills */}
             <Field>
               <FieldLabel
@@ -229,7 +229,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
             </Field>
 
             {/* Hard skill (tech/tool) */}
-            <div className="grid grid-cols-[1fr_auto_2fr] items-start gap-3">
+            <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-[1fr_auto_2fr]">
               <Controller
                 name="name"
                 control={form.control}
@@ -258,15 +258,20 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel className="text-sm font-semibold text-primary">
-                      Proficiency Level
+                    <FieldLabel
+                      htmlFor="dialog-skill-level"
+                      className="text-sm font-semibold text-primary"
+                    >
+                      Proficiency Level (1-5)
                     </FieldLabel>
                     <Input
                       {...field}
-                      type="text"
-                   
+                      type="number"
+                      min={1}
+                      max={5}
+                      step={1}
                       id="dialog-skill-level"
-                      placeholder="e.g. 1-5"
+                      placeholder="e.g. 3"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -352,7 +357,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
 
             {/* Certifications */}
             <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <span className="text-sm font-semibold text-primary">
                   Certification{" "}
                   <span className="font-normal text-muted-foreground">
@@ -371,7 +376,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                 return (
                   <div
                     key={certField.id}
-                    className="grid grid-cols-3 items-center gap-3"
+                    className="grid grid-cols-1 items-center gap-3 sm:grid-cols-3"
                   >
                     <Controller
                       name={`certifications.${index}.name`}
@@ -457,16 +462,16 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
             </div>
           </div>
 
-          <div className="flex items-center gap-3 px-6 py-4">
+          <div className="flex items-center gap-3 px-4 py-4 sm:px-6">
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="h-11 flex-1"
               onClick={handleCancel}
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="h-11 flex-1">
               Save
             </Button>
           </div>

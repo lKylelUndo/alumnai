@@ -4,30 +4,33 @@ import { Button } from "@/components/ui/button"
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-[#1A216D]/8 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo/logoalumnai.png"
-            width={100}
-            height={100}
+            width={140}
+            height={76}
             alt="alumnAI"
             priority
+            fetchPriority="high"
+            sizes="140px"
+            className="h-8 w-auto"
           />
         </Link>
 
-        <div className="flex items-center gap-3">
+        <nav className="flex items-center gap-3">
           <Button
             asChild
             variant="ghost"
-            className="hidden text-[#1A216D] sm:inline-flex"
+            className="hidden text-[#1A216D] hover:bg-[#1A216D]/5 sm:inline-flex"
           >
             <Link href="/login">Login</Link>
           </Button>
-          <Button asChild className="bg-[#2D7EE2] hover:bg-[#1A216D]">
+          <Button asChild className="bg-[#1A216D] hover:bg-[#131b2e] text-white">
             <Link href="/register">Get Started</Link>
           </Button>
-        </div>
+        </nav>
       </div>
     </header>
   )

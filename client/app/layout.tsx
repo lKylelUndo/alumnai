@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     default: "AlumnAI - AI-Powered Alumni-Student Matching And Skill Gap Analysis System",
     template: "%s | AlumnAI",
   },
-  description: "Bridge the gap between education and career. AlumnAI connects students with alumni for mentorship, career guidance, and skill analysis.",
+  description: "AlumnAI connects CPC computing students and alumni through AI-powered, evidence-based skill profiles. Find mentors, close skill gaps, and grow with real data.",
   keywords: ["alumnai", "cpc", "skill", "gap", "github api", "platform", "student", "alumni", "mentorship", "collaboration"],
   appleWebApp: {
     capable: true,
@@ -36,6 +36,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("antialiased", roboto.className)} >
+      <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+      </head>
       <body>
         <AuthProvider>
           <SocketProvider>

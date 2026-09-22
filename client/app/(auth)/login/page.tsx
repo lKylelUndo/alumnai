@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Login",
-  description: "Sign in to your AlumnAI account to connect with alumni, find mentors, and analyze skill gaps.",
+  description: "Sign in to your AlumnAI account to connect with verified alumni mentors and build your skill profile.",
   alternates: {
     canonical: "/login",
   },

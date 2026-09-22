@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import AlumniHeader from "@/components/features/alumni/dashboard/AlumniHeader";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
-import ChatBox from "@/components/common/ChatBox";
+import ChatBox from "@/components/common/ChatBoxDynamic";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {

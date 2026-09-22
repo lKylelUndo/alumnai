@@ -40,19 +40,30 @@ export function AuthGuard({ children, mode = "GUEST" }: AuthGuardProps) {
     }
   }, [isLoading, isAuthenticated, user, mode])
 
-  // only show spinner while auth state is being determined
+  // guest pages render immediately — no need to verify auth before showing login/register
+  if (mode === "GUEST") {
+    // logged-in user on guest page — redirect but still show content behind spinner
+    if (isAuthenticated) {
+      return (
+        <>
+          {children}
+          <Spinner content="Redirecting..." />
+        </>
+      )
+    }
+    return <>{children}</>
+  }
+
+  // only show spinner while auth state is being determined for protected routes
   if (isLoading) {
     return <Spinner content="Verifying session..." />
   }
 
   // not authenticated — render nothing para walay makita na glimpse of UI while redirect happens
-  if (!isAuthenticated && mode !== "GUEST") return <Spinner content="Redirecting..."/>
+  if (!isAuthenticated) return <Spinner content="Redirecting..."/>
 
   // role mismatch auth routes — render redirect spinner
-  if (mode !== "GUEST" && user?.role !== mode) return <Spinner content="Redirecting..."/>
-
-  // guest pages but user is logged in — render nothing while redirect happens
-  if (mode === "GUEST" && isAuthenticated) return <Spinner content="Redirecting..."/>
+  if (user?.role !== mode) return <Spinner content="Redirecting..."/>
 
   return <>{children}</>
 }

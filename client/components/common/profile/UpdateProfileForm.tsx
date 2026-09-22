@@ -5,12 +5,18 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field } from "@/components/ui/field"
 import { updateProfileSchema } from "@/schema/profile"
-import AddTechOrToolsDialog from "@/components/common/dialogs/AddTechOrToolsDialog"
+import { Loader2 } from "lucide-react"
 import { useAuthContext } from "@/context/AuthContext"
+
+const AddTechOrToolsDialog = dynamic(
+  () => import("@/components/common/dialogs/AddTechOrToolsDialog"),
+  { loading: () => null }
+)
 
 import ProfilePictureUpload from "./ProfilePictureUpload"
 import ProfileFormFields from "./ProfileFormFields"
@@ -33,6 +39,8 @@ const UpdateProfileForm = () => {
     resolver: zodResolver(updateProfileSchema),
     defaultValues: getProfileFormDefaultValues(user as User),
   })
+
+  const { formState: { isSubmitting } } = form
 
   // butngan og initial values ang form once finished loading na ang user authcontext from the DB
   useEffect(() => {
@@ -171,7 +179,8 @@ const UpdateProfileForm = () => {
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="h-11 flex-1"
+              disabled={isSubmitting}
               onClick={() => {
                 form.reset()
                 setSkills([])
@@ -182,9 +191,14 @@ const UpdateProfileForm = () => {
             <Button
               type="submit"
               form="form-rhf-updateprofileform"
-              className="flex-1"
+              className="h-11 flex-1"
+              disabled={isSubmitting}
             >
-              Update
+              {isSubmitting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</>
+              ) : (
+                "Update"
+              )}
             </Button>
           </Field>
         </CardFooter>

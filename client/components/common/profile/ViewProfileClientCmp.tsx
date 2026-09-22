@@ -14,7 +14,7 @@ import ViewProfileHeaderCard from "@/components/common/profile/ViewProfileHeader
 import InviteDialog from "@/components/common/dialogs/InviteDialog"
 import GithubSkillIndexResultCmp, { GithubSkillIndexResultData } from "@/components/common/skills/GithubSkillIndexResultCmp"
 import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
-import { RefreshCw, ArrowLeft, Award, Users, Loader2 } from "lucide-react"
+import { RefreshCw, ArrowLeft, Users, Loader2, User } from "lucide-react"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import ProfiecienyScale from "@/components/common/skills/ProficiencyScale"
@@ -78,7 +78,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
 
   if (loading) {
     return (
-     <ViewProfileLoading />
+      <ViewProfileLoading />
     )
   }
 
@@ -94,9 +94,8 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
 
   const coreSkills = profile.skills?.filter((s) => s.type === "SOFT_SKILL") || []
   const techSkills = profile.skills?.filter((s) => s.type === "HARD_SKILL" || s.type === "OTHER_HARD_SKILL") || []
-  const otherSkills = profile.skills?.filter((s) => !s.type) || []
+  const otherSkills = profile.skills?.filter((s) => s.type === "OTHER_HARD_SKILL") || []
 
-  // Check if the student has a GitHub URL set in their profile
   const hasGithubUrl = Boolean(
     profile.socialLink &&
     (profile.socialLink.includes("github.com") || profile.socialLink.includes("github"))
@@ -152,13 +151,11 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
 
     try {
       if (isStudent) {
-        // Send Collaboration Invite to Student
         await collaborationService.sendCollabInvite({
           toStudentId: profile.userId,
           message_details: inviteMessage,
         })
       } else {
-        // Send Mentorship Invite to Alumni
         await mentorshipService.sendMentorshipInvite({
           toAlumniId: profile.userId,
           message_details: inviteMessage,
@@ -194,252 +191,235 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   }
 
   return (
-    <div className="mx-auto mt-4 w-full max-w-[1200px] p-4 md:p-8">
-      {/* Back Button */}
-      <div className="mb-4">
-        <button
-          onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#1A216D] hover:text-[#1877F2] transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {isAlumni ? "Back to Find Mentors" : "Back to Find Collaborators"}
-        </button>
-      </div>
+    <div className="bg-[#F8FAFC] min-h-screen">
+      <main className="mx-auto max-w-[1280px] px-4 md:px-8 py-8 md:py-16">
+        {/* Back Button */}
+        <div className="mb-4">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#1A216D] hover:text-[#1877F2] transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {isAlumni ? "Back to Find Mentors" : "Back to Find Collaborators"}
+          </button>
+        </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* LEFT COLUMN */}
-        <div className="space-y-6 lg:col-span-2">
-          {/* Top Profile Header Card */}
-          <ViewProfileHeaderCard
-            profile={profile}
-            isStudent={isStudent}
-            isAlumni={isAlumni}
-            alreadyInvited={alreadyInvited}
-            mentorshipStatus={isAlumni ? profile.mentorshipStatus : null}
-            onOpenInviteModal={openInviteModal}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Header / Hero Section - Full Width */}
+          <div className="lg:col-span-12">
+            <ViewProfileHeaderCard
+              profile={profile}
+              isStudent={isStudent}
+              isAlumni={isAlumni}
+              alreadyInvited={alreadyInvited}
+              mentorshipStatus={isAlumni ? profile.mentorshipStatus : null}
+              onOpenInviteModal={openInviteModal}
+            />
+          </div>
 
-          {/* About & Skills Card */}
-          <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm md:p-8">
-            {/* About */}
-            <h2 className="mb-3 text-2xl font-bold text-[#1A216D]">About</h2>
-            <p className="mb-8 text-sm leading-relaxed whitespace-pre-line text-gray-700">
-              {profile.aboutMe || "No bio provided."}
-            </p>
+          {/* Left Column: About & Skills */}
+          <div className="lg:col-span-8 flex flex-col gap-8">
+            {/* About Section */}
+            <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 md:p-8">
+              <h2 className="font-bold text-[#131b2e] text-2xl mb-4">About</h2>
+              <p className="text-[#434657] leading-relaxed whitespace-pre-line">
+                {profile.aboutMe || "No bio provided."}
+              </p>
+            </Card>
 
-            {/* Skills Header & Action */}
-            <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <h2 className="text-2xl font-bold text-[#1A216D]">Skills</h2>
+            {/* Skills Section */}
+            <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 md:p-8">
+              <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                <h2 className="font-bold text-[#131b2e] text-2xl">Skills</h2>
 
-              {/* Analyze Github Skill Index Button - ONLY FOR STUDENT PROFILES */}
-              {isStudent && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleAnalyzeGithub()}
-                  disabled={analyzingGithub}
-                  className="inline-flex items-center gap-2 rounded-lg border-[#1877F2]/40 bg-[#F0F4FF] text-xs font-semibold text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all"
-                >
-                  {analyzingGithub ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Analyzing GitHub...
-                    </>
-                  ) : (
-                    <>
-                      <span>Analyze Github Skill Index</span>
-                      <RefreshCw className="h-3.5 w-3.5" />
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
+                {isStudent && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAnalyzeGithub()}
+                    disabled={analyzingGithub}
+                    className="inline-flex items-center gap-2 rounded-lg border-[#1877F2]/40 bg-[#dde1ff] text-xs font-semibold text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all cursor-pointer"
+                  >
+                    {analyzingGithub ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Analyzing GitHub...
+                      </>
+                    ) : (
+                      <>
+                        <span>Analyze Github Skill Index</span>
+                        <RefreshCw className="h-3.5 w-3.5" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
 
-            {/* Skills Content */}
-            <div className="space-y-6">
-              {/* Core Skills */}
-              {coreSkills.length > 0 && (
+              <div className="space-y-8">
+                {/* Core Skills */}
                 <div>
-                  <h3 className="mb-3 text-sm font-semibold text-gray-800">
+                  <h3 className="text-sm font-semibold text-[#131b2e] mb-3 border-b border-[#E2E8F0] pb-2">
                     Core Skills
                   </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {coreSkills.map((skill) => (
-                      <span
-                        key={skill.id}
-                        className="inline-flex rounded-md bg-[#F0F4FF] px-4 py-1.5 text-xs font-semibold text-[#1A216D]"
-                      >
-                        {skill.name || skill.title}
-                      </span>
-                    ))}
-                  </div>
+                  {coreSkills.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {coreSkills.map((skill) => (
+                        <span
+                          key={skill.id}
+                          className="inline-flex rounded-md bg-[#dde1ff] px-4 py-1.5 text-xs font-semibold text-[#1A216D]"
+                        >
+                          {skill.name || skill.title}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#434657] italic py-2">No core skills added yet</p>
+                  )}
                 </div>
-              )}
 
-              {/* Tools & Technology / Hard Skills */}
-              {techSkills.length > 0 && (
+                {/* Tools & Technology / Hard Skills */}
                 <div>
-                  <h3 className="mb-3 text-sm font-semibold text-gray-800">
+                  <h3 className="text-sm font-semibold text-[#131b2e] mb-3 border-b border-[#E2E8F0] pb-2">
                     Tools & Technology
                   </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {techSkills.map((skill) => {
-                      const levelNum =
-                        typeof skill.level === "number"
-                          ? skill.level
-                          : undefined
-                      const tooltipText =
-                        skill.description ||
-                        (levelNum !== undefined
-                          ? `Proficiency Level: ${levelNum}`
-                          : null)
+                  {techSkills.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {techSkills.map((skill) => {
+                        const levelNum =
+                          typeof skill.level === "number" ? skill.level : undefined
+                        const tooltipText =
+                          skill.description ||
+                          (levelNum !== undefined ? `Proficiency Level: ${levelNum}` : null)
 
-                      return (
-                        <span
-                          key={skill.id}
-                          className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold text-gray-700"
-                        >
-                          {skill.name || skill.title}
-                          {tooltipText ? (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
+                        return (
+                          <span
+                            key={skill.id}
+                            className="inline-flex items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-1.5 text-xs font-semibold text-[#434657]"
+                          >
+                            {skill.name || skill.title}
+                            {tooltipText ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span
+                                    className="h-2 w-2 cursor-pointer rounded-full"
+                                    style={{ backgroundColor: getProficiencyColor(levelNum) }}
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{tooltipText}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              levelNum !== undefined && (
                                 <span
-                                  className="h-2 w-2 cursor-pointer rounded-full"
-                                  style={{
-                                    backgroundColor:
-                                      getProficiencyColor(levelNum),
-                                  }}
+                                  className="h-2 w-2 rounded-full"
+                                  style={{ backgroundColor: getProficiencyColor(levelNum) }}
                                 />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{tooltipText}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          ) : (
-                            levelNum !== undefined && (
-                              <span
-                                className="h-2 w-2 rounded-full"
-                                style={{
-                                  backgroundColor:
-                                    getProficiencyColor(levelNum),
-                                }}
-                              />
-                            )
-                          )}
-                        </span>
-                      )
-                    })}
-                  </div>
+                              )
+                            )}
+                          </span>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#434657] italic py-2">No tools added yet</p>
+                  )}
                 </div>
-              )}
 
-              {/* Fallback All Skills */}
-              {otherSkills.length > 0 && (
+                {/* Others */}
                 <div>
-                  <h3 className="mb-3 text-sm font-semibold text-gray-800">
-                    Skills
+                  <h3 className="text-sm font-semibold text-[#131b2e] mb-3 border-b border-[#E2E8F0] pb-2">
+                    Others
                   </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {otherSkills.map((skill) => {
-                      const levelNum =
-                        typeof skill.level === "number"
-                          ? skill.level
-                          : undefined
-                      const tooltipText =
-                        skill.description ||
-                        (levelNum !== undefined
-                          ? `Proficiency Level: ${levelNum}`
-                          : null)
+                  {otherSkills.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {otherSkills.map((skill) => {
+                        const levelNum =
+                          typeof skill.level === "number" ? skill.level : undefined
+                        const tooltipText =
+                          skill.description ||
+                          (levelNum !== undefined ? `Proficiency Level: ${levelNum}` : null)
 
-                      return (
-                        <span
-                          key={skill.id}
-                          className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold text-gray-700"
-                        >
-                          {skill.name || skill.title}
-                          {tooltipText ? (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
+                        return (
+                          <span
+                            key={skill.id}
+                            className="inline-flex items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-1.5 text-xs font-semibold text-[#434657]"
+                          >
+                            {skill.name || skill.title}
+                            {tooltipText ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span
+                                    className="h-2 w-2 cursor-pointer rounded-full"
+                                    style={{ backgroundColor: getProficiencyColor(levelNum) }}
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{tooltipText}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              levelNum !== undefined && (
                                 <span
-                                  className="h-2 w-2 cursor-pointer rounded-full"
-                                  style={{
-                                    backgroundColor:
-                                      getProficiencyColor(levelNum),
-                                  }}
+                                  className="h-2 w-2 rounded-full"
+                                  style={{ backgroundColor: getProficiencyColor(levelNum) }}
                                 />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{tooltipText}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          ) : (
-                            levelNum !== undefined && (
-                              <span
-                                className="h-2 w-2 rounded-full"
-                                style={{
-                                  backgroundColor:
-                                    getProficiencyColor(levelNum),
-                                }}
-                              />
-                            )
-                          )}
-                        </span>
-                      )
-                    })}
+                              )
+                            )}
+                          </span>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#434657] italic py-2">No other skills added yet</p>
+                  )}
+                </div>
+              </div>
+
+              <ProfiecienyScale />
+            </Card>
+
+            {/* GitHub Skill Indexing Result Error Display */}
+            {githubError && (
+              <Card className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm">
+                <p className="text-sm font-semibold">{githubError}</p>
+              </Card>
+            )}
+
+            {/* GitHub Skill Indexing Result Component */}
+            {githubResult && (
+              <GithubSkillIndexResultCmp githubResult={githubResult} />
+            )}
+          </div>
+
+          {/* Right Column */}
+          <div className="lg:col-span-4 flex flex-col gap-8">
+            {/* Recognitions or Mentors overview card */}
+            {isAlumni ? (
+              <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />
+            ) : (
+              <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-[#e0e0ff] text-[#1877F2] flex items-center justify-center">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-[#131b2e]">Current Mentors</h3>
+                    <p className="text-sm text-[#434657]">Student mentorship connections</p>
                   </div>
                 </div>
-              )}
-
-              {(!profile.skills || profile.skills.length === 0) && (
-                <p className="text-xs text-muted-foreground">
-                  No skills listed yet.
-                </p>
-              )}
-            </div>
-
-            {/* Proficiency Scale Legend */}
-            <ProfiecienyScale />
-          </Card>
-
-          {/* GitHub Skill Indexing Result Error Display */}
-          {githubError && (
-            <Card className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm">
-              <p className="text-sm font-semibold">{githubError}</p>
-            </Card>
-          )}
-
-          {/* GitHub Skill Indexing Result Component */}
-          {githubResult && (
-            <GithubSkillIndexResultCmp githubResult={githubResult} />
-          )}
-        </div>
-
-        {/* RIGHT COLUMN */}
-        <div className="space-y-6 lg:col-span-1">
-          {/* Recognitions or Mentors overview card */}
-          {isAlumni ? (
-            <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />
-          ) : (
-            <Card className="rounded-xl border border-[#A4B1CC] bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <Users className="h-5 w-5 text-[#1877F2]" />
-                <div>
-                  <h3 className="font-bold text-[#1A216D]">Current Mentors</h3>
-                  <p className="text-xs text-gray-500">
-                    Student mentorship connections
-                  </p>
+                <div className="flex-grow flex flex-col items-center justify-center text-center p-6 text-[#434657]">
+                  <Users className="h-10 w-10 mb-2 text-[#A4B1CC]/50" />
+                  <p className="text-sm italic">No active mentors connected yet.</p>
                 </div>
-              </div>
-              <div className="mt-4 rounded-lg bg-[#F8FAFC] p-4 text-center text-xs text-gray-500">
-                No active mentors connected yet.
-              </div>
-            </Card>
-          )}
+              </Card>
+            )}
 
-          {/* Certifications Card */}
-          <Certifications certifications={profile.certifications} />
+            {/* Certifications Card */}
+            <Certifications certifications={profile.certifications} />
+          </div>
         </div>
-      </div>
+      </main>
 
       {/* Invite Dialog Component */}
       <InviteDialog

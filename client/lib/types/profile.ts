@@ -22,6 +22,8 @@ export interface Profile {
   yearLevel: string;
   fullName: string;
   work_field: string;
+  isAvailableForMentorship?: boolean | null;
+  isAvailableForCollaboration?: boolean | null;
   socialLink: string;
   companyName: string;
   aboutMe: string;

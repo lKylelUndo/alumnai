@@ -7,6 +7,7 @@ import { resetPasswordRequestSchema } from "@/schema/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 export default function ForgotPasswordForm() {
@@ -23,7 +24,7 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <AuthCard title="Forgot Password" subtitle="Enter your email well send you a link for reset password">
+    <AuthCard title="Forgot password?" subtitle="Enter your email and we'll send you a reset link.">
       <form id="form-rhf-resetpass" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <Controller
@@ -38,6 +39,7 @@ export default function ForgotPasswordForm() {
                   aria-invalid={fieldState.invalid}
                   autoComplete="off"
                   type="email"
+                  placeholder="name@example.com"
                   required
                 />
                 {fieldState.invalid && (
@@ -49,10 +51,20 @@ export default function ForgotPasswordForm() {
         </FieldGroup>
       </form>
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-resetpass" className="w-full">
-          Submit
+        <Button type="submit" form="form-rhf-resetpass" className="h-11 w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
+          Send reset link
         </Button>
       </Field>
+
+      <p className="mt-6 text-center text-sm text-gray-600">
+        Remembered it?{" "}
+        <Link
+          href="/login"
+          className="font-medium text-[#2D7EE2] hover:underline"
+        >
+          Back to login
+        </Link>
+      </p>
     </AuthCard>
   )
 }

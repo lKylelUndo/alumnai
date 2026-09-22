@@ -1,70 +1,93 @@
 "use client"
 
-import { useState } from "react"
-import { ChartPie, PieChartItem } from "./PieChart"
+import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
 import { RefreshCw, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { axiosInstance } from "@/lib/axios"
+import { SkillAnalyticsData } from "@/lib/types/analytics"
 
-export type TopSkillInsight = {
-  field: string
-  skill: string
-  percentage: number
-  abbreviation: string
-  bgColor: string
-}
-
-export type SkillAnalyticsData = {
-  pieChart: PieChartItem[]
-  topSkills: TopSkillInsight[]
-  recommendation: string
-  lastUpdated?: string
-}
-
-const defaultAnalytics: SkillAnalyticsData = {
-  pieChart: [
-    { name: "TypeScript", value: 40, color: "#2563EB" },
-    { name: "JavaScript", value: 20, color: "#F59E0B" },
-    { name: "React", value: 20, color: "#06B6D4" },
-    { name: "PHP", value: 10, color: "#8B5CF6" },
-    { name: "C#", value: 10, color: "#EF4444" },
-  ],
-  topSkills: [
-    {
-      field: "Fullstack Web Development",
-      skill: "TypeScript",
-      percentage: 40,
-      abbreviation: "TS",
-      bgColor: "#2563EB",
-    },
-    {
-      field: "Backend Web Development",
-      skill: "PHP",
-      percentage: 10,
-      abbreviation: "PHP",
-      bgColor: "#8B5CF6",
-    },
-  ],
-  recommendation:
-    "TypeScript continues to lead industry adoption. Consider adding advanced Fullstack TypeScript workshops for graduating students.",
-}
+const ChartPie = dynamic(() => import("./PieChart").then((mod) => mod.ChartPie), {
+  ssr: false,
+  loading: () => <div className="h-[300px] animate-pulse bg-muted rounded-xl" />,
+})
 
 const Analytics = ({ data }: { data?: SkillAnalyticsData }) => {
-  const [analytics, setAnalytics] = useState<SkillAnalyticsData>(data ?? defaultAnalytics)
+  const [analytics, setAnalytics] = useState<SkillAnalyticsData | null>(data ?? null)
+  const [isLoading, setIsLoading] = useState(!data)
+  const [loadError, setLoadError] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  // Lazy client-side load so a cold-cache AI run never blocks the rest of the dashboard
+  useEffect(() => {
+    if (data) return
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await axiosInstance.get("/api/skill/v1/get-top-alumni-skills")
+        if (!cancelled && res.data?.data?.skills) {
+          setAnalytics(res.data.data.skills)
+        } else if (!cancelled) {
+          setLoadError(true)
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Failed to load skill analytics:", error)
+          setLoadError(true)
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [data])
 
   const handleRefreshAnalytics = async () => {
     try {
       setIsRefreshing(true)
-      const res = await axiosInstance.get("/api/admin/v1/get-analytics?refresh=true")
+      const res = await axiosInstance.get("/api/skill/v1/get-top-alumni-skills?refresh=true")
       if (res.data?.data?.skills) {
         setAnalytics(res.data.data.skills)
+        setLoadError(false)
       }
     } catch (error) {
       console.error("Failed to refresh AI analytics:", error)
     } finally {
       setIsRefreshing(false)
     }
+  }
+
+  if (isLoading || !analytics) {
+    return (
+      <div className="space-y-4">
+        <div className="h-[76px] animate-pulse rounded-2xl border border-border/80 bg-card" />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="h-[420px] animate-pulse rounded-2xl border border-border/80 bg-card" />
+          <div className="h-[420px] animate-pulse rounded-2xl border border-border/80 bg-card" />
+        </div>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/80 bg-card p-10 text-center shadow-xs">
+        <p className="text-sm font-semibold text-primary">Couldn&apos;t load skill analytics</p>
+        <p className="text-xs text-muted-foreground">Check your connection and try again.</p>
+        <Button
+          onClick={handleRefreshAnalytics}
+          disabled={isRefreshing}
+          variant="outline"
+          size="sm"
+          className="gap-2 rounded-xl text-xs font-semibold"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+          {isRefreshing ? "Retrying..." : "Retry"}
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -100,7 +123,16 @@ const Analytics = ({ data }: { data?: SkillAnalyticsData }) => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Left Card: Most Used Alumni Skills */}
-        <ChartPie data={analytics.pieChart} />
+        {analytics.pieChart.length > 0 ? (
+          <ChartPie data={analytics.pieChart} />
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-border/80 bg-card p-6 shadow-xs h-full min-h-[420px] text-center">
+            <p className="text-sm font-semibold text-primary">No alumni hard skills yet</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Skills will appear here once alumni add them to their profiles.
+            </p>
+          </div>
+        )}
 
         {/* Right Card: Key Insights */}
         <div className="flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 shadow-xs h-full min-h-[420px]">

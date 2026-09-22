@@ -17,8 +17,8 @@ export default function AuthCard({ title, subtitle, children }: AuthCardProps) {
         ← Back to Homepage
       </Link>
 
-      <div className="bg-white border-2 border-[#1A216D] rounded-md p-8 sm:p-10 shadow-sm">
-        <div className="w-full mb-6">
+      <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 sm:p-8 shadow-md">
+        <div className="w-full mb-6 text-center">
           <h2 className="text-2xl font-extrabold text-[#1A216D]">
             {title}
           </h2>

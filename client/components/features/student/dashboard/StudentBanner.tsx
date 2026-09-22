@@ -1,4 +1,3 @@
-import Image from "next/image"
 import StudentStatCards from "./StudentStatCards"
 import StudentWelcomeHeader from "./StudentWelcomeHeader"
 import { studentService } from "@/services/student.service"
@@ -17,25 +16,11 @@ const StudentBanner = async () => {
   }
 
   return (
-    <section className="mt-2">
-      <div className="flex items-center gap-x-4">
-        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-primary/10 bg-primary/5 p-2 shadow-xs">
-          <Image
-            src="/images/alumniicon.png"
-            alt="Alumni dashboard icon"
-            width={60}
-            height={60}
-            className="h-full w-full object-contain"
-          />
-        </div>
-
-        <StudentWelcomeHeader />
-      </div>
-
+    <section className="rounded-2xl bg-primary/[0.03] p-6">
+      <StudentWelcomeHeader />
       <StudentStatCards dashboardStats={dashboardStats} />
     </section>
   )
 }
 
 export default StudentBanner
-

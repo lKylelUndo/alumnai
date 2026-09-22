@@ -1,9 +1,9 @@
 import { ENV } from "@/config/env";
 import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
-import { generateSkillAnalytics } from "@/lib/gemini";
+import { generateSkillAnalytics, buildLocalSkillAnalytics } from "@/lib/gemini";
 import { AddSkillInputTypes } from "@/schema/skill";
-import { RoleType } from "@/generated/prisma/enums";
+import { RoleType, SkillType } from "@/generated/prisma/enums";
 
 export class SkillRepository {
   async add(data: AddSkillInputTypes) {
@@ -25,6 +25,7 @@ export class SkillRepository {
   async findAlumniSkillsByWorkField(workField?: string | null) {
     const alumniSkills = await prisma.skill.findMany({
       where: {
+        type: { in: [SkillType.HARD_SKILL, SkillType.OTHER_HARD_SKILL] },
         profile: {
           user: {
             role: RoleType.ALUMNI,
@@ -48,6 +49,7 @@ export class SkillRepository {
     if (skillsToProcess.length === 0 && workField) {
       skillsToProcess = await prisma.skill.findMany({
         where: {
+          type: { in: [SkillType.HARD_SKILL, SkillType.OTHER_HARD_SKILL] },
           profile: {
             user: {
               role: RoleType.ALUMNI,
@@ -73,7 +75,7 @@ export class SkillRepository {
   }
 
   async findTopAlumniSkills(forceRefresh: boolean = false) {
-    const cacheKey = `${ENV.ADMIN_REDIS_KEY}top-alumni-skills`;
+    const cacheKey = `${ENV.ADMIN_REDIS_KEY}top-alumni-skills:v2`;
 
     // try cache first unless force refresh requested
     if (!forceRefresh) {
@@ -81,8 +83,16 @@ export class SkillRepository {
       if (cached) return JSON.parse(cached);
     }
 
-    // fallback to DB — fetch skills with profile work fields
+    // fallback to DB — fetch hard skills from alumni profiles with work fields
     const skills = await prisma.skill.findMany({
+      where: {
+        type: { in: [SkillType.HARD_SKILL, SkillType.OTHER_HARD_SKILL] },
+        profile: {
+          user: {
+            role: RoleType.ALUMNI,
+          },
+        },
+      },
       include: {
         profile: {
           select: {
@@ -115,15 +125,32 @@ export class SkillRepository {
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
-    const analytics = await generateSkillAnalytics(skillsData);
+    // AI first (single fast attempt, ~25s cap inside); live local counts on failure.
+    // Local results cache briefly so the next visit is instant and retries AI sooner.
+    const SEVEN_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 7;
+    const ONE_HOUR_IN_MS = 1000 * 60 * 60;
+
+    let analytics;
+    let cacheTtl = SEVEN_DAYS_IN_MS;
+    if (skillsData.length === 0) {
+      analytics = buildLocalSkillAnalytics(skillsData);
+      cacheTtl = ONE_HOUR_IN_MS;
+    } else {
+      try {
+        analytics = await generateSkillAnalytics(skillsData);
+      } catch (error) {
+        console.warn("Skill analytics AI unavailable, serving live counts:", error);
+        analytics = buildLocalSkillAnalytics(skillsData);
+        cacheTtl = ONE_HOUR_IN_MS;
+      }
+    }
+
     const analyticsWithTimestamp = {
       ...analytics,
       lastUpdated: new Date().toISOString(),
     };
 
-    // Cache analytics in Redis for 7 days (7 * 24 * 60 * 60 * 1000 ms)
-    const SEVEN_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 7;
-    await redis.set(cacheKey, JSON.stringify(analyticsWithTimestamp), "PX", SEVEN_DAYS_IN_MS);
+    await redis.set(cacheKey, JSON.stringify(analyticsWithTimestamp), "PX", cacheTtl);
 
     return analyticsWithTimestamp;
   }

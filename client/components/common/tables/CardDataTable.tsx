@@ -1,8 +1,7 @@
 "use client";
 
 import { ColumnDef, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, Row, useReactTable } from "@tanstack/react-table"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "../../ui/button"
+import { PaginationControls } from "./PaginationControls"
 
 interface CardDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -72,41 +71,18 @@ export function CardDataTable<TData, TValue>({
         )
       )}
 
-      {/* Pagination */}
+      {/* Pagination — compact sliding window shared with admin tables */}
       {totalPages > 1 && (
         <div className="mt-10 flex items-center justify-center gap-2">
-          {/* Prev */}
-          <Button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E2E6F3] bg-white text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D]/5 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-
-          {/* Page numbers */}
-          {Array.from({ length: totalPages }, (_, i) => i).map((pageIdx) => (
-            <Button
-              key={pageIdx}
-              onClick={() => table.setPageIndex(pageIdx)}
-              className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200 ${
-                currentPage === pageIdx
-                  ? "bg-[#1A216D] text-white shadow-md shadow-[#1A216D]/30"
-                  : "border border-[#E2E6F3] bg-white text-[#1A216D] hover:border-[#1A216D] hover:bg-[#1A216D]/5"
-              }`}
-            >
-              {pageIdx + 1}
-            </Button>
-          ))}
-
-          {/* Next */}
-          <Button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E2E6F3] bg-white text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D]/5 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            canPreviousPage={table.getCanPreviousPage()}
+            canNextPage={table.getCanNextPage()}
+            onPreviousPage={() => table.previousPage()}
+            onNextPage={() => table.nextPage()}
+            onSelectPage={(pageIdx) => table.setPageIndex(pageIdx)}
+          />
         </div>
       )}
     </div>

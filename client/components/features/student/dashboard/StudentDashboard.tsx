@@ -30,11 +30,11 @@ const DashboardPanel = async () => {
 
   return (
     <section className="mt-6 min-h-screen">
-      <Tabs defaultValue="gap-analysis" className="w-full bg-transparent">
-        <TabsList variant="none" className="flex w-full justify-between">
+        <Tabs defaultValue="gap-analysis" className="w-full bg-transparent">
+        <TabsList variant="none" className="w-full">
           <TabsTrigger
             value="gap-analysis"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Target className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Gap Analysis</span>
@@ -43,7 +43,7 @@ const DashboardPanel = async () => {
 
           <TabsTrigger
             value="collaboration-invites"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Mail className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Collaboration Requests</span>
@@ -52,7 +52,7 @@ const DashboardPanel = async () => {
 
           <TabsTrigger
             value="my-mentors"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Your Mentors</span>
@@ -61,7 +61,7 @@ const DashboardPanel = async () => {
 
           <TabsTrigger
             value="my-collaborators"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Handshake className="h-4 w-4 text-primary" />
             <span className="hidden sm:inline">Your Collaborators</span>
@@ -69,19 +69,19 @@ const DashboardPanel = async () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="gap-analysis" forceMount className="mt-4 data-[state=inactive]:hidden">
+        <TabsContent value="gap-analysis" forceMount className="mt-6 data-[state=inactive]:hidden">
           <SkillGapAnalysis />
         </TabsContent>
 
-        <TabsContent value="collaboration-invites" forceMount className="mt-4 data-[state=inactive]:hidden">
+        <TabsContent value="collaboration-invites" forceMount className="mt-6 data-[state=inactive]:hidden">
           <CollaborationInvites invites={myCollaborationInvites || []} />
         </TabsContent>
 
-        <TabsContent value="my-mentors" forceMount className="mt-4 data-[state=inactive]:hidden">
+        <TabsContent value="my-mentors" forceMount className="mt-6 data-[state=inactive]:hidden">
           <Mentors mentors={myMentors || []} />
         </TabsContent>
 
-        <TabsContent value="my-collaborators" forceMount className="mt-4 data-[state=inactive]:hidden">
+        <TabsContent value="my-collaborators" forceMount className="mt-6 data-[state=inactive]:hidden">
           <Collaborators collaborators={myCollaborators || []} />
         </TabsContent>
       </Tabs>
@@ -90,4 +90,3 @@ const DashboardPanel = async () => {
 }
 
 export default DashboardPanel
-

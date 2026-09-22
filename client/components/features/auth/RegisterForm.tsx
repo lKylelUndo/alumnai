@@ -3,13 +3,14 @@
 import { Button } from "@/components/ui/button"
 import AuthCard from "./AuthCard"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { Input, PasswordInput } from "@/components/ui/input"
 import { signupSchema } from "@/schema/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
+import { Loader2 } from "lucide-react"
 
 export default function RegisterForm() {
   const { signup } = useAuthContext();
@@ -23,6 +24,8 @@ export default function RegisterForm() {
       password: "",
     },
   })
+
+  const { formState: { isSubmitting } } = form;
 
   async function onSubmit(data: z.infer<typeof signupSchema>) {
     try {
@@ -45,8 +48,8 @@ export default function RegisterForm() {
 
   return (
     <AuthCard
-      title="Create an Account"
-      subtitle="Register as a student to get started"
+      title="Start your journey"
+      subtitle="Create your verified skill profile in minutes."
     >
       <form id="form-rhf-signup" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
@@ -65,6 +68,7 @@ export default function RegisterForm() {
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                     type="text"
+                    placeholder="2018-00001"
                     required
                   />
                   {fieldState.invalid && (
@@ -86,6 +90,7 @@ export default function RegisterForm() {
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                     type="text"
+                    placeholder="John Doe"
                     required
                   />
                   {fieldState.invalid && (
@@ -103,14 +108,15 @@ export default function RegisterForm() {
                 <FieldLabel htmlFor="form-rhf-email-address">
                   Email Address
                 </FieldLabel>
-                <Input
-                  {...field}
-                  id="form-rhf-email-address"
-                  aria-invalid={fieldState.invalid}
-                  autoComplete="off"
-                  type="email"
-                  required
-                />
+                  <Input
+                    {...field}
+                    id="form-rhf-email-address"
+                    aria-invalid={fieldState.invalid}
+                    autoComplete="off"
+                    type="email"
+                    placeholder="name@example.com"
+                    required
+                  />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -124,12 +130,11 @@ export default function RegisterForm() {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="form-rhf-password">Password</FieldLabel>
-                <Input
+                <PasswordInput
                   {...field}
                   id="form-rhf-password"
                   aria-invalid={fieldState.invalid}
                   autoComplete="off"
-                  type="password"
                   required
                 />
                 {fieldState.invalid && (
@@ -141,8 +146,12 @@ export default function RegisterForm() {
         </FieldGroup>
       </form>
       <Field orientation="horizontal" className="mt-4">
-        <Button type="submit" form="form-rhf-signup" className="w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
-          Register
+        <Button type="submit" form="form-rhf-signup" disabled={isSubmitting} className="h-11 w-full bg-[#1A216D] hover:bg-[#151b54] text-white">
+          {isSubmitting ? (
+            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating account...</>
+          ) : (
+            "Register"
+          )}
         </Button>
       </Field>
 

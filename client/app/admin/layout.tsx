@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import AdminHeader from "@/components/features/admin/AdminHeader";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
+import ChatBox from "@/components/common/ChatBoxDynamic";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
@@ -20,6 +22,7 @@ export default function AdminRootLayout({ children }: { children: ReactNode }) {
           <p>Copyright © {new Date().getFullYear()} Alumnai. All rights reserved.</p>
         </footer>
       </main>
+      <ChatBox />
     </AuthGuard>
   )
 }

@@ -14,5 +14,7 @@ export const getProfileFormDefaultValues = (user: User | null) => ({
   socialLink: user?.profile?.socialLink || "",
   companyName: user?.profile?.companyName || "",
   current_position: user?.profile?.current_position || "",
+  isAvailableForMentorship: user?.profile?.isAvailableForMentorship ?? true,
+  isAvailableForCollaboration: user?.profile?.isAvailableForCollaboration ?? true,
   certifications: user?.profile?.certifications || [],
 })

@@ -125,6 +125,68 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
+/* ── Product-mockup float keyframes ────────────────────────────── */
+@keyframes product-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes product-float-alt {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes product-float-slow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+@keyframes auth-node-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.06); opacity: 0.85; }
+}
+@keyframes auth-line-dash {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 12; }
+}
+
+/* Utility classes that apply the keyframes (durations set via inline style) */
+.product-mockup-float {
+  animation-name: product-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.product-mockup-float-alt {
+  animation-name: product-float-alt;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.product-mockup-float-slow {
+  animation-name: product-float-slow;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.auth-line-dash {
+  animation-name: auth-line-dash;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-mockup-float,
+  .product-mockup-float-alt,
+  .product-mockup-float-slow,
+  .auth-node-pulse {
+    animation: none !important;
+  }
+  .auth-line-dash {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

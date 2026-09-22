@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Register",
-  description: "Create an AlumnAI account to start connecting with mentors, receiving AI skill gap analysis, and building your professional network.",
+  description: "Create your verified AlumnAI skill profile and connect with CPC alumni mentors powered by AI.",
   alternates: {
     canonical: "/register",
   },
