@@ -42,7 +42,7 @@ const StudentHeader = () => {
             </button>
           )}
 
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger className="focus:outline-none">
               <div className="relative h-9 w-9 overflow-hidden rounded-full border-2 border-primary/20 bg-primary text-white flex items-center justify-center font-bold text-sm shadow-xs hover:border-primary transition-all">
                 {user?.profile?.profilePicture ? (
@@ -52,7 +52,7 @@ const StudentHeader = () => {
                 )}
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="me-4 w-44 rounded-xl shadow-md">
+            <DropdownMenuContent align="end" sideOffset={8} className="w-44 rounded-xl shadow-md data-open:animate-none data-closed:animate-none">
               <DropdownMenuGroup>
                 <DropdownMenuLabel className="text-sm font-semibold text-foreground">My Account</DropdownMenuLabel>
                 <DropdownMenuItem asChild className="text-sm cursor-pointer">

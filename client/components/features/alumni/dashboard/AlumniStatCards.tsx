@@ -1,5 +1,9 @@
+"use client"
+
+import { useState, useEffect, useCallback } from "react"
 import DashboardQuickAction from "@/components/common/layout/DashboardQuickAction"
 import { Handshake, Mail, Users } from "lucide-react"
+import { alumniService } from "@/services/alumni.service"
 
 interface DashboardStats {
   activeCollaborators: number
@@ -34,7 +38,27 @@ const stats = [
   },
 ]
 
-const AlumniStatCards = ({ dashboardStats }: { dashboardStats: DashboardStats | null }) => {
+const AlumniStatCards = ({ dashboardStats: initialStats }: { dashboardStats: DashboardStats | null }) => {
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(initialStats)
+  const [prevInitialStats, setPrevInitialStats] = useState(initialStats)
+
+  const refetchStats = useCallback(() => {
+    alumniService.getDashboardStats()
+      .then((res) => {
+        if (res?.data) setDashboardStats(res.data)
+      })
+      .catch((err) => console.error("Refetch alumni stats failed:", err))
+  }, [])
+
+  if (prevInitialStats !== initialStats) {
+    setPrevInitialStats(initialStats)
+    if (initialStats) setDashboardStats(initialStats)
+  }
+
+  useEffect(() => {
+    if (!dashboardStats) refetchStats()
+  }, [dashboardStats, refetchStats])
+
   return (
     <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-4">
       {/* Stats Cards */}

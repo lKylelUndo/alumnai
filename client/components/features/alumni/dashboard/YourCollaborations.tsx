@@ -5,16 +5,26 @@ import { CardDataTable } from "@/components/common/tables/CardDataTable"
 import { AlumniStudentCollaborationCardTypes } from "@/lib/types/collaboration"
 import CollaborationCard from "./CollaborationCard"
 
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useCallback } from "react"
 import { useAlumniSocket } from "@/hooks/useAlumniSocket"
+import { alumniService } from "@/services/alumni.service"
 import { toast } from "sonner"
 
 export const columns: ColumnDef<AlumniStudentCollaborationCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
-const YourCollaborations = ({ collaborations }: { collaborations: AlumniStudentCollaborationCardTypes[] }) => {
-  const router = useRouter()
+const YourCollaborations = ({ collaborations: initialCollaborations }: { collaborations: AlumniStudentCollaborationCardTypes[] }) => {
+  const [collaborations, setCollaborations] = useState<AlumniStudentCollaborationCardTypes[]>(initialCollaborations ?? [])
+  const [prevInitialCollaborations, setPrevInitialCollaborations] = useState(initialCollaborations)
+
+  const refetchCollaborations = useCallback(() => {
+    alumniService.getMyCollaborations()
+      .then((res) => {
+        if (Array.isArray(res?.data)) setCollaborations(res.data)
+      })
+      .catch((err) => console.error("Refetch collaborations failed:", err))
+  }, [])
 
   useAlumniSocket({
     target: "your-collaborations",
@@ -24,9 +34,18 @@ const YourCollaborations = ({ collaborations }: { collaborations: AlumniStudentC
       } else {
         toast.info("Your collaboration status has been updated.")
       }
-      router.refresh()
+      refetchCollaborations()
     },
   })
+
+  if (prevInitialCollaborations !== initialCollaborations) {
+    setPrevInitialCollaborations(initialCollaborations)
+    if (initialCollaborations && initialCollaborations.length > 0) setCollaborations(initialCollaborations)
+  }
+
+  useEffect(() => {
+    if (collaborations.length === 0) refetchCollaborations()
+  }, [collaborations.length, refetchCollaborations])
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

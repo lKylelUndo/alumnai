@@ -5,24 +5,43 @@ import { CardDataTable } from "@/components/common/tables/CardDataTable";
 import { StudentMentorCardTypes } from "@/lib/types/mentorship";
 import MentorCard from "./MentorCard";
 
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
 import { useStudentSocket } from "@/hooks/useStudentSocket";
+import { mentorshipService } from "@/services/mentorship.service";
 import { toast } from "sonner";
 
 export const columns: ColumnDef<StudentMentorCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ];
 
-const Mentors = ({ mentors }: { mentors: StudentMentorCardTypes[] }) => {
-  const router = useRouter();
+const Mentors = ({ mentors: initialMentors }: { mentors: StudentMentorCardTypes[] }) => {
+  const [mentors, setMentors] = useState<StudentMentorCardTypes[]>(initialMentors ?? []);
+  const [prevInitialMentors, setPrevInitialMentors] = useState(initialMentors);
+
+  const refetchMentors = useCallback(() => {
+    mentorshipService.getMyMentors()
+      .then((res) => {
+        if (Array.isArray(res?.data)) setMentors(res.data);
+      })
+      .catch((err) => console.error("Refetch mentors failed:", err));
+  }, []);
 
   useStudentSocket({
     target: "my-mentors",
     onRefresh: (data) => {
       if (data?.message) toast.info(data.message);
-      router.refresh();
+      refetchMentors();
     },
   });
+
+  if (prevInitialMentors !== initialMentors) {
+    setPrevInitialMentors(initialMentors);
+    if (initialMentors && initialMentors.length > 0) setMentors(initialMentors);
+  }
+
+  useEffect(() => {
+    if (mentors.length === 0) refetchMentors();
+  }, [mentors.length, refetchMentors]);
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">

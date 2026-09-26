@@ -4,24 +4,43 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CardDataTable } from "@/components/common/tables/CardDataTable";
 import { StudentCollaboratorCardTypes } from "@/lib/types/collaboration";
 import CollaboratorCard from "./CollaboratorCard";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
 import { useStudentSocket } from "@/hooks/useStudentSocket";
+import { collaborationService } from "@/services/collaboration.service";
 import { toast } from "sonner";
 
 export const columns: ColumnDef<StudentCollaboratorCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ];
 
-const Collaborators = ({ collaborators }: { collaborators: StudentCollaboratorCardTypes[] }) => {
-  const router = useRouter();
+const Collaborators = ({ collaborators: initialCollaborators }: { collaborators: StudentCollaboratorCardTypes[] }) => {
+  const [collaborators, setCollaborators] = useState<StudentCollaboratorCardTypes[]>(initialCollaborators ?? []);
+  const [prevInitialCollaborators, setPrevInitialCollaborators] = useState(initialCollaborators);
+
+  const refetchCollaborators = useCallback(() => {
+    collaborationService.getMyStudentCollaborations()
+      .then((res) => {
+        if (Array.isArray(res?.data)) setCollaborators(res.data);
+      })
+      .catch((err) => console.error("Refetch collaborations failed:", err));
+  }, []);
 
   useStudentSocket({
     target: "your-collaborations",
     onRefresh: (data) => {
       if (data?.message) toast.info(data.message);
-      router.refresh();
+      refetchCollaborators();
     },
   });
+
+  if (prevInitialCollaborators !== initialCollaborators) {
+    setPrevInitialCollaborators(initialCollaborators);
+    if (initialCollaborators && initialCollaborators.length > 0) setCollaborators(initialCollaborators);
+  }
+
+  useEffect(() => {
+    if (collaborators.length === 0) refetchCollaborators();
+  }, [collaborators.length, refetchCollaborators]);
 
   return (
     <div className="rounded p-4 shadow-md">

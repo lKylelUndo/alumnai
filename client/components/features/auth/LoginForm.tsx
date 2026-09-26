@@ -11,6 +11,7 @@ import { z } from "zod"
 import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function LoginForm() {
   const { login } = useAuthContext();
@@ -34,8 +35,11 @@ export default function LoginForm() {
       if (serverError?.path && serverError?.message) {
         form.setError(serverError.path, { type: "server", message: serverError.message })
       } else {
-        // Fallback: set a generic root error
-        form.setError("root", { type: "server", message: serverError?.message ?? "Something went wrong" })
+        // No field to attach to (e.g. 429 rate limit) — surface it as a toast
+        // since nothing on the form renders the root error.
+        const message = serverError?.message ?? "Something went wrong"
+        form.setError("root", { type: "server", message })
+        toast.error(message)
       }    
     }
   }
