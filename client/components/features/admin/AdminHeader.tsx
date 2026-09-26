@@ -17,13 +17,13 @@ const AdminHeader = () => {
         </span>
       </div>
 
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger className="focus:outline-none">
           <div className="relative h-9 w-9 overflow-hidden rounded-full border-2 border-primary/20 bg-primary text-white flex items-center justify-center font-bold text-sm shadow-xs hover:border-primary transition-all">
             <Image src="/images/admindashboardicon.png" alt="Admin Profile" width={36} height={36} className="h-full w-full object-cover" />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="me-4 w-48 rounded-xl">
+        <DropdownMenuContent align="end" sideOffset={8} className="w-48 rounded-xl data-open:animate-none data-closed:animate-none">
           <DropdownMenuGroup>
             <DropdownMenuLabel className="text-xs font-semibold text-foreground">My Account</DropdownMenuLabel>
             <DropdownMenuItem onClick={logout} className="text-xs font-medium text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 cursor-pointer">

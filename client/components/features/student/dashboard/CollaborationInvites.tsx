@@ -5,16 +5,26 @@ import { CardDataTable } from "@/components/common/tables/CardDataTable";
 import { StudentCollabInviteCardTypes } from "@/lib/types/collaboration";
 import CollaborationInviteCard from "./CollaborationInviteCard";
 
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
 import { useStudentSocket } from "@/hooks/useStudentSocket";
+import { collaborationService } from "@/services/collaboration.service";
 import { toast } from "sonner";
 
 export const columns: ColumnDef<StudentCollabInviteCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ];
 
-const CollaborationInvites = ({ invites }: { invites: StudentCollabInviteCardTypes[] }) => {
-  const router = useRouter();
+const CollaborationInvites = ({ invites: initialInvites }: { invites: StudentCollabInviteCardTypes[] }) => {
+  const [invites, setInvites] = useState<StudentCollabInviteCardTypes[]>(initialInvites ?? []);
+  const [prevInitialInvites, setPrevInitialInvites] = useState(initialInvites);
+
+  const refetchInvites = useCallback(() => {
+    collaborationService.getCollabRequests()
+      .then((res) => {
+        if (Array.isArray(res?.data)) setInvites(res.data);
+      })
+      .catch((err) => console.error("Refetch collaboration invites failed:", err));
+  }, []);
 
   useStudentSocket({
     target: "collaboration-invites",
@@ -24,9 +34,18 @@ const CollaborationInvites = ({ invites }: { invites: StudentCollabInviteCardTyp
       } else {
         toast.info("You have a new collaboration request!");
       }
-      router.refresh();
+      refetchInvites();
     },
   });
+
+  if (prevInitialInvites !== initialInvites) {
+    setPrevInitialInvites(initialInvites);
+    if (initialInvites && initialInvites.length > 0) setInvites(initialInvites);
+  }
+
+  useEffect(() => {
+    if (invites.length === 0) refetchInvites();
+  }, [invites.length, refetchInvites]);
 
   return (
     <div className="rounded p-4 shadow-md">

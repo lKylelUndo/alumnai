@@ -12,7 +12,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         {/* Content */}
         <main className="flex-1 grid grid-cols-1 lg:grid-cols-2 w-full">
           {/* ── Left Column: product-mockup visual ── */}
-          <div className="hidden lg:flex relative w-full h-full min-h-[calc(100vh-80px)] bg-[#1A216D] items-center justify-center overflow-hidden">
+          <div className="hidden relative w-full overflow-hidden bg-[#1A216D] lg:sticky lg:top-0 lg:block lg:h-svh lg:self-start">
             {/* Route-aware photographic backdrop (decorative) */}
             <AuthVisual />
             {/* Small decorative dots */}

@@ -5,24 +5,43 @@ import { CardDataTable } from "@/components/common/tables/CardDataTable"
 import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship"
 import MenteeCard from "./MenteeCard"
 
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useCallback } from "react"
 import { useAlumniSocket } from "@/hooks/useAlumniSocket"
+import { mentorshipService } from "@/services/mentorship.service"
 import { toast } from "sonner"
 
 export const columns: ColumnDef<AlumniStudentMentorshipCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
 ]
 
-const YourMentees = ({ mentees }: { mentees: AlumniStudentMentorshipCardTypes[] }) => {
-  const router = useRouter()
+const YourMentees = ({ mentees: initialMentees }: { mentees: AlumniStudentMentorshipCardTypes[] }) => {
+  const [mentees, setMentees] = useState<AlumniStudentMentorshipCardTypes[]>(initialMentees ?? [])
+  const [prevInitialMentees, setPrevInitialMentees] = useState(initialMentees)
+
+  const refetchMentees = useCallback(() => {
+    mentorshipService.getMyMentees()
+      .then((res) => {
+        if (Array.isArray(res?.data)) setMentees(res.data)
+      })
+      .catch((err) => console.error("Refetch mentees failed:", err))
+  }, [])
 
   useAlumniSocket({
     target: "your-mentees",
     onRefresh: (data) => {
       if (data?.message) toast.info(data.message)
-      router.refresh()
+      refetchMentees()
     },
   })
+
+  if (prevInitialMentees !== initialMentees) {
+    setPrevInitialMentees(initialMentees)
+    if (initialMentees && initialMentees.length > 0) setMentees(initialMentees)
+  }
+
+  useEffect(() => {
+    if (mentees.length === 0) refetchMentees()
+  }, [mentees.length, refetchMentees])
   return (
     <div className="rounded p-4 shadow-md">
       <div className="mb-6">
