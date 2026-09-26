@@ -21,7 +21,7 @@ export const globalRateLimiter = rateLimit({
 // Credential-stuffing / password-spraying defense for login.
 export const loginRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 5,
+  limit: 30,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   message: jsonMessage(

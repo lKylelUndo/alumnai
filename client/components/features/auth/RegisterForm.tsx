@@ -11,6 +11,7 @@ import { z } from "zod"
 import Link from "next/link"
 import { useAuthContext } from "@/context/AuthContext"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function RegisterForm() {
   const { signup } = useAuthContext();
@@ -31,18 +32,16 @@ export default function RegisterForm() {
     try {
       await signup(data);
     } catch (error: any) {
-      console.error("Signup form error:", error.response)
-      // const serverErrors = error.response.data;
+      const serverError = error?.response?.data
+      console.error("Signup form error:", serverError)
 
-      // serverErrors.forEach((error: any) => {
-      //   console.log(error)
-      // });
-      // form.setError("studentIdNumber", {
-      //   type: "server",
-      //   message:
-      //     error.response?.data?.message ??
-      //     "Something went wrong",
-      // });
+      if (serverError?.path && serverError?.message) {
+        form.setError(serverError.path, { type: "server", message: serverError.message })
+      } else {
+        // No field to attach to — surface it as a toast
+        // since nothing on the form renders the root error.
+        toast.error(serverError?.message ?? "Something went wrong")
+      }
     }
   }
 

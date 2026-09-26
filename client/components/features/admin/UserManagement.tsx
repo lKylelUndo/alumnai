@@ -129,10 +129,34 @@ export const columns: ColumnDef<UserManagement>[] = [
 
 export default function UserManagement({ data: initialData }: { data: UserManagement[] }) {
   const [users, setUsers] = useState<UserManagement[]>(initialData ?? []);
+  const [prevInitialData, setPrevInitialData] = useState(initialData);
 
+  const refetchUsers = useCallback(() => {
+    adminService.getAllUsers()
+      .then((res) => {
+        if (res?.data?.users) setUsers(res.data.users)
+      })
+      .catch((err) => console.error("Refetch users failed:", err))
+  }, [])
+
+  // Listen for realtime updates
+  useAdminSocket({ target: "all-users", onRefresh: refetchUsers })
+
+  // Sync fresh server data without cascading renders
+  if (prevInitialData !== initialData) {
+    setPrevInitialData(initialData);
+    if (initialData && initialData.length > 0) {
+      setUsers(initialData);
+    }
+  }
+
+  // Fall back to a client fetch when SSR provided nothing (e.g. no
+  // backend-domain cookies on the frontend server in production)
   useEffect(() => {
-    setUsers(initialData ?? []);
-  }, [initialData]);
+    if (users.length === 0) {
+      refetchUsers();
+    }
+  }, [users.length, refetchUsers]);
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
