@@ -40,7 +40,7 @@ const DashboardPanel = async () => {
             className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
             <TrendingUp className="h-4 w-4 shrink-0 text-primary" />
-            <span className="hidden truncate sm:inline">Your Mentees</span>
+            <span className="hidden truncate sm:inline">My Mentees</span>
             <span className="truncate text-xs sm:hidden">Mentees</span>
           </TabsTrigger>
 
@@ -49,7 +49,7 @@ const DashboardPanel = async () => {
             className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Handshake className="h-4 w-4 shrink-0 text-primary" />
-            <span className="hidden truncate sm:inline">Your Collaborations</span>
+            <span className="hidden truncate sm:inline">My Collaborations</span>
             <span className="truncate text-xs sm:hidden">Collaborations</span>
           </TabsTrigger>
 
@@ -58,8 +58,8 @@ const DashboardPanel = async () => {
             className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Users className="h-4 w-4 shrink-0 text-primary" />
-            <span className="hidden truncate sm:inline">Manage Mentorships</span>
-            <span className="truncate text-xs sm:hidden">Mentorships</span>
+            <span className="hidden truncate sm:inline">Mentorship Requests</span>
+            <span className="truncate text-xs sm:hidden">Requests</span>
           </TabsTrigger>
         </TabsList>
 

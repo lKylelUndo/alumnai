@@ -41,7 +41,7 @@ const DashboardPanel = async () => {
             className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Target className="h-4 w-4 shrink-0 text-primary" />
-            <span className="hidden truncate sm:inline">Gap Analysis</span>
+            <span className="hidden truncate sm:inline">Skill Analysis</span>
             <span className="truncate text-xs sm:hidden">Analysis</span>
           </TabsTrigger>
 
@@ -59,7 +59,7 @@ const DashboardPanel = async () => {
             className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
             <TrendingUp className="h-4 w-4 shrink-0 text-primary" />
-            <span className="hidden truncate sm:inline">Your Mentors</span>
+            <span className="hidden truncate sm:inline">My Mentors</span>
             <span className="truncate text-xs sm:hidden">Mentors</span>
           </TabsTrigger>
 
@@ -68,7 +68,7 @@ const DashboardPanel = async () => {
             className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
             <Handshake className="h-4 w-4 shrink-0 text-primary" />
-            <span className="hidden truncate sm:inline">Your Collaborators</span>
+            <span className="hidden truncate sm:inline">My Collaborators</span>
             <span className="truncate text-xs sm:hidden">Collaborators</span>
           </TabsTrigger>
         </TabsList>

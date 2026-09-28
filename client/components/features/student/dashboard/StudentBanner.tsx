@@ -8,15 +8,15 @@ const StudentBanner = async () => {
   try {
     const response = await studentService.getDashboardStats();
     dashboardStats = response?.data;
-  } catch (error: any) {
-    if (error?.digest === "DYNAMIC_SERVER_USAGE") {
+  } catch (error) {
+    if (error instanceof Error && "digest" in error && error.digest === "DYNAMIC_SERVER_USAGE") {
       throw error;
     }
     console.error("Failed to fetch student stats", error);
   }
 
   return (
-    <section className="rounded-2xl bg-primary/[0.03] p-4 sm:p-6">
+    <section>
       <StudentWelcomeHeader />
       <StudentStatCards dashboardStats={dashboardStats} />
     </section>

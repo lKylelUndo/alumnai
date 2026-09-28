@@ -17,27 +17,21 @@ const stats = [
     key: "collaborators" as const,
     label: "Active Collaborators",
     shortLabel: "Collaborators",
-    sublabel: "Users",
     icon: Handshake,
-    bannerBg: "bg-primary/10",
     count: (s: StudentDashboardStats) => s?.activeCollaborators || 0,
   },
   {
     key: "invites" as const,
     label: "Pending Invites",
     shortLabel: "Invites",
-    sublabel: "Invites",
     icon: Mail,
-    bannerBg: "bg-primary/15",
     count: (s: StudentDashboardStats) => s?.pendingInvites ?? s?.pendingRequests ?? 0,
   },
   {
     key: "mentorships" as const,
     label: "Active Mentorships",
     shortLabel: "Mentors",
-    sublabel: "Mentors",
     icon: Users,
-    bannerBg: "bg-primary/8",
     count: (s: StudentDashboardStats) => s?.activeMentorships || 0,
   },
 ]
@@ -69,40 +63,28 @@ const StudentStatCards = ({ dashboardStats: initialStats }: { dashboardStats: St
       <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:col-span-3">
         {stats.map((stat) => {
           const count = stat.count(dashboardStats!)
+          const countColor = count === 0 ? "text-muted-foreground" : "text-foreground"
 
           return (
             <div
               key={stat.key}
-              className="group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+              className="group flex flex-col rounded-2xl border border-border/80 bg-card px-3 py-3 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:px-5 sm:py-4"
             >
-              <div className={`${stat.bannerBg} hidden px-5 py-4 sm:block`}>
-                <div className="flex items-center gap-2">
-                  <stat.icon className="h-4 w-4 shrink-0 text-primary" />
-                  <span className="text-sm font-semibold text-primary">{stat.label}</span>
-                </div>
+              <div className="flex items-center justify-center gap-2 sm:hidden">
+                <stat.icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className={`text-2xl font-extrabold ${countColor}`}>{count}</span>
               </div>
-              <div className="px-3 py-3 sm:px-5 sm:py-4">
-                <div className="flex items-center justify-center gap-2 sm:hidden">
-                  <stat.icon className="h-4 w-4 shrink-0 text-primary" />
-                  <span
-                    className={`text-2xl font-extrabold ${count === 0 ? "text-muted-foreground" : "text-foreground"}`}
-                  >
-                    {count}
-                  </span>
-                </div>
-                <span className="mt-1 block truncate text-center text-[11px] font-medium text-muted-foreground sm:hidden">
-                  {stat.shortLabel}
-                </span>
+              <span className="mt-1.5 block truncate text-center text-[11px] font-medium text-muted-foreground sm:hidden">
+                {stat.shortLabel}
+              </span>
 
-                <span
-                  className={`hidden text-4xl font-extrabold sm:block ${
-                    count === 0 ? "text-muted-foreground" : "text-foreground"
-                  }`}
-                >
-                  {count}
+              <div className="hidden items-center gap-2.5 sm:flex">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <stat.icon className="h-4 w-4" />
                 </span>
-                <span className="mt-1 hidden text-xs text-muted-foreground sm:block">{stat.sublabel}</span>
+                <span className="text-sm font-medium text-muted-foreground">{stat.label}</span>
               </div>
+              <span className={`mt-3 hidden text-4xl font-bold sm:block ${countColor}`}>{count}</span>
             </div>
           )
         })}
