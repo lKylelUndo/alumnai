@@ -79,8 +79,7 @@ export default function RequestAlumniUpgradeDialog({ open, onOpenChange }: Reque
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-lg gap-0 overflow-y-auto p-0"
-        style={{ maxHeight: "90vh" }}
+        className="max-w-lg gap-0 p-0"
         showCloseButton={true}
       >
         <DialogHeader className="border-b px-6 pt-6 pb-4">
@@ -117,7 +116,7 @@ export default function RequestAlumniUpgradeDialog({ open, onOpenChange }: Reque
                   <button
                     type="button"
                     onClick={clearFile}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                   >
                     <Trash2Icon className="h-4 w-4" />
                   </button>
@@ -155,7 +154,7 @@ export default function RequestAlumniUpgradeDialog({ open, onOpenChange }: Reque
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="h-11 flex-1"
               onClick={handleClose}
               disabled={isSubmitting}
             >
@@ -163,7 +162,7 @@ export default function RequestAlumniUpgradeDialog({ open, onOpenChange }: Reque
             </Button>
             <Button
               type="button"
-              className="flex-1"
+              className="h-11 flex-1"
               onClick={handleSubmit}
               disabled={isSubmitting || !fileBase64}
             >

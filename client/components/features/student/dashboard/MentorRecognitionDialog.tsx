@@ -82,11 +82,11 @@ export default function MentorRecognitionDialog({
       } else {
         setError(response.message || "Failed to save recognition. Please try again.");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to submit recognition:", err);
       const msg =
-        err?.response?.data?.message ||
-        err?.message ||
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        (err instanceof Error ? err.message : null) ||
         "An unexpected error occurred while saving your recognition.";
       setError(msg);
     } finally {
@@ -100,31 +100,31 @@ export default function MentorRecognitionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg p-6 sm:rounded-2xl">
         <DialogHeader className="text-left">
-          <DialogTitle className="text-xl font-bold text-[#1A216D]">
+          <DialogTitle className="text-xl font-bold text-primary">
             Mentor Recognition
           </DialogTitle>
-          <DialogDescription className="text-xs text-gray-500">
+          <DialogDescription className="text-xs text-muted-foreground">
             Write a short message to appreciate this mentor
           </DialogDescription>
         </DialogHeader>
 
         {isSuccess ? (
-          <div className="flex flex-col items-center justify-center py-8 gap-3">
+          <div className="flex flex-col items-center justify-center gap-3 py-8">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
               <CheckCircle2 className="h-8 w-8" />
             </div>
-            <p className="text-base font-semibold text-emerald-700">
+            <p className="text-base font-semibold text-emerald-600">
               {isEditing ? "Recognition Updated!" : "Recognition Sent!"}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Your mentor will see this recognition on their profile.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 pt-2">
             {/* Mentor Info Header Card */}
-            <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-[#F8FAFC] p-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#E2E6F3] bg-[#EEF0FB]">
+            <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/50 p-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
                 {mentor.profilePicture ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -133,26 +133,26 @@ export default function MentorRecognitionDialog({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <span className="text-[#1A216D]/60">
+                  <span className="text-primary/60">
                     <User className="h-6 w-6" />
                   </span>
                 )}
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-[#1A216D]">
+                <p className="truncate text-sm font-bold text-foreground">
                   {mentor.fullName}
                 </p>
-                <p className="truncate text-xs font-semibold text-[#4F5EBD]">
+                <p className="truncate text-xs font-semibold text-primary">
                   {mentor.currentPosition || mentor.workField}
                 </p>
-                <p className="truncate text-[11px] font-medium tracking-wider text-gray-400 uppercase">
+                <p className="truncate text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   {mentor.companyName || mentor.workField}
                 </p>
               </div>
 
               {isEditing && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
                   <Sparkles className="h-3 w-3" />
                   Editing
                 </span>
@@ -168,12 +168,12 @@ export default function MentorRecognitionDialog({
                 onChange={(e) => setMessage(e.target.value)}
                 rows={5}
                 maxLength={1000}
-                className="w-full resize-none rounded-xl border-gray-300 p-3 text-sm transition-all focus:border-[#1877F2] focus:ring-1 focus:ring-[#1877F2]"
+                className="w-full resize-none rounded-xl p-3 text-sm"
               />
-              <div className="flex items-center justify-between px-1 text-[11px] text-gray-400">
+              <div className="flex flex-col gap-0.5 px-1 text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
                 <span>{message.length} / 1000 characters</span>
                 {isEditing && (
-                  <span className="text-gray-400">
+                  <span>
                     You can edit any typos anytime.
                   </span>
                 )}
@@ -181,26 +181,26 @@ export default function MentorRecognitionDialog({
             </div>
 
             {error && (
-              <p className="rounded-lg bg-red-50 p-2.5 text-xs font-medium text-red-600">
+              <p className="rounded-lg bg-destructive/10 p-2.5 text-xs font-medium text-destructive">
                 {error}
               </p>
             )}
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2.5 pt-2">
+            <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:items-center sm:justify-end sm:gap-2.5">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 disabled={loading}
-                className="rounded-full px-4 text-xs font-semibold"
+                className="h-11 w-full rounded-full text-xs font-semibold sm:w-auto"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={loading || !message.trim()}
-                className="rounded-full bg-[#1877F2] px-6 text-xs font-semibold text-white hover:bg-[#1565C0] disabled:opacity-50"
+                className="h-11 w-full rounded-full bg-primary text-xs font-semibold text-white hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
               >
                 {loading ? (
                   <>

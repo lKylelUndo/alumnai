@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Award, Download, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card } from "../../ui/card"
+import ProfileCardHeader from "@/components/common/profile/ProfileCardHeader"
 import { useAuthContext } from "@/context/AuthContext"
 
 interface CertificationsProps {
@@ -24,34 +25,30 @@ const Certifications = ({ certifications }: CertificationsProps) => {
   const goToNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
 
   return (
-    <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 min-h-[250px] flex flex-col">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-full bg-[#e0e0ff] text-[#1877F2] flex items-center justify-center">
-          <Award className="h-5 w-5" />
-        </div>
-        <div>
-          <h2 className="font-bold text-[#131b2e]">Certifications</h2>
-          <p className="text-sm text-[#434657]">Certifications from verified organizations</p>
-        </div>
-      </div>
+    <Card className="flex min-h-[250px] flex-col rounded-2xl p-6">
+      <ProfileCardHeader
+        icon={Award}
+        title="Certifications"
+        description="Certifications from verified organizations"
+      />
 
       {paginatedCerts.length > 0 ? (
-        <div className="space-y-3 flex-grow">
+        <div className="flex-grow space-y-3">
           {paginatedCerts.map((cert) => (
             <div
               key={cert.id}
-              className="flex items-center justify-between rounded-lg bg-[#F8FAFC] p-4"
+              className="flex items-center justify-between gap-3 rounded-lg bg-muted/50 p-4"
             >
-              <div>
-                <p className="text-sm font-bold text-[#1A216D]">{cert.name}</p>
-                <p className="mt-1 text-xs text-[#434657]">{cert.issuer}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-foreground">{cert.name}</p>
+                <p className="mt-1 truncate text-xs text-muted-foreground">{cert.issuer}</p>
               </div>
               {cert.fileUrl && (
                 <a
                   href={cert.fileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:text-primary/80 transition cursor-pointer"
+                  className="shrink-0 cursor-pointer text-primary transition hover:text-primary/80"
                   title="View/Download Certificate"
                 >
                   <Download className="h-4 w-4" />

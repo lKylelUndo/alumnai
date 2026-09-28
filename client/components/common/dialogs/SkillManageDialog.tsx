@@ -79,7 +79,7 @@ export default function SkillManageDialog({
         {skill && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-2 rounded-md bg-[#dde1ff] px-3 py-1.5 text-sm font-semibold text-[#1A216D]">
+              <span className="inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary">
                 {skill.name}
               </span>
               <span className="text-xs font-medium text-muted-foreground">
@@ -96,7 +96,7 @@ export default function SkillManageDialog({
             </div>
 
             {skill.description ? (
-              <p className="text-sm leading-relaxed text-[#434657]">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 {skill.description}
               </p>
             ) : null}

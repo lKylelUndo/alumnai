@@ -9,14 +9,14 @@ const NoProfileCreated = ({ error }: { error: string | null }) => {
   const router = useRouter()
   return (
     <div className="mx-auto mt-8 w-full max-w-[1200px] p-4 md:p-8">
-      <Card className="flex flex-col items-center justify-center rounded-xl border border-[#A4B1CC] bg-white p-12 text-center shadow-sm">
-        <div className="mb-4 rounded-full bg-gray-100 p-4 text-gray-400">
+      <Card className="flex flex-col items-center justify-center rounded-2xl p-12 text-center">
+        <div className="mb-4 rounded-full bg-muted p-4 text-muted-foreground">
           <UserX className="h-10 w-10" />
         </div>
-        <h2 className="text-2xl font-bold text-[#1A216D]">
+        <h2 className="text-2xl font-bold text-foreground">
           {error || "No Profile Found"}
         </h2>
-        <p className="mt-2 max-w-md text-sm text-gray-500">
+        <p className="mt-2 max-w-md text-sm text-muted-foreground">
           This user has not created a profile yet or the profile data could not
           be fetched.
         </p>

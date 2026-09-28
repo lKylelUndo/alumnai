@@ -14,7 +14,8 @@ import ViewProfileHeaderCard from "@/components/common/profile/ViewProfileHeader
 import InviteDialog from "@/components/common/dialogs/InviteDialog"
 import GithubSkillIndexResultCmp, { GithubSkillIndexResultData } from "@/components/common/skills/GithubSkillIndexResultCmp"
 import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
-import { RefreshCw, ArrowLeft, Users, Loader2, User } from "lucide-react"
+import { RefreshCw, ArrowLeft, Users, Loader2, User, Sparkles } from "lucide-react"
+import ProfileCardHeader from "./ProfileCardHeader"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import ProfiecienyScale from "@/components/common/skills/ProficiencyScale"
@@ -191,13 +192,13 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   }
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen">
+    <div className="bg-muted/40 lg:min-h-screen">
       <main className="mx-auto max-w-[1280px] px-4 md:px-8 py-8 md:py-16">
         {/* Back Button */}
         <div className="mb-4">
           <button
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#1A216D] hover:text-[#1877F2] transition-colors cursor-pointer"
+            className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
           >
             <ArrowLeft className="h-4 w-4" />
             {isAlumni ? "Back to Find Mentors" : "Back to Find Collaborators"}
@@ -220,17 +221,17 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
           {/* Left Column: About & Skills */}
           <div className="lg:col-span-8 flex flex-col gap-8">
             {/* About Section */}
-            <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 md:p-8">
-              <h2 className="font-bold text-[#131b2e] text-2xl mb-4">About</h2>
-              <p className="text-[#434657] leading-relaxed whitespace-pre-line">
+            <Card className="rounded-2xl p-6 md:p-8">
+              <ProfileCardHeader icon={User} title="About" />
+              <p className="whitespace-pre-line leading-relaxed text-muted-foreground">
                 {profile.aboutMe || "No bio provided."}
               </p>
             </Card>
 
             {/* Skills Section */}
-            <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 md:p-8">
-              <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-                <h2 className="font-bold text-[#131b2e] text-2xl">Skills</h2>
+            <Card className="rounded-2xl p-6 md:p-8">
+              <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                <ProfileCardHeader icon={Sparkles} title="Skills" />
 
                 {isStudent && (
                   <Button
@@ -238,7 +239,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                     size="sm"
                     onClick={() => handleAnalyzeGithub()}
                     disabled={analyzingGithub}
-                    className="inline-flex items-center gap-2 rounded-lg border-[#1877F2]/40 bg-[#dde1ff] text-xs font-semibold text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all cursor-pointer"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-lg border-primary/30 bg-primary/10 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground"
                   >
                     {analyzingGithub ? (
                       <>
@@ -258,7 +259,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
               <div className="space-y-8">
                 {/* Core Skills */}
                 <div>
-                  <h3 className="text-sm font-semibold text-[#131b2e] mb-3 border-b border-[#E2E8F0] pb-2">
+                  <h3 className="mb-3 border-b border-border pb-2 text-sm font-semibold text-foreground">
                     Core Skills
                   </h3>
                   {coreSkills.length > 0 ? (
@@ -266,20 +267,20 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                       {coreSkills.map((skill) => (
                         <span
                           key={skill.id}
-                          className="inline-flex rounded-md bg-[#dde1ff] px-4 py-1.5 text-xs font-semibold text-[#1A216D]"
+                          className="inline-flex rounded-md bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary"
                         >
                           {skill.name || skill.title}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-[#434657] italic py-2">No core skills added yet</p>
+                    <p className="py-2 text-sm text-muted-foreground">No core skills added yet</p>
                   )}
                 </div>
 
                 {/* Tools & Technology / Hard Skills */}
                 <div>
-                  <h3 className="text-sm font-semibold text-[#131b2e] mb-3 border-b border-[#E2E8F0] pb-2">
+                  <h3 className="mb-3 border-b border-border pb-2 text-sm font-semibold text-foreground">
                     Tools & Technology
                   </h3>
                   {techSkills.length > 0 ? (
@@ -294,7 +295,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                         return (
                           <span
                             key={skill.id}
-                            className="inline-flex items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-1.5 text-xs font-semibold text-[#434657]"
+                            className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-1.5 text-xs font-semibold text-muted-foreground"
                           >
                             {skill.name || skill.title}
                             {tooltipText ? (
@@ -322,13 +323,13 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                       })}
                     </div>
                   ) : (
-                    <p className="text-sm text-[#434657] italic py-2">No tools added yet</p>
+                    <p className="py-2 text-sm text-muted-foreground">No tools added yet</p>
                   )}
                 </div>
 
                 {/* Others */}
                 <div>
-                  <h3 className="text-sm font-semibold text-[#131b2e] mb-3 border-b border-[#E2E8F0] pb-2">
+                  <h3 className="mb-3 border-b border-border pb-2 text-sm font-semibold text-foreground">
                     Others
                   </h3>
                   {otherSkills.length > 0 ? (
@@ -343,7 +344,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                         return (
                           <span
                             key={skill.id}
-                            className="inline-flex items-center gap-2 rounded-full bg-[#F1F5F9] px-4 py-1.5 text-xs font-semibold text-[#434657]"
+                            className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-1.5 text-xs font-semibold text-muted-foreground"
                           >
                             {skill.name || skill.title}
                             {tooltipText ? (
@@ -371,7 +372,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                       })}
                     </div>
                   ) : (
-                    <p className="text-sm text-[#434657] italic py-2">No other skills added yet</p>
+                    <p className="py-2 text-sm text-muted-foreground">No other skills added yet</p>
                   )}
                 </div>
               </div>
@@ -398,19 +399,15 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
             {isAlumni ? (
               <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />
             ) : (
-              <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-full bg-[#e0e0ff] text-[#1877F2] flex items-center justify-center">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#131b2e]">Current Mentors</h3>
-                    <p className="text-sm text-[#434657]">Student mentorship connections</p>
-                  </div>
-                </div>
-                <div className="flex-grow flex flex-col items-center justify-center text-center p-6 text-[#434657]">
-                  <Users className="h-10 w-10 mb-2 text-[#A4B1CC]/50" />
-                  <p className="text-sm italic">No active mentors connected yet.</p>
+              <Card className="rounded-2xl p-6">
+                <ProfileCardHeader
+                  icon={Users}
+                  title="Current Mentors"
+                  description="Student mentorship connections"
+                />
+                <div className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
+                  <Users className="mb-2 h-10 w-10 text-muted-foreground/50" />
+                  <p className="text-sm">No active mentors connected yet.</p>
                 </div>
               </Card>
             )}
