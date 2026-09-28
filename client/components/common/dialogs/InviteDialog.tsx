@@ -34,21 +34,21 @@ export default function InviteDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-[#1A216D]">
+          <DialogTitle className="text-xl font-bold text-primary">
             {isStudent ? "Send Collaboration Invite" : "Apply for Mentorship"}
           </DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">
+          <DialogDescription className="text-sm text-muted-foreground">
             Send an invitation message to{" "}
-            <span className="font-semibold text-gray-700">
+            <span className="font-semibold text-foreground">
               {fullName || "User"}
             </span>
           </DialogDescription>
         </DialogHeader>
 
         {inviteSuccess ? (
-          <div className="flex flex-col items-center justify-center py-6 gap-2">
+          <div className="flex flex-col items-center justify-center gap-2 py-6">
             <CheckCircle2 className="h-12 w-12 text-emerald-500" />
-            <p className="font-semibold text-emerald-700">
+            <p className="font-semibold text-emerald-600">
               {isStudent ? "Collaboration Invite Sent!" : "Mentorship Request Sent!"}
             </p>
           </div>
@@ -59,25 +59,26 @@ export default function InviteDialog({
               value={inviteMessage}
               onChange={(e) => onMessageChange(e.target.value)}
               rows={4}
-              className="w-full text-sm border-gray-300 focus:border-[#1877F2]"
+              className="w-full text-sm"
             />
 
             {inviteError && (
-              <p className="text-xs text-red-600 font-medium">{inviteError}</p>
+              <p className="text-xs font-medium text-destructive">{inviteError}</p>
             )}
 
-            <div className="flex justify-end gap-3 pt-2">
+            <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end sm:gap-3">
               <Button
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 disabled={sendingInvite}
+                className="h-11 w-full sm:w-auto"
               >
                 Cancel
               </Button>
               <Button
                 onClick={onSendInvite}
                 disabled={sendingInvite}
-                className="bg-[#1877F2] hover:bg-[#1565C0] text-white"
+                className="h-11 w-full bg-primary text-white hover:bg-primary/90 sm:w-auto"
               >
                 {sendingInvite ? (
                   <>

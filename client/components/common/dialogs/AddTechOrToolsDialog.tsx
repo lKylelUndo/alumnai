@@ -167,8 +167,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-2xl gap-0 overflow-y-auto p-0 w-[calc(100vw-2rem)] sm:w-full lg:max-w-[800px]"
-        style={{ maxHeight: "90dvh" }}
+        className="max-w-2xl gap-0 p-0 lg:max-w-[800px]"
         showCloseButton={false}
       >
         <DialogHeader className="border-b px-4 pt-6 pb-4">
@@ -218,9 +217,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                       <button
                         type="button"
                         onClick={() => removeSoftSkillTag(tag)}
-                        className="text-muted-foreground transition hover:text-destructive"
+                        aria-label={`Remove ${tag}`}
+                        className="-m-1.5 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                       >
-                        <XIcon size={10} />
+                        <XIcon size={12} />
                       </button>
                     </span>
                   ))}
@@ -345,9 +345,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                       <button
                         type="button"
                         onClick={() => removeOtherHardSkillTag(tag)}
-                        className="text-muted-foreground transition hover:text-destructive"
+                        aria-label={`Remove ${tag}`}
+                        className="-m-1.5 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                       >
-                        <XIcon size={10} />
+                        <XIcon size={12} />
                       </button>
                     </span>
                   ))}
@@ -413,9 +414,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                           <button
                             type="button"
                             onClick={() => clearFile(index)}
-                            className="text-muted-foreground transition hover:text-destructive"
+                            aria-label="Remove uploaded file"
+                            className="-m-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                           >
-                            <Trash2Icon size={13} />
+                            <Trash2Icon size={14} />
                           </button>
                         </div>
                       ) : (
@@ -440,7 +442,8 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                         <button
                           type="button"
                           onClick={() => remove(index)}
-                          className="shrink-0 text-muted-foreground transition hover:text-destructive"
+                          aria-label="Remove certification"
+                          className="-m-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                         >
                           <Trash2Icon size={15} />
                         </button>

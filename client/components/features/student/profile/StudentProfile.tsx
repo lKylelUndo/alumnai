@@ -6,7 +6,7 @@ import StudentProfileSkills from "./StudentProfileSkills"
 
 const StudentProfile = () => {
   return (
-    <div className="bg-[#F8FAFC] min-h-screen">
+    <div className="bg-muted/40 lg:min-h-screen">
       <main className="mx-auto max-w-[1280px] px-4 md:px-8 py-8 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Header / Hero Section - Full Width */}

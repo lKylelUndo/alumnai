@@ -3,6 +3,8 @@
 import { useState } from "react"
 import ProfiecienyScale from "@/components/common/skills/ProficiencyScale"
 import { Card } from "@/components/ui/card"
+import { Sparkles } from "lucide-react"
+import ProfileCardHeader from "@/components/common/profile/ProfileCardHeader"
 import StudentCoreSkills from "./StudentCoreSkills"
 import StudentToolsTechnology from "./StudentToolsTechnology"
 import SkillManageDialog from "@/components/common/dialogs/SkillManageDialog"
@@ -27,8 +29,8 @@ const StudentProfileSkills = () => {
   }
 
   return (
-    <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6 md:p-8">
-      <h2 className="font-bold text-[#131b2e] text-2xl mb-6">Skills</h2>
+    <Card className="rounded-2xl p-6 md:p-8">
+      <ProfileCardHeader icon={Sparkles} title="Skills" />
 
       <div className="space-y-8">
         <StudentCoreSkills skills={user?.profile?.skills || []} onSelect={setSelectedSkill} />

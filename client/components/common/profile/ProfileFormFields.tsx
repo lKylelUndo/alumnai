@@ -324,7 +324,7 @@ export default function ProfileFormFields({
             type="button"
             id="open-tech-tools-dialog-btn"
             onClick={onOpenDialog}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
             title="Add Tech or Tools"
           >
             <PlusIcon size={14} />
@@ -367,8 +367,8 @@ export default function ProfileFormFields({
         control={control}
         render={({ field }) => (
           <Field className="lg:col-span-2">
-            <div className="flex items-center justify-between rounded-lg border border-input bg-transparent px-4 py-3">
-              <div className="flex flex-col gap-0.5">
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-input bg-transparent px-4 py-3">
+              <div className="flex min-w-0 flex-col gap-0.5">
                 <FieldLabel className="font-semibold text-primary cursor-pointer">
                   {availabilityLabel}
                 </FieldLabel>
@@ -385,7 +385,7 @@ export default function ProfileFormFields({
                   handleAvailabilityToggle(next, field.onChange)
                 }}
                 disabled={savingAvailability}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out before:absolute before:-inset-4 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                   field.value !== false ? "bg-primary" : "bg-input"
                 }`}
               >
