@@ -73,7 +73,7 @@ export default function MentorCard({ row }: { row: Row<StudentMentorCardTypes> }
             <p className="mt-0.5 text-xs font-semibold tracking-wider text-[#4F5EBD]">
               {mentor.currentPosition || mentor.workField}
             </p>
-            <p className="mt-0.5 text-[10px] font-medium tracking-wider text-gray-400 uppercase">
+            <p className="mt-0.5 text-[11px] font-medium tracking-wider text-gray-400 uppercase">
               {mentor.companyName || mentor.workField}
             </p>
           </div>
@@ -109,7 +109,7 @@ export default function MentorCard({ row }: { row: Row<StudentMentorCardTypes> }
       <div className="mt-5 flex items-center gap-2">
         <button
           id={`view-profile-mentor-${mentor.toAlumniId}`}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#E2E6F3] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D] hover:text-white active:scale-95"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#E2E6F3] bg-white px-2.5 py-1.5 min-h-10 text-xs font-semibold text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D] hover:text-white active:scale-95"
           onClick={() => router.push(`/student/profile/view/${mentor.toAlumniId}`)}
         >
           <UserCircle2 className="h-3.5 w-3.5" />
@@ -119,7 +119,7 @@ export default function MentorCard({ row }: { row: Row<StudentMentorCardTypes> }
         <button
           id={`recognize-mentor-btn-${mentor.toAlumniId}`}
           onClick={() => setRecognitionDialogOpen(true)}
-          className={`flex flex-1 items-center justify-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95 ${
+          className={`flex flex-1 items-center justify-center gap-1.5 rounded-full border px-2.5 py-1.5 min-h-10 text-xs font-semibold transition-all duration-200 active:scale-95 ${
             isRecognized
               ? "border-emerald-300 bg-emerald-50/70 text-emerald-800 hover:bg-emerald-600 hover:text-white hover:border-emerald-600"
               : "border-[#1877F2]/30 bg-[#F0F4FF] text-[#1877F2] hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]"
@@ -132,7 +132,7 @@ export default function MentorCard({ row }: { row: Row<StudentMentorCardTypes> }
         <button
           id={`end-mentorship-${mentor.mentorshipRecordId}`}
           disabled={loading}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#793A3A]/40 bg-white px-2.5 py-1.5 text-xs font-semibold text-[#793A3A] transition-all duration-200 hover:border-red-400 hover:bg-red-500 hover:text-white active:scale-95 disabled:opacity-50"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#793A3A]/40 bg-white px-2.5 py-1.5 min-h-10 text-xs font-semibold text-[#793A3A] transition-all duration-200 hover:border-red-400 hover:bg-red-500 hover:text-white active:scale-95 disabled:opacity-50"
           onClick={handleEndMentorship}
         >
           <XCircle className="h-3.5 w-3.5" />

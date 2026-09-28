@@ -212,7 +212,7 @@ export default function ChatBox() {
         id="chatbox-trigger"
         onClick={() => setIsOpen((p) => !p)}
         aria-label="Open chat"
-        className="fixed bottom-6 right-6 z-[9998] flex h-[52px] w-[52px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
+        className="fixed bottom-4 right-4 z-[9998] flex h-[52px] w-[52px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl sm:bottom-6 sm:right-6"
       >
         {isOpen ? (
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -229,7 +229,7 @@ export default function ChatBox() {
       {/* ── Chat Panel ── */}
       <div
         ref={panelRef}
-        className={`fixed bottom-[88px] right-6 z-[9999] flex h-[520px] w-[360px] max-h-[calc(100vh-120px)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-250 ${
+        className={`fixed bottom-[76px] right-4 z-[9999] flex h-[520px] w-[calc(100vw-2rem)] max-w-[360px] max-h-[calc(100dvh-120px)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-250 sm:bottom-[88px] sm:right-6 ${
           isOpen ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" : "opacity-0 translate-y-3 scale-95 pointer-events-none"
         }`}
       >

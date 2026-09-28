@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
+import ProfileCardHeader from "@/components/common/profile/ProfileCardHeader"
 import { Users, User } from "lucide-react"
 import { mentorshipService } from "@/services/mentorship.service"
 import Image from "next/image"
@@ -35,32 +36,28 @@ const StudentCurrentMentors = () => {
   }, [])
 
   return (
-    <Card className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-full bg-[#e0e0ff] text-[#1877F2] flex items-center justify-center">
-          <Users className="h-5 w-5" />
-        </div>
-        <div>
-          <h2 className="font-bold text-[#131b2e]">Current Mentors</h2>
-          <p className="text-sm text-[#434657]">
-            {loading
-              ? "Loading mentors..."
-              : mentors.length > 0
-              ? `Currently have ${mentors.length} mentor${mentors.length > 1 ? "s" : ""}`
-              : "No active mentors connected yet"}
-          </p>
-        </div>
-      </div>
+    <Card className="rounded-2xl p-6">
+      <ProfileCardHeader
+        icon={Users}
+        title="Current Mentors"
+        description={
+          loading
+            ? "Loading mentors..."
+            : mentors.length > 0
+            ? `Currently have ${mentors.length} mentor${mentors.length > 1 ? "s" : ""}`
+            : "No active mentors connected yet"
+        }
+      />
 
       {mentors.length > 0 && (
         <div className="space-y-4">
           {mentors.map((mentor) => (
             <div
               key={mentor.toAlumniId}
-              className="flex items-center justify-between p-3 rounded-lg hover:bg-[#F1F5F9] transition-colors border border-transparent hover:border-[#E2E8F0] cursor-pointer"
+              className="flex cursor-pointer items-center justify-between rounded-lg border border-transparent p-3 transition-colors hover:border-border hover:bg-muted"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#d2d9f4] flex items-center justify-center shrink-0">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                   {mentor.profilePicture ? (
                     <Image
                       src={mentor.profilePicture}
@@ -70,14 +67,14 @@ const StudentCurrentMentors = () => {
                       className="h-full w-full rounded-full object-cover"
                     />
                   ) : (
-                    <User className="h-5 w-5 text-[#A4B1CC]" />
+                    <User className="h-5 w-5 text-muted-foreground" />
                   )}
                 </div>
-                <div>
-                  <p className="font-semibold text-[#131b2e] leading-tight">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold leading-tight text-foreground">
                     {mentor.fullName}
                   </p>
-                  <p className="text-xs text-[#434657]">
+                  <p className="truncate text-xs text-muted-foreground">
                     {mentor.currentPosition || "Mentor"}
                     {mentor.companyName ? ` @ ${mentor.companyName}` : ""}
                   </p>
@@ -89,9 +86,9 @@ const StudentCurrentMentors = () => {
       )}
 
       {!loading && mentors.length === 0 && (
-        <div className="flex-grow flex flex-col items-center justify-center text-center p-6 text-[#434657]">
-          <Users className="h-10 w-10 mb-2 text-[#A4B1CC]/50" />
-          <p className="text-sm italic">No active mentors connected yet.</p>
+        <div className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
+          <Users className="mb-2 h-10 w-10 text-muted-foreground/50" />
+          <p className="text-sm">No active mentors connected yet.</p>
         </div>
       )}
     </Card>

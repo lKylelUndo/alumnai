@@ -75,7 +75,7 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentM
             <p className="mt-0.5 text-xs font-semibold tracking-wider text-[#4F5EBD]">
               {request.track || "NONE"}
             </p>
-            <p className="mt-0.5 text-[10px] font-medium tracking-wider text-gray-400 uppercase">
+            <p className="mt-0.5 text-[11px] font-medium tracking-wider text-gray-400 uppercase">
               {request.yearLevel || "N/A"}
             </p>
           </div>
@@ -84,7 +84,7 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentM
         <div className="mt-4 flex items-center gap-2">
           <button
             id={`view-profile-request-${request.fromStudentId}`}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#E2E6F3] bg-white px-3 py-1.5 text-xs font-semibold text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D] hover:text-white active:scale-95"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-[#E2E6F3] bg-white px-3 py-1.5 min-h-10 text-xs font-semibold text-[#1A216D] transition-all duration-200 hover:border-[#1A216D] hover:bg-[#1A216D] hover:text-white active:scale-95"
             onClick={() => router.push(`/alumni/profile/view/${request.fromStudentId}`)}
           >
             <UserCircle2 className="h-3.5 w-3.5" />
@@ -92,7 +92,7 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentM
           </button>
           <button
             id={`view-message-request-${request.mentorshipRecordId}`}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[#1A216D] px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-[#1A216D]/85 active:scale-95"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[#1A216D] px-3 py-1.5 min-h-10 text-xs font-semibold text-white transition-all duration-200 hover:bg-[#1A216D]/85 active:scale-95"
             onClick={() => setMessageOpen(true)}
           >
             <MessageSquare className="h-3.5 w-3.5" />

@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, Users, Target, Mail, Handshake } from "lucide-react"
+import { TrendingUp, Target, Mail, Handshake } from "lucide-react"
 import SkillGapAnalysis from "@/components/features/student/dashboard/SkillGapAnalysis"
 import CollaborationInvites from "./CollaborationInvites"
 import Collaborators from "./Collaborators"
@@ -29,43 +29,47 @@ const DashboardPanel = async () => {
   }
 
   return (
-    <section className="mt-6 min-h-screen">
+    <section className="mt-6 lg:min-h-screen">
         <Tabs defaultValue="gap-analysis" className="w-full bg-transparent">
-        <TabsList variant="none" className="w-full">
+        <TabsList
+          variant="none"
+          aria-label="Student dashboard sections"
+          className="grid h-auto w-full auto-rows-fr grid-cols-3 gap-1 group-data-horizontal/tabs:h-auto sm:inline-flex sm:group-data-horizontal/tabs:h-8"
+        >
           <TabsTrigger
             value="gap-analysis"
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Target className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Gap Analysis</span>
-            <span className="text-xs sm:hidden">Analysis</span>
+            <Target className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden truncate sm:inline">Skill Analysis</span>
+            <span className="truncate text-xs sm:hidden">Analysis</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="collaboration-invites"
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Mail className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Collaboration Requests</span>
-            <span className="text-xs sm:hidden">Requests</span>
+            <Mail className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden truncate sm:inline">Collaboration Requests</span>
+            <span className="truncate text-xs sm:hidden">Requests</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="my-mentors"
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <TrendingUp className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Your Mentors</span>
-            <span className="text-xs sm:hidden">Mentors</span>
+            <TrendingUp className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden truncate sm:inline">My Mentors</span>
+            <span className="truncate text-xs sm:hidden">Mentors</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="my-collaborators"
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Handshake className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Your Collaborators</span>
-            <span className="text-xs sm:hidden">Collaborators</span>
+            <Handshake className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden truncate sm:inline">My Collaborators</span>
+            <span className="truncate text-xs sm:hidden">Collaborators</span>
           </TabsTrigger>
         </TabsList>
 

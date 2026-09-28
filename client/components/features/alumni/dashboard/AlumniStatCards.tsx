@@ -15,25 +15,22 @@ const stats = [
   {
     key: "collaborators" as const,
     label: "Active Collaborators",
-    sublabel: "Users",
+    shortLabel: "Collaborators",
     icon: Handshake,
-    bannerBg: "bg-primary/10",
     count: (s: DashboardStats) => s?.activeCollaborators || 0,
   },
   {
     key: "requests" as const,
     label: "Pending Requests",
-    sublabel: "Requests",
+    shortLabel: "Requests",
     icon: Mail,
-    bannerBg: "bg-primary/15",
     count: (s: DashboardStats) => s?.pendingRequests || 0,
   },
   {
     key: "mentorships" as const,
     label: "Active Mentorships",
-    sublabel: "Mentees",
+    shortLabel: "Mentees",
     icon: Users,
-    bannerBg: "bg-primary/8",
     count: (s: DashboardStats) => s?.activeMentorships || 0,
   },
 ]
@@ -62,26 +59,34 @@ const AlumniStatCards = ({ dashboardStats: initialStats }: { dashboardStats: Das
   return (
     <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-4">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:col-span-3">
-        {stats.map((stat) => (
-          <div
-            key={stat.key}
-            className="group rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 overflow-hidden"
-          >
-            <div className={`${stat.bannerBg} px-5 py-4`}>
-              <div className="flex items-center gap-2">
-                <stat.icon className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold text-primary">{stat.label}</span>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:col-span-3">
+        {stats.map((stat) => {
+          const count = stat.count(dashboardStats!)
+          const countColor = count === 0 ? "text-muted-foreground" : "text-foreground"
+
+          return (
+            <div
+              key={stat.key}
+              className="group flex flex-col rounded-2xl border border-border/80 bg-card px-3 py-3 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:px-5 sm:py-4"
+            >
+              <div className="flex items-center justify-center gap-2 sm:hidden">
+                <stat.icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className={`text-2xl font-extrabold ${countColor}`}>{count}</span>
               </div>
-            </div>
-            <div className="px-5 py-4">
-              <span className="text-4xl font-extrabold text-foreground block">
-                {stat.count(dashboardStats!)}
+              <span className="mt-1.5 block truncate text-center text-[11px] font-medium text-muted-foreground sm:hidden">
+                {stat.shortLabel}
               </span>
-              <span className="text-xs text-muted-foreground mt-1 block">{stat.sublabel}</span>
+
+              <div className="hidden items-center gap-2.5 sm:flex">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <stat.icon className="h-4 w-4" />
+                </span>
+                <span className="text-sm font-medium text-muted-foreground">{stat.label}</span>
+              </div>
+              <span className={`mt-3 hidden text-4xl font-bold sm:block ${countColor}`}>{count}</span>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Quick Actions Panel */}

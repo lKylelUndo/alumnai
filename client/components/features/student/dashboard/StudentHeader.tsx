@@ -2,13 +2,23 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuthContext } from "@/context/AuthContext"
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { User, LogOut, GraduationCap } from "lucide-react";
 import { useState } from "react";
+import InstitutionWordmark from "@/components/common/layout/InstitutionWordmark";
+import { cn } from "@/lib/utils";
 import RequestAlumniUpgradeDialog from "@/components/common/dialogs/RequestAlumniUpgradeDialog";
+
+const navLinks = [
+  { label: "Home", href: "/student/dashboard" },
+  { label: "Profile", href: "/student/profile" },
+  { label: "Find Mentors", href: "/student/find-mentors" },
+];
 
 const StudentHeader = () => {
   const { user, logout } = useAuthContext()
+  const pathname = usePathname()
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
 
   const isStudent = user?.role === "STUDENT"
@@ -16,18 +26,24 @@ const StudentHeader = () => {
   return (
     <>
       <nav className="flex items-center justify-between">
-        <div className="flex items-center gap-x-8">
-          <Image src="/logo/logoalumnai.png" alt="Logo" width={110} height={40} priority fetchPriority="high" sizes="110px" className="h-8 w-auto object-contain" />
-          <div className="hidden sm:flex items-center gap-x-10">
-            <Link href="/student/dashboard" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-              Home
-            </Link>
-            <Link href="/student/profile" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-              Profile
-            </Link>
-            <Link href="/student/find-mentors" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-              Find Mentors
-            </Link>
+        <div className="flex min-w-0 items-center gap-x-8">
+          <Link href="/student/dashboard" className="min-w-0">
+            <InstitutionWordmark />
+          </Link>
+          <div className="hidden items-center gap-x-10 sm:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
+                className={cn(
+                  "text-sm font-medium transition-colors",
+                  pathname === link.href ? "text-primary" : "text-foreground hover:text-primary"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
 
@@ -35,7 +51,7 @@ const StudentHeader = () => {
           {isStudent && (
             <button
               onClick={() => setUpgradeDialogOpen(true)}
-              className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700 hover:shadow-md active:translate-y-px"
+              className="hidden items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:opacity-90 hover:shadow-md active:translate-y-px sm:inline-flex"
             >
               <GraduationCap className="h-4 w-4" />
               Request Alumni Status
@@ -56,9 +72,9 @@ const StudentHeader = () => {
               <DropdownMenuGroup>
                 <DropdownMenuLabel className="text-sm font-semibold text-foreground">My Account</DropdownMenuLabel>
                 <DropdownMenuItem asChild className="text-sm cursor-pointer">
-                  <Link href="/alumni/profile" className="flex items-center gap-2">
-                    <User className="h-3.5 w-3.5 text-primary" /> Profile
-                  </Link>
+                <Link href="/student/profile" className="flex items-center gap-2">
+                  <User className="h-3.5 w-3.5 text-primary" /> Profile
+                </Link>
                 </DropdownMenuItem>
                 {isStudent && (
                   <DropdownMenuItem onClick={() => setUpgradeDialogOpen(true)} className="text-sm cursor-pointer">

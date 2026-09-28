@@ -3,25 +3,41 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { useAuthContext } from "@/context/AuthContext"
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { User, LogOut } from "lucide-react";
+import InstitutionWordmark from "@/components/common/layout/InstitutionWordmark";
+import { cn } from "@/lib/utils";
+
+const navLinks = [
+  { label: "Home", href: "/alumni/dashboard" },
+  { label: "Profile", href: "/alumni/profile" },
+  { label: "Collaborators", href: "/alumni/find-collaborators" },
+];
 
 const AlumniHeader = () => {
   const { user, logout } = useAuthContext()
+  const pathname = usePathname()
 
   return (
     <nav className="flex items-center justify-between">
-      <div className="flex items-center gap-x-8">
-        <Image src="/logo/logoalumnai.png" alt="Logo" width={110} height={40} priority fetchPriority="high" sizes="110px" className="h-8 w-auto object-contain" />
-        <div className="hidden sm:flex items-center gap-x-10">
-          <Link href="/alumni/dashboard" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-            Home
-          </Link>
-          <Link href="/alumni/profile" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-            Profile
-          </Link>
-          <Link href="/alumni/find-collaborators" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-            Collaborators
-          </Link>
+      <div className="flex min-w-0 items-center gap-x-8">
+        <Link href="/alumni/dashboard" className="min-w-0">
+          <InstitutionWordmark />
+        </Link>
+        <div className="hidden items-center gap-x-10 sm:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              aria-current={pathname === link.href ? "page" : undefined}
+              className={cn(
+                "text-sm font-medium transition-colors",
+                pathname === link.href ? "text-primary" : "text-foreground hover:text-primary"
+              )}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </div>
 
