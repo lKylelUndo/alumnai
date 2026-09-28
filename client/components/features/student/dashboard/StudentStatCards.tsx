@@ -16,6 +16,7 @@ const stats = [
   {
     key: "collaborators" as const,
     label: "Active Collaborators",
+    shortLabel: "Collaborators",
     sublabel: "Users",
     icon: Handshake,
     bannerBg: "bg-primary/10",
@@ -24,6 +25,7 @@ const stats = [
   {
     key: "invites" as const,
     label: "Pending Invites",
+    shortLabel: "Invites",
     sublabel: "Invites",
     icon: Mail,
     bannerBg: "bg-primary/15",
@@ -32,6 +34,7 @@ const stats = [
   {
     key: "mentorships" as const,
     label: "Active Mentorships",
+    shortLabel: "Mentors",
     sublabel: "Mentors",
     icon: Users,
     bannerBg: "bg-primary/8",
@@ -63,26 +66,46 @@ const StudentStatCards = ({ dashboardStats: initialStats }: { dashboardStats: St
   return (
     <section className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-4">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:col-span-3">
-        {stats.map((stat) => (
-          <div
-            key={stat.key}
-            className="group rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 overflow-hidden"
-          >
-            <div className={`${stat.bannerBg} px-5 py-4`}>
-              <div className="flex items-center gap-2">
-                <stat.icon className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold text-primary">{stat.label}</span>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:col-span-3">
+        {stats.map((stat) => {
+          const count = stat.count(dashboardStats!)
+
+          return (
+            <div
+              key={stat.key}
+              className="group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+            >
+              <div className={`${stat.bannerBg} hidden px-5 py-4 sm:block`}>
+                <div className="flex items-center gap-2">
+                  <stat.icon className="h-4 w-4 shrink-0 text-primary" />
+                  <span className="text-sm font-semibold text-primary">{stat.label}</span>
+                </div>
+              </div>
+              <div className="px-3 py-3 sm:px-5 sm:py-4">
+                <div className="flex items-center justify-center gap-2 sm:hidden">
+                  <stat.icon className="h-4 w-4 shrink-0 text-primary" />
+                  <span
+                    className={`text-2xl font-extrabold ${count === 0 ? "text-muted-foreground" : "text-foreground"}`}
+                  >
+                    {count}
+                  </span>
+                </div>
+                <span className="mt-1 block truncate text-center text-[11px] font-medium text-muted-foreground sm:hidden">
+                  {stat.shortLabel}
+                </span>
+
+                <span
+                  className={`hidden text-4xl font-extrabold sm:block ${
+                    count === 0 ? "text-muted-foreground" : "text-foreground"
+                  }`}
+                >
+                  {count}
+                </span>
+                <span className="mt-1 hidden text-xs text-muted-foreground sm:block">{stat.sublabel}</span>
               </div>
             </div>
-            <div className="px-5 py-4">
-              <span className="text-4xl font-extrabold text-foreground block">
-                {stat.count(dashboardStats!)}
-              </span>
-              <span className="text-xs text-muted-foreground mt-1 block">{stat.sublabel}</span>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Quick Actions Panel */}

@@ -16,7 +16,7 @@ const StudentBanner = async () => {
   }
 
   return (
-    <section className="rounded-2xl bg-primary/[0.03] p-6">
+    <section className="rounded-2xl bg-primary/[0.03] p-4 sm:p-6">
       <StudentWelcomeHeader />
       <StudentStatCards dashboardStats={dashboardStats} />
     </section>

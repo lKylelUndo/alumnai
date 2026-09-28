@@ -28,7 +28,7 @@ const DashboardPanel = async () => {
   }
 
   return (
-    <section className="mt-6 min-h-screen">
+    <section className="mt-6 lg:min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
         <TabsList
           variant="none"

@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, Users, Target, Mail, Handshake } from "lucide-react"
+import { TrendingUp, Target, Mail, Handshake } from "lucide-react"
 import SkillGapAnalysis from "@/components/features/student/dashboard/SkillGapAnalysis"
 import CollaborationInvites from "./CollaborationInvites"
 import Collaborators from "./Collaborators"
@@ -29,7 +29,7 @@ const DashboardPanel = async () => {
   }
 
   return (
-    <section className="mt-6 min-h-screen">
+    <section className="mt-6 lg:min-h-screen">
         <Tabs defaultValue="gap-analysis" className="w-full bg-transparent">
         <TabsList
           variant="none"
