@@ -146,13 +146,13 @@ export default function MentorRecognitionDialog({
                 <p className="truncate text-xs font-semibold text-[#4F5EBD]">
                   {mentor.currentPosition || mentor.workField}
                 </p>
-                <p className="truncate text-[10px] font-medium tracking-wider text-gray-400 uppercase">
+                <p className="truncate text-[11px] font-medium tracking-wider text-gray-400 uppercase">
                   {mentor.companyName || mentor.workField}
                 </p>
               </div>
 
               {isEditing && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-semibold text-blue-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
                   <Sparkles className="h-3 w-3" />
                   Editing
                 </span>

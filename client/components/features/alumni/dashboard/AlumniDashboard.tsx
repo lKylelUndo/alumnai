@@ -30,32 +30,36 @@ const DashboardPanel = async () => {
   return (
     <section className="mt-6 min-h-screen">
       <Tabs defaultValue="your-mentees" className="w-full bg-transparent">
-        <TabsList variant="none" className="w-full">
+        <TabsList
+          variant="none"
+          aria-label="Alumni dashboard sections"
+          className="grid h-auto w-full auto-rows-fr grid-cols-3 gap-1 group-data-horizontal/tabs:h-auto sm:inline-flex sm:group-data-horizontal/tabs:h-8"
+        >
           <TabsTrigger
             value="your-mentees"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <TrendingUp className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Your Mentees</span>
-            <span className="text-xs sm:hidden">Mentees</span>
+            <TrendingUp className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden truncate sm:inline">Your Mentees</span>
+            <span className="truncate text-xs sm:hidden">Mentees</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="your-collaborations"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Handshake className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Your Collaborations</span>
-            <span className="text-xs sm:hidden">Collaborations</span>
+            <Handshake className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden truncate sm:inline">Your Collaborations</span>
+            <span className="truncate text-xs sm:hidden">Collaborations</span>
           </TabsTrigger>
 
           <TabsTrigger
             value="manage-mentorships"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:text-sm dark:data-[state=active]:bg-card"
+            className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2.5 text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:text-primary data-[state=active]:shadow-xs sm:min-h-0 sm:px-3 sm:text-sm dark:data-[state=active]:bg-card"
           >
-            <Users className="h-4 w-4 text-primary" />
-            <span className="hidden sm:inline">Manage Mentorships</span>
-            <span className="text-xs sm:hidden">Mentorships</span>
+            <Users className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden truncate sm:inline">Manage Mentorships</span>
+            <span className="truncate text-xs sm:hidden">Mentorships</span>
           </TabsTrigger>
         </TabsList>
 
