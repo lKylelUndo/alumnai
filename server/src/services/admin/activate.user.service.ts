@@ -1,5 +1,8 @@
 import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository";
+import { ENV } from "@/config/env";
+import { renderTemplate } from "@/utils/template";
+import { sendEmail } from "@/services/mail/mailer";
 
 export const ActivateUserService = async (id: string) => {
   const adminRepository = new AdminRepository();
@@ -20,6 +23,18 @@ export const ActivateUserService = async (id: string) => {
       return { status: "error", code: 500, message: "Unable to activate user" };
 
     await adminRepository.invalidateCache(["all-users", "dashboard-stats"]);
+
+    const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
+
+    const html = renderTemplate("account-reactivated.html", {
+      backToLoginURL,
+    });
+
+    await sendEmail({
+      to: activatedUser.email ?? "",
+      subject: "Your account is active again",
+      html,
+    });
 
     notifyRole("admin", "admin:refresh", { targets: ["all-users", "stats"] });
 

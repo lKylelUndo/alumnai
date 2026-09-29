@@ -1,5 +1,7 @@
 import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository"
+import { renderTemplate } from "@/utils/template";
+import { sendEmail } from "@/services/mail/mailer";
 
 export const RejectUserService = async (id: string) => {
     const adminRepository = new AdminRepository();
@@ -10,8 +12,15 @@ export const RejectUserService = async (id: string) => {
             return { status: "error", code: 404, message: "User not found" };
         }
 
-        // TODO 
-        // send email to user
+        const html = renderTemplate("request-rejected.html", {
+            requestType: "account registration",
+        });
+
+        await sendEmail({
+            to: user.email ?? "",
+            subject: "Update on your account registration",
+            html,
+        });
 
         notifyRole("admin", "admin:refresh", { targets: ["alumni-requests", "stats"] });
 

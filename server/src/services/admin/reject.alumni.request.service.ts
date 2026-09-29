@@ -1,5 +1,7 @@
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/cloudinary";
+import { renderTemplate } from "@/utils/template";
+import { sendEmail } from "@/services/mail/mailer";
 
 export const RejectAlumniRequestService = async (studentId: string) => {
   const alumniRepository = new AlumniRepository();
@@ -18,6 +20,16 @@ export const RejectAlumniRequestService = async (studentId: string) => {
     }
 
     await alumniRepository.invalidateCache(result.user.id, ["alumni-requests"]);
+
+    const html = renderTemplate("request-rejected.html", {
+      requestType: "alumni status request",
+    });
+
+    await sendEmail({
+      to: result.user.email ?? "",
+      subject: "Update on your alumni status request",
+      html,
+    });
 
     return {
       status: "success",
