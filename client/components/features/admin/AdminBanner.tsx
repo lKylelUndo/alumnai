@@ -7,15 +7,15 @@ const AdminBanner = async () => {
   try {
     const response = await adminService.getDashboardStats()
     statsData = response?.data
-  } catch (error: any) {
-    if (error?.digest === "DYNAMIC_SERVER_USAGE") {
+  } catch (error) {
+    if (error instanceof Error && "digest" in error && error.digest === "DYNAMIC_SERVER_USAGE") {
       throw error
     }
     console.error("Failed to fetch admin stats", error)
   }
 
   return (
-    <section className="rounded-2xl bg-primary/[0.03] p-6">
+    <section>
       <AdminWelcomeHeader />
       <AdminStatCards data={statsData} />
     </section>

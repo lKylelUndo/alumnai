@@ -1,5 +1,6 @@
 "use client";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import AccountMenu from "@/components/common/layout/AccountMenu"
 import { useAuthContext } from "@/context/AuthContext"
 import Link from "next/link";
 import Image from "next/image";
@@ -52,19 +53,29 @@ const AlumniHeader = () => {
             )}
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" sideOffset={8} className="w-44 rounded-xl shadow-md data-open:animate-none data-closed:animate-none">
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className="text-sm font-semibold text-foreground">My Account</DropdownMenuLabel>
-            <DropdownMenuItem asChild className="text-sm cursor-pointer">
-              <Link href="/alumni/profile" className="flex items-center gap-2">
-                <User className="h-3.5 w-3.5 text-primary" /> Profile
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={logout} className="text-sm font-medium text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 cursor-pointer">
-              <LogOut className="h-3.5 w-3.5 mr-0.5" /> Logout
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
+        <AccountMenu
+          avatar={
+            user?.profile?.profilePicture ? (
+              <Image src={user.profile.profilePicture} alt="Profile" width={36} height={36} className="h-full w-full object-cover" />
+            ) : (
+              <span className="flex h-full w-full items-center justify-center bg-primary text-sm font-bold text-white">
+                {user?.profile?.fullName?.[0] || user?.email?.[0] || "A"}
+              </span>
+            )
+          }
+          name={user?.profile?.fullName || user?.email?.split("@")[0] || "Alumni"}
+          email={user?.email}
+          roleLabel="Alumni"
+        >
+          <DropdownMenuItem asChild className="cursor-pointer text-sm hover:bg-muted">
+            <Link href="/alumni/profile" className="flex items-center gap-2">
+              <User className="h-3.5 w-3.5 text-primary" /> Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={logout} className="cursor-pointer text-sm font-medium text-rose-600 hover:bg-rose-50 focus:bg-rose-50 dark:hover:bg-rose-950/30 dark:focus:bg-rose-950/30">
+            <LogOut className="mr-0.5 h-3.5 w-3.5" /> Logout
+          </DropdownMenuItem>
+        </AccountMenu>
       </DropdownMenu>
       </div>
     </nav>

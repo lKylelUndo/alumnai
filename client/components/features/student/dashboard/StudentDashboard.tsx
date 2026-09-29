@@ -52,6 +52,14 @@ const DashboardPanel = async () => {
             <Mail className="h-4 w-4 shrink-0 text-primary" />
             <span className="hidden truncate sm:inline">Collaboration Requests</span>
             <span className="truncate text-xs sm:hidden">Requests</span>
+            {myCollaborationInvites.length > 0 && (
+              <span
+                aria-label={`${myCollaborationInvites.length} pending collaboration requests`}
+                className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
+              >
+                {myCollaborationInvites.length}
+              </span>
+            )}
           </TabsTrigger>
 
           <TabsTrigger

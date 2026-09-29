@@ -115,13 +115,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(userData)
           localStorage.setItem("user", JSON.stringify(userData))
 
-          // Trigger Role Base
+          // Full document navigation so the dashboard boots with cookies
+          // attached — client-side router.push races auth state and forces
+          // a manual refresh before the session is recognized.
           if (userData.role === "STUDENT") {
-            router.push("/student/dashboard")
+            window.location.href = "/student/dashboard"
           } else if (userData.role === "ALUMNI") {
-            router.push("/alumni/dashboard")
+            window.location.href = "/alumni/dashboard"
           } else if (userData.role === "ADMIN") {
-            router.push("/admin/dashboard")
+            window.location.href = "/admin/dashboard"
           }
         } else {
           console.log("Failed to login")

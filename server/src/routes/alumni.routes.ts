@@ -1,3 +1,4 @@
+import { json } from "express";
 import alumniController from "@/controllers/alumni.controller";
 import { RoleType } from "@/generated/prisma/enums";
 import authMiddleware from "@/middlewares/auth-middleware";
@@ -9,7 +10,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.post("/v1/request-alumni-upgrade", authMiddleware.execute, permittedRole([RoleType.STUDENT]), validateSchema(requestAlumniUpgradeSchema), alumniController.requestAlumniUpgrade);
+router.post("/v1/request-alumni-upgrade", json({ limit: "8mb" }), authMiddleware.execute, permittedRole([RoleType.STUDENT]), validateSchema(requestAlumniUpgradeSchema), alumniController.requestAlumniUpgrade);
 router.get("/v1/get-dashboard-stats", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), alumniController.getDashboardStats);
 router.get("/v1/find-collaborators", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), alumniController.findCollaborators);
 router.get("/v1/get-my-collaborations", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), alumniController.getMyCollaborations);
