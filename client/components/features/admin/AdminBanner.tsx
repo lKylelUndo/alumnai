@@ -15,7 +15,7 @@ const AdminBanner = async () => {
   }
 
   return (
-    <section className="rounded-2xl bg-primary/[0.03] p-6">
+    <section>
       <AdminWelcomeHeader />
       <AdminStatCards data={statsData} />
     </section>

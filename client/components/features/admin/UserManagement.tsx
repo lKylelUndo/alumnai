@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from "react"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { ColumnDef, Row } from "@tanstack/react-table"
-import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
+import { UserCheck, UserX, ArrowUpRight, RefreshCw, Users } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
 import { useAdminSocket } from "@/hooks/useAdminSocket"
@@ -24,8 +25,8 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   const handleActivate = async () => {
     const response = await adminService.activateUser(id)
     if (response.code === 200) {
-      router.refresh();
-      toast("User activated successfully");
+      router.refresh()
+      toast("User activated successfully")
     } else {
       toast(response.message || "Failed to activate user")
     }
@@ -34,33 +35,39 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   const handleSuspend = async () => {
     const response = await adminService.suspendUser(id)
     if (response.code === 200) {
-      router.refresh();
-      toast("User suspended successfully");
+      router.refresh()
+      toast("User suspended successfully")
     } else {
       toast(response.message || "Failed to suspend user")
     }
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2 sm:gap-1.5">
       <button
+        type="button"
         onClick={handleActivate}
         title="Activate User"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors"
+        aria-label="Activate this user"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 transition-colors hover:bg-emerald-500 hover:text-white sm:h-7 sm:w-7"
       >
         <UserCheck className="h-4 w-4" />
       </button>
       <button
+        type="button"
         onClick={handleSuspend}
         title="Suspend User"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors"
+        aria-label="Suspend this user"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 transition-colors hover:bg-rose-500 hover:text-white sm:h-7 sm:w-7"
       >
         <UserX className="h-4 w-4" />
       </button>
       <button
+        type="button"
         title="View Profile"
+        aria-label="View this user profile"
         onClick={() => router.push(`/admin/view-user-profile/${id}`)}
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-white sm:h-7 sm:w-7"
       >
         <ArrowUpRight className="h-4 w-4" />
       </button>
@@ -73,7 +80,7 @@ export const columns: ColumnDef<UserManagement>[] = [
     accessorKey: "user",
     header: "User",
     cell: ({ row }) => (
-      <span className="font-semibold text-foreground text-sm">
+      <span className="text-sm font-semibold text-foreground">
         {row.getValue("user")}
       </span>
     ),
@@ -82,7 +89,9 @@ export const columns: ColumnDef<UserManagement>[] = [
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => (
-      <span className="text-xs text-muted-foreground">{row.getValue("email")}</span>
+      <span className="text-xs text-muted-foreground">
+        {row.getValue("email")}
+      </span>
     ),
   },
   {
@@ -127,12 +136,17 @@ export const columns: ColumnDef<UserManagement>[] = [
   },
 ]
 
-export default function UserManagement({ data: initialData }: { data: UserManagement[] }) {
-  const [users, setUsers] = useState<UserManagement[]>(initialData ?? []);
-  const [prevInitialData, setPrevInitialData] = useState(initialData);
+export default function UserManagement({
+  data: initialData,
+}: {
+  data: UserManagement[]
+}) {
+  const [users, setUsers] = useState<UserManagement[]>(initialData ?? [])
+  const [prevInitialData, setPrevInitialData] = useState(initialData)
 
   const refetchUsers = useCallback(() => {
-    adminService.getAllUsers()
+    adminService
+      .getAllUsers()
       .then((res) => {
         if (res?.data?.users) setUsers(res.data.users)
       })
@@ -144,9 +158,9 @@ export default function UserManagement({ data: initialData }: { data: UserManage
 
   // Sync fresh server data without cascading renders
   if (prevInitialData !== initialData) {
-    setPrevInitialData(initialData);
+    setPrevInitialData(initialData)
     if (initialData && initialData.length > 0) {
-      setUsers(initialData);
+      setUsers(initialData)
     }
   }
 
@@ -154,18 +168,36 @@ export default function UserManagement({ data: initialData }: { data: UserManage
   // backend-domain cookies on the frontend server in production)
   useEffect(() => {
     if (users.length === 0) {
-      refetchUsers();
+      refetchUsers()
     }
-  }, [users.length, refetchUsers]);
+  }, [users.length, refetchUsers])
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
-      <div className="mb-4">
-        <h2 className="text-lg font-bold text-primary">User Management</h2>
-        <p className="text-xs text-muted-foreground">
-          Review and manage user accounts and roles
-        </p>
+    <div className="rounded-2xl border border-border/80 bg-card p-4 shadow-xs transition-all sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Users className="h-6 w-6" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-foreground">
+              User Management
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Review and manage user accounts and roles
+            </p>
+          </div>
+        </div>
+
+        <Button
+          onClick={refetchUsers}
+          className="h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl px-6 font-medium shadow-sm transition-all sm:w-auto"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Refresh
+        </Button>
       </div>
+
       <DataTable
         columns={columns}
         data={users}

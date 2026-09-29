@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { adminService } from "@/services/admin.service"
 import { ColumnDef, Row } from "@tanstack/react-table"
-import { CheckCircle2, XCircle } from "lucide-react"
+import { CheckCircle2, RefreshCw, UserCheck, XCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { useAdminSocket } from "@/hooks/useAdminSocket"
 import { toast } from "sonner"
 
@@ -36,18 +37,22 @@ const ActionCell = ({ row }: { row: Row<VerifyStudents> }) => {
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2 sm:gap-1.5">
       <button
+        type="button"
         onClick={handleApprove}
         title="Approve Alumni Status"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors"
+        aria-label="Approve this student"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 transition-colors hover:bg-emerald-500 hover:text-white sm:h-7 sm:w-7"
       >
         <CheckCircle2 className="h-4 w-4" />
       </button>
       <button
+        type="button"
         onClick={handleReject}
         title="Decline Request"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500 hover:text-white transition-colors"
+        aria-label="Decline this request"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 transition-colors hover:bg-rose-500 hover:text-white sm:h-7 sm:w-7"
       >
         <XCircle className="h-4 w-4" />
       </button>
@@ -69,7 +74,9 @@ export const columns: ColumnDef<VerifyStudents>[] = [
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => (
-      <span className="text-xs text-muted-foreground">{row.getValue("email")}</span>
+      <span className="text-xs text-muted-foreground">
+        {row.getValue("email")}
+      </span>
     ),
   },
   {
@@ -80,7 +87,8 @@ export const columns: ColumnDef<VerifyStudents>[] = [
       if (status === "success") {
         return (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Approved
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{" "}
+            Approved
           </span>
         )
       }
@@ -93,7 +101,8 @@ export const columns: ColumnDef<VerifyStudents>[] = [
       }
       return (
         <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" /> Pending
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />{" "}
+          Pending
         </span>
       )
     },
@@ -101,18 +110,23 @@ export const columns: ColumnDef<VerifyStudents>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => <ActionCell row={row} />
-  }
+    cell: ({ row }) => <ActionCell row={row} />,
+  },
 ]
 
-export default function VerifyStudents({ data: initialData }: { data: VerifyStudents[] }) {
-  const [students, setStudents] = useState<VerifyStudents[]>(initialData ?? []);
+export default function VerifyStudents({
+  data: initialData,
+}: {
+  data: VerifyStudents[]
+}) {
+  const [students, setStudents] = useState<VerifyStudents[]>(initialData ?? [])
 
   const refetchStudents = useCallback(() => {
-    adminService.getUnverifiedUsers()
+    adminService
+      .getUnverifiedUsers()
       .then((res) => {
         if (res?.data?.users) setStudents(res.data.users)
-    })
+      })
       .catch((err) => console.error("Refetch unverified users failed:", err))
   }, [])
 
@@ -123,25 +137,51 @@ export default function VerifyStudents({ data: initialData }: { data: VerifyStud
     if (initialData && initialData.length > 0) {
       setStudents(initialData)
     } else {
-      adminService.getUnverifiedUsers()
+      adminService
+        .getUnverifiedUsers()
         .then((res) => {
           if (res?.data?.users) {
             setStudents(res.data.users)
           }
         })
-        .catch((err) => console.error("Client fetch unverified users failed:", err))
+        .catch((err) =>
+          console.error("Client fetch unverified users failed:", err)
+        )
     }
   }, [initialData])
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
-      <div className="mb-4">
-        <h2 className="text-lg font-bold text-primary">Verify Students</h2>
-        <p className="text-xs text-muted-foreground">
-          Approve or reject student verification requests
-        </p>
+    <div className="rounded-2xl border border-border/80 bg-card p-4 shadow-xs transition-all sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <UserCheck className="h-6 w-6" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-foreground">
+              Verify Students
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Approve or reject student verification requests
+            </p>
+          </div>
+        </div>
+
+        <Button
+          onClick={refetchStudents}
+          className="h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl px-6 font-medium shadow-sm transition-all sm:w-auto"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Refresh
+        </Button>
       </div>
-      <DataTable columns={columns} data={students} filterColumn="student_id_number" filterPlaceholder="Search by Student Id..." />
+
+      <DataTable
+        columns={columns}
+        data={students}
+        filterColumn="student_id_number"
+        filterPlaceholder="Search by Student Id..."
+      />
     </div>
   )
 }

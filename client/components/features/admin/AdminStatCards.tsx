@@ -1,58 +1,56 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { BookOpen, GraduationCap, Handshake, Users2 } from "lucide-react"
+import { BookOpen, GraduationCap, Handshake, Users } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useAdminSocket } from "@/hooks/useAdminSocket"
 
 export interface AdminDashboardStats {
-  totalStudents?: number;
-  verifiedAlumni?: number;
-  activeMentorships?: number;
-  activeCollaborations?: number;
+  totalStudents?: number
+  verifiedAlumni?: number
+  activeMentorships?: number
+  activeCollaborations?: number
 }
 
 interface AdminStatCardsProps {
-  data?: AdminDashboardStats | null;
+  data?: AdminDashboardStats | null
 }
 
 const stats = [
   {
     key: "students" as const,
     label: "Total Students",
-    sublabel: "Students",
-    icon: Users2,
-    bannerBg: "bg-primary/10",
+    shortLabel: "Students",
+    icon: Users,
     count: (s: AdminDashboardStats) => s?.totalStudents ?? 0,
   },
   {
     key: "alumni" as const,
     label: "Verified Alumni",
-    sublabel: "Alumni",
+    shortLabel: "Alumni",
     icon: GraduationCap,
-    bannerBg: "bg-primary/15",
     count: (s: AdminDashboardStats) => s?.verifiedAlumni ?? 0,
   },
   {
     key: "mentorships" as const,
     label: "Active Mentorships",
-    sublabel: "Mentors",
+    shortLabel: "Mentors",
     icon: BookOpen,
-    bannerBg: "bg-primary/8",
     count: (s: AdminDashboardStats) => s?.activeMentorships ?? 0,
   },
   {
     key: "collaborations" as const,
     label: "Active Collaborations",
-    sublabel: "Collaborators",
+    shortLabel: "Collaborators",
     icon: Handshake,
-    bannerBg: "bg-primary/12",
     count: (s: AdminDashboardStats) => s?.activeCollaborations ?? 0,
   },
 ]
 
 const AdminStatCards = ({ data: initialData }: AdminStatCardsProps) => {
-  const [statsData, setStatsData] = useState<AdminDashboardStats | null>(initialData ?? null)
+  const [statsData, setStatsData] = useState<AdminDashboardStats | null>(
+    initialData ?? null
+  )
 
   const refetchStats = useCallback(async () => {
     await adminService
@@ -69,7 +67,8 @@ const AdminStatCards = ({ data: initialData }: AdminStatCardsProps) => {
     if (initialData) {
       setStatsData(initialData)
     } else {
-      adminService.getDashboardStats()
+      adminService
+        .getDashboardStats()
         .then((res) => {
           if (res?.data) setStatsData(res.data)
         })
@@ -78,26 +77,50 @@ const AdminStatCards = ({ data: initialData }: AdminStatCardsProps) => {
   }, [initialData])
 
   return (
-    <section className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat) => (
-        <div
-          key={stat.key}
-          className="group rounded-2xl border border-border/80 bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 overflow-hidden"
-        >
-          <div className={`${stat.bannerBg} px-5 py-4`}>
-            <div className="flex items-center gap-2">
-              <stat.icon className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">{stat.label}</span>
+    <section className="mt-5 grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
+      {stats.map((stat) => {
+        const count = stat.count(statsData!)
+        const countColor =
+          count === 0 ? "text-muted-foreground" : "text-foreground"
+
+        return (
+          <div
+            key={stat.key}
+            // Alumni has no min-h: its cards reach full height because the
+            // section's Quick Actions sibling stretches the grid row. Without
+            // that sibling these collapse, so pin the same height:
+            // sm:p-5 (40) + header h-8 + sm:mb-4 (48) + 3 buttons at
+            // sm:py-2.5 + text-sm line (40 each) + gap-2 (16) = 224.
+            className="group flex min-w-0 flex-col rounded-2xl border border-border/80 bg-card px-3 py-3 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:px-5 sm:py-4 lg:min-h-[224px]"
+          >
+            <div className="flex items-center justify-center gap-2 sm:hidden">
+              <stat.icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <span
+                className={`text-2xl font-extrabold tabular-nums ${countColor}`}
+              >
+                {count}
+              </span>
             </div>
-          </div>
-          <div className="px-5 py-4">
-            <span className="text-4xl font-extrabold text-foreground block">
-              {stat.count(statsData!)}
+            <span className="mt-1.5 block truncate text-center text-[11px] font-medium text-muted-foreground sm:hidden">
+              {stat.shortLabel}
             </span>
-            <span className="text-xs text-muted-foreground mt-1 block">{stat.sublabel}</span>
+
+            <div className="hidden min-w-0 items-center gap-2.5 sm:flex">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <stat.icon className="h-4 w-4" />
+              </span>
+              <span className="truncate text-sm font-medium text-muted-foreground">
+                {stat.label}
+              </span>
+            </div>
+            <span
+              className={`mt-3 hidden text-4xl font-bold tabular-nums sm:block ${countColor}`}
+            >
+              {count}
+            </span>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </section>
   )
 }

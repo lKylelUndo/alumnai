@@ -3,7 +3,15 @@
 import { useState, useEffect, useCallback } from "react"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
-import { FileText, CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
+import {
+  FileText,
+  CheckCircle2,
+  XCircle,
+  ArrowUpRight,
+  GraduationCap,
+  RefreshCw,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
 import type { AlumniRequest } from "@/lib/types/alumni"
@@ -35,24 +43,30 @@ const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2 sm:gap-1.5">
       <button
+        type="button"
         onClick={handleApprove}
         title="Approve Alumni Status"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 transition-colors hover:bg-emerald-500 hover:text-white"
+        aria-label="Approve this alumni request"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 transition-colors hover:bg-emerald-500 hover:text-white sm:h-7 sm:w-7"
       >
         <CheckCircle2 className="h-4 w-4" />
       </button>
       <button
+        type="button"
         onClick={handleReject}
         title="Decline Request"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 transition-colors hover:bg-rose-500 hover:text-white"
+        aria-label="Decline this alumni request"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 transition-colors hover:bg-rose-500 hover:text-white sm:h-7 sm:w-7"
       >
         <XCircle className="h-4 w-4" />
       </button>
       <button
+        type="button"
         title="Inspect Documents"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-white"
+        aria-label="Inspect documents"
+        className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-white sm:h-7 sm:w-7"
       >
         <ArrowUpRight className="h-4 w-4" />
       </button>
@@ -83,9 +97,9 @@ export const columns: ColumnDef<AlumniRequest>[] = [
     accessorKey: "documents",
     header: "Documents",
     cell: ({ row }) => (
-      <div className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-primary hover:underline">
-        <FileText className="h-4 w-4" />
-        <span>{row.getValue("documents")}</span>
+      <div className="flex min-w-0 cursor-pointer items-center gap-1.5 text-xs font-medium text-primary hover:underline">
+        <FileText className="h-4 w-4 shrink-0" />
+        <span className="break-words">{row.getValue("documents")}</span>
       </div>
     ),
   },
@@ -124,21 +138,30 @@ export const columns: ColumnDef<AlumniRequest>[] = [
   },
 ]
 
-export default function AlumniRequest({ data: initialData }: { data: AlumniRequest[] }) {
+export default function AlumniRequest({
+  data: initialData,
+}: {
+  data: AlumniRequest[]
+}) {
   const [requests, setRequests] = useState<AlumniRequest[]>(initialData ?? [])
 
   const refetchAlumniRequests = useCallback(() => {
-    adminService.getAlumniRequest()
+    adminService
+      .getAlumniRequest()
       .then((res) => {
         if (res?.data?.requests) {
           setRequests(res.data.requests)
         }
       })
-      .catch((err) => console.error("Client fetch alumni requests failed:", err))
+      .catch((err) =>
+        console.error("Client fetch alumni requests failed:", err)
+      )
   }, [])
 
   // Listen for realtime updates when a student submits an alumni request
-  useAdminSocket({ target: "alumni-requests", onRefresh: (data) => {
+  useAdminSocket({
+    target: "alumni-requests",
+    onRefresh: (data) => {
       if (data?.message) toast.info(data.message)
       else toast.info("A new alumni upgrade request has been submitted!")
       refetchAlumniRequests()
@@ -155,15 +178,31 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
   }, [refetchAlumniRequests])
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
-      <div className="mb-4">
-        <h2 className="text-lg font-bold text-primary">
-          Alumni Status Request
-        </h2>
-        <p className="text-xs text-muted-foreground">
-          Review and approve alumni status upgrade requests
-        </p>
+    <div className="rounded-2xl border border-border/80 bg-card p-4 shadow-xs transition-all sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <GraduationCap className="h-6 w-6" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-foreground">
+              Alumni Status Request
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Review and approve alumni status upgrade requests
+            </p>
+          </div>
+        </div>
+
+        <Button
+          onClick={refetchAlumniRequests}
+          className="h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl px-6 font-medium shadow-sm transition-all sm:w-auto"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Refresh
+        </Button>
       </div>
+
       <DataTable
         columns={columns}
         data={requests}
