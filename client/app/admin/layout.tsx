@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function AdminRootLayout({ children }: { children: ReactNode }) {
   return (
     <AuthGuard mode={"ADMIN"}>
-      <header className="bg-card px-6 py-3 shadow">
+      <header className="bg-card px-6 py-1 shadow">
         <AdminHeader />
       </header>
       <main className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 py-6 space-y-6">
