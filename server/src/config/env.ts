@@ -42,11 +42,8 @@ export const ENV = {
   STUDENT_REDIS_KEY: process.env.STUDENT_REDIS_KEY || "student:",
   ALUMNI_REDIS_KEY: process.env.ALUMNI_REDIS_KEY || "alumni:",
   
-  SMTP: { 
-    HOST: process.env.SMTP_HOST,
-    PORT: parseInt(process.env.SMTP_PORT || '587', 10),
-    USER: process.env.SMTP_USER,
-    PASS: process.env.SMTP_PASSWORD,
-    FROM: process.env.SMTP_FROM,
+  EMAIL: {
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    FROM: process.env.EMAIL_FROM,
   }
 };

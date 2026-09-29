@@ -1,6 +1,9 @@
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/cloudinary";
+import { ENV } from "@/config/env";
+import { renderTemplate } from "@/utils/template";
+import { sendEmail } from "@/services/mail/mailer";
 
 export const ApproveAlumniRequestService = async (studentId: string) => {
   const alumniRepository = new AlumniRepository();
@@ -23,6 +26,19 @@ export const ApproveAlumniRequestService = async (studentId: string) => {
       alumniRepository.invalidateCache(result.updatedUser.id, ["alumni-requests"]),
       adminRepository.invalidateCache(["all-users", "dashboard-stats"]),
     ]);
+
+    const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
+
+    const html = renderTemplate("alumni-approved.html", {
+      studentIdNumber: studentId,
+      backToLoginURL,
+    });
+
+    await sendEmail({
+      to: result.updatedUser.email ?? "",
+      subject: "Alumni status approved",
+      html,
+    });
 
     return {
       status: "success",
