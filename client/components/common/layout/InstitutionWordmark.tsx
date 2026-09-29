@@ -4,16 +4,16 @@ const InstitutionWordmark = () => {
   return (
     <div className="flex min-w-0 items-center gap-3">
       <Image
-        src="/logo/logoalumnai.png"
+        src="/logo/logoalumnaiv2.png"
         alt="alumnAI"
-        width={110}
-        height={40}
+        width={100}
+        height={80}
         priority
         fetchPriority="high"
-        sizes="110px"
-        className="h-8 w-auto shrink-0 object-contain"
+        sizes="112px"
+        className="h-20 w-auto shrink-0 object-contain"
       />
-      <span className="hidden h-8 w-px shrink-0 bg-border sm:block" aria-hidden="true" />
+      <span className="hidden h-16 w-px shrink-0 bg-border sm:block" aria-hidden="true" />
       <span className="min-w-0 leading-tight">
         <span className="block truncate text-[11px] font-semibold tracking-wide text-foreground">
           Cordova Public College

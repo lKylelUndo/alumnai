@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { UserRoundIcon, CameraIcon } from "lucide-react"
 
 interface ProfilePictureUploadProps {
@@ -13,16 +13,19 @@ export default function ProfilePictureUpload({
   onChange,
 }: ProfilePictureUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.size > 1024 * 1024 * 10) {
-      alert("File size must be less than 10MB")
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Image must be 10MB or less")
+      if (fileInputRef.current) fileInputRef.current.value = ""
       return
     }
 
+    setError(null)
     const reader = new FileReader()
     reader.onload = () => {
       onChange(reader.result as string)
@@ -57,17 +60,23 @@ export default function ProfilePictureUpload({
         </button>
       </div>
 
-      <div>
+      <div className="min-w-0">
         <p className="text-sm font-medium">Profile Picture</p>
         <p className="text-xs text-muted-foreground">
-          Click the avatar to upload a new photo
+          Click the avatar to upload a new photo (JPG, PNG or WebP up to 10MB)
         </p>
+        {error && (
+          <p role="alert" className="mt-1 text-xs font-medium text-destructive">
+            {error}
+          </p>
+        )}
         {value && (
           <button
             type="button"
             className="mt-1 text-xs text-destructive hover:underline"
             onClick={() => {
               onChange("")
+              setError(null)
               if (fileInputRef.current) fileInputRef.current.value = ""
             }}
           >

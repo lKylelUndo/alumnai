@@ -60,6 +60,14 @@ const DashboardPanel = async () => {
             <Users className="h-4 w-4 shrink-0 text-primary" />
             <span className="hidden truncate sm:inline">Mentorship Requests</span>
             <span className="truncate text-xs sm:hidden">Requests</span>
+            {myMentorshipRequests.length > 0 && (
+              <span
+                aria-label={`${myMentorshipRequests.length} pending mentorship requests`}
+                className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
+              >
+                {myMentorshipRequests.length}
+              </span>
+            )}
           </TabsTrigger>
         </TabsList>
 

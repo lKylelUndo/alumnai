@@ -4,17 +4,18 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { useAuthContext } from "@/context/AuthContext"
 import { LogOut } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import InstitutionWordmark from "@/components/common/layout/InstitutionWordmark"
 
 const AdminHeader = () => {
   const { logout } = useAuthContext()
 
   return (
     <nav className="flex items-center justify-between">
-      <div className="flex items-center gap-x-8">
-        <Image src="/logo/logoalumnai.png" alt="Alumnai Logo" width={110} height={40} priority fetchPriority="high" sizes="110px" className="h-8 w-auto object-contain" />
-        <span className="text-sm font-semibold text-primary/90 hidden sm:inline-block cursor-pointer hover:text-primary transition-colors">
-          Dashboard
-        </span>
+      <div className="flex min-w-0 items-center gap-x-8">
+        <Link href="/admin/dashboard" className="min-w-0">
+          <InstitutionWordmark />
+        </Link>
       </div>
 
       <DropdownMenu modal={false}>

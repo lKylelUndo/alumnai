@@ -11,6 +11,6 @@ const router = Router();
 
 router.post("/v1/view-single-profile", authMiddleware.execute, validateSchema(viewProfileSchema), profileController.viewProfile);
 router.get("/v1/all-profiles", authMiddleware.execute, profileController.allProfiles);
-router.post("/v1/update-profile", json({ limit: "5mb" }), authMiddleware.execute, permittedRole([RoleType.ALUMNI, RoleType.STUDENT]), validateSchema(updateProfileSchema), profileController.updateProfile);
+router.post("/v1/update-profile", json({ limit: "15mb" }), authMiddleware.execute, permittedRole([RoleType.ALUMNI, RoleType.STUDENT]), validateSchema(updateProfileSchema), profileController.updateProfile);
 
 export default router;

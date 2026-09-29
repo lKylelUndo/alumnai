@@ -20,7 +20,12 @@ app.use(cors({
 app.use(globalRateLimiter);
 
 app.use((req, res, next) => {
-  if (req.path === '/api/profile/v1/update-profile') {
+  // Routes with their own body-size limits parse themselves —
+  // the global parser (default 100kb) would reject their payloads first.
+  if (
+    req.path === '/api/profile/v1/update-profile' ||
+    req.path === '/api/alumni/v1/request-alumni-upgrade'
+  ) {
     return next();
   }
   express.json()(req, res, next);
@@ -52,7 +57,16 @@ app.use((req: Request, res: Response) => {
 // --- Global Error Handler ---
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('🔥 Global Error Hook:', err.message);
-  
+
+  // Oversized JSON bodies — answer with a readable message even in
+  // production instead of "Internal Server Error".
+  if (err.status === 413 || err.type === "entity.too.large") {
+    return res.status(413).json({
+      status: 'error',
+      message: 'Request body too large. Please upload a smaller file.',
+    });
+  }
+
   const statusCode = err.status || 500;
   res.status(statusCode).json({
     status: 'error',
