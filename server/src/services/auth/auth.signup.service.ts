@@ -1,6 +1,9 @@
 import { encryptPassword } from "@/lib/bcrypt";
 import { SignupInputTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
+import { ENV } from "@/config/env";
+import { renderTemplate } from "@/utils/template";
+import { sendEmail } from "@/services/mail/mailer";
 
 export const AuthSignupService = async (data: SignupInputTypes) => {
   const userRepository = new UserRepository();
@@ -24,6 +27,18 @@ export const AuthSignupService = async (data: SignupInputTypes) => {
         status: "error",
         code: 400,
       };
+
+    const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
+
+    const html = renderTemplate("signup-pending.html", {
+      backToLoginURL,
+    });
+
+    await sendEmail({
+      to: data.email ?? "",
+      subject: "Registration received - pending approval",
+      html,
+    });
 
     return {
       message: "Successfully signup - wait for the approval",
