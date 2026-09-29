@@ -14,6 +14,10 @@ class AuthController {
       secure: isProduction,
       sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
       path: "/",
+      // CHIPS: lets the cross-site session survive third-party-cookie
+      // blocking (e.g. Chrome Incognito). Requires Secure + SameSite=None,
+      // so production-only — browsers reject Partitioned without Secure.
+      ...(isProduction ? { partitioned: true } : {}),
     };
   };
 

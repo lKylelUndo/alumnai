@@ -8,14 +8,14 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo/logoalumnai.png"
-            width={140}
-            height={76}
+            src="/logo/logoalumnaiv2.png"
+            width={100}
+            height={80}
             alt="alumnAI"
             priority
             fetchPriority="high"
-            sizes="140px"
-            className="h-8 w-auto"
+            sizes="80px"
+            className="h-20 w-auto"
           />
         </Link>
 

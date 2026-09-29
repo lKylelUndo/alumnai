@@ -182,8 +182,10 @@ const UpdateProfileForm = () => {
               className="h-11 flex-1"
               disabled={isSubmitting}
               onClick={() => {
-                form.reset()
-                setSkills([])
+                // Discard all unsaved changes and leave the page — the form
+                // unmounts, so typed text, staged skills and the picked photo
+                // are dropped automatically. Same destination as Update.
+                router.push(user?.role === "ALUMNI" ? "/alumni/profile" : "/student/profile")
               }}
             >
               Cancel
