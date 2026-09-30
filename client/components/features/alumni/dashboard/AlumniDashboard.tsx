@@ -3,6 +3,7 @@ import { TrendingUp, Users, Handshake } from "lucide-react"
 import YourMentees from "./YourMentees"
 import YourCollaborations from "./YourCollaborations"
 import ManageMentorships from "./ManageMentorships"
+import PendingCountBadge from "@/components/common/layout/PendingCountBadge"
 import { alumniService } from "@/services/alumni.service"
 import { mentorshipService } from "@/services/mentorship.service"
 import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship"
@@ -60,14 +61,7 @@ const DashboardPanel = async () => {
             <Users className="h-4 w-4 shrink-0 text-primary" />
             <span className="hidden truncate sm:inline">Mentorship Requests</span>
             <span className="truncate text-xs sm:hidden">Requests</span>
-            {myMentorshipRequests.length > 0 && (
-              <span
-                aria-label={`${myMentorshipRequests.length} pending mentorship requests`}
-                className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
-              >
-                {myMentorshipRequests.length}
-              </span>
-            )}
+            <PendingCountBadge initial={myMentorshipRequests.length} source="mentorship-requests" label="pending mentorship requests" />
           </TabsTrigger>
         </TabsList>
 

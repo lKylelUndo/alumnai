@@ -16,6 +16,7 @@ Welcome to the official developer documentation for the **AlumnAI** platform.
 8. [API Route Modules](#api-route-modules)
 9. [Environment Variables Reference](#environment-variables-reference)
 10. [VPS Deployment (Hostinger)](#vps-deployment-hostinger)
+11. [Cookie Auth on Render: Subdomain vs Proxy](./RENDER_COOKIE_AUTH.md)
 
 ---
 
