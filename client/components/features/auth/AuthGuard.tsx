@@ -42,14 +42,11 @@ export function AuthGuard({ children, mode = "GUEST" }: AuthGuardProps) {
 
   // guest pages render immediately — no need to verify auth before showing login/register
   if (mode === "GUEST") {
-    // logged-in user on guest page — redirect but still show content behind spinner
+    // logged-in user on guest page — replace content with the loader, never
+    // stack it below the form (the loader is min-h-screen and would double
+    // the document height).
     if (isAuthenticated) {
-      return (
-        <>
-          {children}
-          <Spinner content="Redirecting..." />
-        </>
-      )
+      return <Spinner content="Redirecting..." />
     }
     return <>{children}</>
   }
