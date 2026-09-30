@@ -1,5 +1,5 @@
-import Image from "next/image"
 import Link from "next/link"
+import Logo from "@/components/common/layout/Logo"
 
 const footerLinks = {
   platform: [
@@ -21,15 +21,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-2">
-            <Image
-              src="/logo/logoalumnaiv3.png"
-              width={226}
-              height={237}
-              alt="alumnAI"
-              loading="lazy"
-              sizes="40px"
-              className="h-10 w-auto"
-            />
+            <Logo />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#434657]">
               AI-powered platform connecting CPC computing students and alumni
               through verified, evidence-based skill profiles.

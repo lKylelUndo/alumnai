@@ -1,5 +1,5 @@
-import Image from "next/image"
 import Link from "next/link"
+import Logo from "@/components/common/layout/Logo"
 import { Button } from "@/components/ui/button"
 
 export default function Header() {
@@ -7,16 +7,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/logo/logoalumnaiv3.png"
-            width={226}
-            height={237}
-            alt="alumnAI"
-            priority
-            fetchPriority="high"
-            sizes="40px"
-            className="h-10 w-auto"
-          />
+          <Logo priority />
         </Link>
 
         <nav className="flex items-center gap-3">
