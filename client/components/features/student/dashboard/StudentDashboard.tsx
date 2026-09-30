@@ -7,6 +7,7 @@ import Mentors from "./Mentors"
 import { mentorshipService } from "@/services/mentorship.service"
 import { collaborationService } from "@/services/collaboration.service"
 import { StudentMentorCardTypes } from "@/lib/types/mentorship"
+import PendingCountBadge from "@/components/common/layout/PendingCountBadge"
 import { StudentCollaboratorCardTypes, StudentCollabInviteCardTypes } from "@/lib/types/collaboration"
 
 const DashboardPanel = async () => {
@@ -52,14 +53,7 @@ const DashboardPanel = async () => {
             <Mail className="h-4 w-4 shrink-0 text-primary" />
             <span className="hidden truncate sm:inline">Collaboration Requests</span>
             <span className="truncate text-xs sm:hidden">Requests</span>
-            {myCollaborationInvites.length > 0 && (
-              <span
-                aria-label={`${myCollaborationInvites.length} pending collaboration requests`}
-                className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
-              >
-                {myCollaborationInvites.length}
-              </span>
-            )}
+            <PendingCountBadge initial={myCollaborationInvites.length} source="collab-invites" label="pending collaboration requests" />
           </TabsTrigger>
 
           <TabsTrigger
