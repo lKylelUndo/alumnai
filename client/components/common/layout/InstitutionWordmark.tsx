@@ -1,19 +1,10 @@
-import Image from "next/image"
+import Logo from "@/components/common/layout/Logo"
 
 const InstitutionWordmark = () => {
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <Image
-        src="/logo/logoalumnaiv3.png"
-        alt="alumnAI"
-        width={226}
-        height={237}
-        priority
-        fetchPriority="high"
-        sizes="56px"
-        className="h-10 w-auto shrink-0 object-contain"
-      />
-      <span className="hidden h-12 w-px shrink-0 bg-border sm:block" aria-hidden="true" />
+      <Logo priority />
+      <span className="hidden h-8 w-px shrink-0 bg-border sm:block" aria-hidden="true" />
       <span className="min-w-0 leading-tight">
         <span className="block truncate text-[11px] font-semibold tracking-wide text-foreground">
           Cordova Public College
