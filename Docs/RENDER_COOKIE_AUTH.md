@@ -152,31 +152,46 @@ BROWSER  ──►  FRONTEND (alumnaicpc.online/api/…)  ──►  BACKEND (pr
 | Fixes SSR + badges + refresh + incognito | Yes | Yes |
 | Rollout risk | Low | High if untested — use a preview deploy |
 
-## 6. Recommendation
+## 6. Recommendation & final decision
 
-With the backend on `onrender.com`: **Option B**. If the backend ever moves to
-`api.alumnaicpc.online`, Option A becomes the simpler choice and the proxy can
-be removed.
+With the backend on `onrender.com`: **Option B is the architecturally correct
+fix**, but it was **reverted**. Reasons:
 
-## 7. What was implemented (Option B)
+- Every screen already renders correctly from client-side fallbacks, so the
+  proxy's only user-visible payoff is badge counts arriving in the SSR payload
+  instead of ~a beat later.
+- The proxy carries real cost: one forced re-login for all users, a new
+  hard-failure dependency (`BACKEND_URL` missing on the Render frontend =
+  **every** API call 404s), permanent rewrite/socket complexity.
+- For a capstone app whose only symptom was four count pills, the risk/benefit
+  favors the client-side fix below.
 
-- `client/next.config.mjs` — `rewrites()`: `/api/:path*` → `${BACKEND_URL}/api/:path*`
-  (`BACKEND_URL` is server-only; `http://localhost:8000` fallback for dev).
-  No `/api` route handlers exist in the app, so the rewrite never collides.
-- `client/lib/axios.ts` — client instance baseURL is now relative `/api`
-  (same-origin through the proxy); server instance uses server-only
-  `BACKEND_URL`; client refresh URL fixed to avoid a double `/api` prefix.
-  The server interceptor's Bearer-forwarding is unchanged — first-party
-  cookies are now visible to `next/headers`, so it works as originally designed.
-- `server/src/controllers/auth.controller.ts` — cookie options simplified to
-  `sameSite: "lax"` (first-party via proxy), `partitioned` removed.
-- `NEXT_PUBLIC_BACKEND_URL` is still required for the Socket.IO client, which
-  keeps its direct connection (sockets are not covered by HTTP rewrites).
-- Render: set `BACKEND_URL` (internal backend address) on the **frontend**
-  service. No DNS or custom-domain work needed.
-- Rollout note: all users log in once more after deploy (old backend-domain
-  cookies no longer match the frontend domain). Roll out via preview deploy
-  first — a proxy misconfiguration fails all API calls at once.
+**Shipped instead:** `client/components/common/layout/PendingCountBadge.tsx` —
+a tiny client component that takes the SSR-rendered count as `initial` and
+corrects it with a `useEffect` fetch on mount (the same proven direct
+browser→backend path every dashboard table uses). Wired to all four request
+tabs: admin Verify (unverified students), admin Alumni (alumni requests),
+student Requests (collaboration invites), alumni Requests (mentorship
+requests).
+
+### PendingCountBadge properties
+
+- Fire-on-mount fetch (runs parallel across badges) with a module-level
+  in-flight map, so StrictMode double-mounts and duplicate sources coalesce
+  into one request — speed preserved, no request spam.
+- Fetch failure keeps the current count (returns `-1` sentinel), so a
+  server-rendered badge is never hidden by a transient error.
+- Server `axiosServerInstance` interceptor (Bearer-forwarding) untouched and
+  cookies untouched (`SameSite=None; Partitioned` kept for incognito) —
+  revert was surgical: only the proxy code (`rewrites`, relative baseURL,
+  cookie simplification) was removed.
+
+### If the cross-site cookie issue returns later
+
+Symptoms would be: refresh-token/SSR 401s, incognito logouts, or tables failing
+to auto-populate (badges alone no longer indicate this — they self-correct).
+Then re-implement Option B or A from the sections above; the design notes
+here stay valid.
 
 ## 8. Verification checklist (either option)
 

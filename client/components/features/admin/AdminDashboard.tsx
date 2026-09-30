@@ -6,6 +6,7 @@ import AlumniRequest from "./AlumniRequest"
 import UserManagement from "./UserManagement"
 import Analytics from "./Analytics"
 import { adminService } from "@/services/admin.service"
+import PendingCountBadge from "@/components/common/layout/PendingCountBadge"
 
 const DashboardPanel = async () => {
   let unverifiedUsers: any = null
@@ -47,14 +48,7 @@ const DashboardPanel = async () => {
             <UserCheck className="h-4 w-4 shrink-0 text-primary" />
             <span className="hidden truncate sm:inline">Verify Students</span>
             <span className="truncate text-xs sm:hidden">Verify</span>
-            {unverifiedCount > 0 && (
-              <span
-                aria-label={`${unverifiedCount} students awaiting verification`}
-                className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
-              >
-                {unverifiedCount}
-              </span>
-            )}
+            <PendingCountBadge initial={unverifiedCount} source="unverified" label="students awaiting verification" />
           </TabsTrigger>
 
           <TabsTrigger
@@ -73,14 +67,7 @@ const DashboardPanel = async () => {
             <GraduationCap className="h-4 w-4 shrink-0 text-primary" />
             <span className="hidden truncate sm:inline">Alumni Request</span>
             <span className="truncate text-xs sm:hidden">Alumni</span>
-            {alumniRequestCount > 0 && (
-              <span
-                aria-label={`${alumniRequestCount} pending alumni requests`}
-                className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
-              >
-                {alumniRequestCount}
-              </span>
-            )}
+            <PendingCountBadge initial={alumniRequestCount} source="alumni-requests" label="pending alumni requests" />
           </TabsTrigger>
 
           <TabsTrigger

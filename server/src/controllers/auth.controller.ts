@@ -12,10 +12,12 @@ class AuthController {
     return {
       httpOnly: true,
       secure: isProduction,
-      // First-party via the Next.js /api proxy: Lax is sufficient and safer
-      // than None (which additionally required Secure + Partitioned).
-      sameSite: "lax" as const,
+      sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
       path: "/",
+      // CHIPS: lets the cross-site session survive third-party-cookie
+      // blocking (e.g. Chrome Incognito). Requires Secure + SameSite=None,
+      // so production-only — browsers reject Partitioned without Secure.
+      ...(isProduction ? { partitioned: true } : {}),
     };
   };
 
