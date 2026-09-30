@@ -1,11 +1,13 @@
 import axios from "axios"
 
-const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
+// Server-only backend address (Render internal hostname in production).
+// The browser never sees this — client calls go through the /api rewrite.
+const serverBackendURL = process.env.BACKEND_URL || "http://localhost:8000"
 
-// Server Request Axios Instance
+// Server Request Axios Instance (Server Components / Server Services only)
 
 export const axiosServerInstance = axios.create({
-  baseURL: backendURL,
+  baseURL: serverBackendURL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -108,7 +110,9 @@ axiosServerInstance.interceptors.response.use(
 // Client Request Axios Instance
 
 export const axiosInstance = axios.create({
-  baseURL: backendURL,
+  // Relative: resolved against this host and forwarded to the backend by
+  // the /api rewrite, so auth cookies stay first-party.
+  baseURL: "/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -175,7 +179,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true
 
       try {
-        const refreshUrl = `${axiosInstance.defaults.baseURL}/api/auth/v1/refresh-token`
+        const refreshUrl = `/api/auth/v1/refresh-token`
 
         await axios.post(refreshUrl, {}, { withCredentials: true })
 

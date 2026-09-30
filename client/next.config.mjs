@@ -16,6 +16,19 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
+  async rewrites() {
+    // First-party API proxy: the browser talks only to this host, so auth
+    // cookies stay first-party and keep working in SSR, incognito, and
+    // strict browsers. BACKEND_URL is server-only (Render internal address
+    // in production, localhost fallback for dev).
+    const backendURL = process.env.BACKEND_URL || "http://localhost:8000"
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${backendURL}/api/:path*`,
+      },
+    ]
+  },
   async headers() {
     return [
       {

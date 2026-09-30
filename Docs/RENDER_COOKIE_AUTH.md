@@ -158,7 +158,27 @@ With the backend on `onrender.com`: **Option B**. If the backend ever moves to
 `api.alumnaicpc.online`, Option A becomes the simpler choice and the proxy can
 be removed.
 
-## 7. Verification checklist (either option)
+## 7. What was implemented (Option B)
+
+- `client/next.config.mjs` — `rewrites()`: `/api/:path*` → `${BACKEND_URL}/api/:path*`
+  (`BACKEND_URL` is server-only; `http://localhost:8000` fallback for dev).
+  No `/api` route handlers exist in the app, so the rewrite never collides.
+- `client/lib/axios.ts` — client instance baseURL is now relative `/api`
+  (same-origin through the proxy); server instance uses server-only
+  `BACKEND_URL`; client refresh URL fixed to avoid a double `/api` prefix.
+  The server interceptor's Bearer-forwarding is unchanged — first-party
+  cookies are now visible to `next/headers`, so it works as originally designed.
+- `server/src/controllers/auth.controller.ts` — cookie options simplified to
+  `sameSite: "lax"` (first-party via proxy), `partitioned` removed.
+- `NEXT_PUBLIC_BACKEND_URL` is still required for the Socket.IO client, which
+  keeps its direct connection (sockets are not covered by HTTP rewrites).
+- Render: set `BACKEND_URL` (internal backend address) on the **frontend**
+  service. No DNS or custom-domain work needed.
+- Rollout note: all users log in once more after deploy (old backend-domain
+  cookies no longer match the frontend domain). Roll out via preview deploy
+  first — a proxy misconfiguration fails all API calls at once.
+
+## 8. Verification checklist (either option)
 
 - [ ] Admin "Alumni Request" / "Verify Students" pills match table row counts
 - [ ] Student + alumni request-tab pills appear live
