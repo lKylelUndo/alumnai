@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function AlumniDashboardLayout({ children }: { children: ReactNode }) {
   return (
     <AuthGuard mode="ALUMNI"> 
-      <header className="bg-card px-6 py-1 shadow">
+      <header className="bg-card px-4 py-1 shadow sm:px-6">
         <AlumniHeader />
       </header>
       <main className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 py-6 space-y-6">
