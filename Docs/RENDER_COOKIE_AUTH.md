@@ -152,48 +152,13 @@ BROWSER  ──►  FRONTEND (alumnaicpc.online/api/…)  ──►  BACKEND (pr
 | Fixes SSR + badges + refresh + incognito | Yes | Yes |
 | Rollout risk | Low | High if untested — use a preview deploy |
 
-## 6. Recommendation & final decision
+## 6. Recommendation
 
-With the backend on `onrender.com`: **Option B is the architecturally correct
-fix**, but it was **reverted**. Reasons:
+With the backend on `onrender.com`: **Option B**. If the backend ever moves to
+`api.alumnaicpc.online`, Option A becomes the simpler choice and the proxy can
+be removed.
 
-- Every screen already renders correctly from client-side fallbacks, so the
-  proxy's only user-visible payoff is badge counts arriving in the SSR payload
-  instead of ~a beat later.
-- The proxy carries real cost: one forced re-login for all users, a new
-  hard-failure dependency (`BACKEND_URL` missing on the Render frontend =
-  **every** API call 404s), permanent rewrite/socket complexity.
-- For a capstone app whose only symptom was four count pills, the risk/benefit
-  favors the client-side fix below.
-
-**Shipped instead:** `client/components/common/layout/PendingCountBadge.tsx` —
-a tiny client component that takes the SSR-rendered count as `initial` and
-corrects it with a `useEffect` fetch on mount (the same proven direct
-browser→backend path every dashboard table uses). Wired to all four request
-tabs: admin Verify (unverified students), admin Alumni (alumni requests),
-student Requests (collaboration invites), alumni Requests (mentorship
-requests).
-
-### PendingCountBadge properties
-
-- Fire-on-mount fetch (runs parallel across badges) with a module-level
-  in-flight map, so StrictMode double-mounts and duplicate sources coalesce
-  into one request — speed preserved, no request spam.
-- Fetch failure keeps the current count (returns `-1` sentinel), so a
-  server-rendered badge is never hidden by a transient error.
-- Server `axiosServerInstance` interceptor (Bearer-forwarding) untouched and
-  cookies untouched (`SameSite=None; Partitioned` kept for incognito) —
-  revert was surgical: only the proxy code (`rewrites`, relative baseURL,
-  cookie simplification) was removed.
-
-### If the cross-site cookie issue returns later
-
-Symptoms would be: refresh-token/SSR 401s, incognito logouts, or tables failing
-to auto-populate (badges alone no longer indicate this — they self-correct).
-Then re-implement Option B or A from the sections above; the design notes
-here stay valid.
-
-## 8. Verification checklist (either option)
+## 7. Verification checklist (either option)
 
 - [ ] Admin "Alumni Request" / "Verify Students" pills match table row counts
 - [ ] Student + alumni request-tab pills appear live
