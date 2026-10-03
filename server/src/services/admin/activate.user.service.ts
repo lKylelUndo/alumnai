@@ -1,8 +1,7 @@
 import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { ENV } from "@/config/env";
-import { renderTemplate } from "@/utils/template";
-import { sendEmail } from "@/services/mail/mailer";
+import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const ActivateUserService = async (id: string) => {
   const adminRepository = new AdminRepository();
@@ -26,14 +25,13 @@ export const ActivateUserService = async (id: string) => {
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 
-    const html = renderTemplate("account-reactivated.html", {
-      backToLoginURL,
-    });
-
-    await sendEmail({
-      to: activatedUser.email ?? "",
+    // Best-effort: a failed notice must not fail a completed activation.
+    await sendNotificationEmail({
+      service: "ActivateUserService",
+      to: activatedUser.email,
+      template: "account-reactivated.html",
+      data: { backToLoginURL },
       subject: "Your account is active again",
-      html,
     });
 
     notifyRole("admin", "admin:refresh", { targets: ["all-users", "stats"] });

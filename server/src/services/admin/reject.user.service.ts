@@ -1,25 +1,27 @@
 import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository"
-import { renderTemplate } from "@/utils/template";
-import { sendEmail } from "@/services/mail/mailer";
+import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const RejectUserService = async (id: string) => {
     const adminRepository = new AdminRepository();
     try {
-        const user = await adminRepository.reject(id);
+        // Fetch first: the delete below removes the row, and its email is
+        // needed for the rejection notice afterwards.
+        const target = await adminRepository.findByStudentIdNumber(id);
 
-        if (!user) {
+        if (!target) {
             return { status: "error", code: 404, message: "User not found" };
         }
 
-        const html = renderTemplate("request-rejected.html", {
-            requestType: "account registration",
-        });
+        const refreshed = await adminRepository.reject(id);
 
-        await sendEmail({
-            to: user.email ?? "",
+        // Best-effort: a failed notice must not fail a completed rejection.
+        await sendNotificationEmail({
+            service: "RejectUserService",
+            to: target.email,
+            template: "request-rejected.html",
+            data: { requestType: "account registration" },
             subject: "Update on your account registration",
-            html,
         });
 
         notifyRole("admin", "admin:refresh", { targets: ["alumni-requests", "stats"] });
@@ -28,10 +30,14 @@ export const RejectUserService = async (id: string) => {
             status: "success",
             code: 200,
             message: "User rejected successfully",
-            data: user,
+            data: refreshed,
         }
     } catch (error) {
         console.error("RejectUserService", error);
+        // Lost a race with another admin action on the same row.
+        if ((error as { code?: string })?.code === "P2025") {
+            return { status: "error", code: 404, message: "User not found" };
+        }
         return { status: "error", code: 500, message: "Unable to reject a user" };
     }
 }
