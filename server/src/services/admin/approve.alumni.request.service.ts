@@ -2,8 +2,7 @@ import { AlumniRepository } from "@/repositories/alumni.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/cloudinary";
 import { ENV } from "@/config/env";
-import { renderTemplate } from "@/utils/template";
-import { sendEmail } from "@/services/mail/mailer";
+import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const ApproveAlumniRequestService = async (studentId: string) => {
   const alumniRepository = new AlumniRepository();
@@ -18,7 +17,12 @@ export const ApproveAlumniRequestService = async (studentId: string) => {
     if (result.request?.documentUrl) {
       const publicId = getPublicIdFromUrl(result.request.documentUrl);
       if (publicId) {
-        await deleteImage(publicId);
+        // Housekeeping: a failed cleanup must not fail a completed approval.
+        try {
+          await deleteImage(publicId);
+        } catch (error) {
+          console.warn("[ApproveAlumniRequestService] Document cleanup failed:", error);
+        }
       }
     }
 
@@ -29,15 +33,16 @@ export const ApproveAlumniRequestService = async (studentId: string) => {
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 
-    const html = renderTemplate("alumni-approved.html", {
-      studentIdNumber: studentId,
-      backToLoginURL,
-    });
-
-    await sendEmail({
-      to: result.updatedUser.email ?? "",
+    // Best-effort: a failed notice must not fail a completed approval.
+    await sendNotificationEmail({
+      service: "ApproveAlumniRequestService",
+      to: result.updatedUser.email,
+      template: "alumni-approved.html",
+      data: {
+        studentIdNumber: studentId,
+        backToLoginURL,
+      },
       subject: "Alumni status approved",
-      html,
     });
 
     return {

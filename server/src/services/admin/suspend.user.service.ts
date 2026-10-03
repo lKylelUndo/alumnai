@@ -1,7 +1,6 @@
 import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository";
-import { renderTemplate } from "@/utils/template";
-import { sendEmail } from "@/services/mail/mailer";
+import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const SuspendUserService = async (id: string) => {
     const adminRepository = new AdminRepository();
@@ -25,12 +24,13 @@ export const SuspendUserService = async (id: string) => {
 
         await adminRepository.invalidateCache(["all-users", "dashboard-stats"]);
 
-        const html = renderTemplate("account-suspended.html", {});
-
-        await sendEmail({
-            to: suspendedUser.email ?? "",
+        // Best-effort: a failed notice must not fail a completed suspension.
+        await sendNotificationEmail({
+            service: "SuspendUserService",
+            to: suspendedUser.email,
+            template: "account-suspended.html",
+            data: {},
             subject: "Your account has been suspended",
-            html,
         });
             
         notifyRole("admin", "admin:refresh", { targets: ["all-users", "stats"] });

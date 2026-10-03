@@ -1,7 +1,6 @@
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { deleteImage, getPublicIdFromUrl } from "@/lib/cloudinary";
-import { renderTemplate } from "@/utils/template";
-import { sendEmail } from "@/services/mail/mailer";
+import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const RejectAlumniRequestService = async (studentId: string) => {
   const alumniRepository = new AlumniRepository();
@@ -15,20 +14,24 @@ export const RejectAlumniRequestService = async (studentId: string) => {
     if (result.request?.documentUrl) {
       const publicId = getPublicIdFromUrl(result.request.documentUrl);
       if (publicId) {
-        await deleteImage(publicId);
+        // Housekeeping: a failed cleanup must not fail a completed rejection.
+        try {
+          await deleteImage(publicId);
+        } catch (error) {
+          console.warn("[RejectAlumniRequestService] Document cleanup failed:", error);
+        }
       }
     }
 
     await alumniRepository.invalidateCache(result.user.id, ["alumni-requests"]);
 
-    const html = renderTemplate("request-rejected.html", {
-      requestType: "alumni status request",
-    });
-
-    await sendEmail({
-      to: result.user.email ?? "",
+    // Best-effort: a failed notice must not fail a completed rejection.
+    await sendNotificationEmail({
+      service: "RejectAlumniRequestService",
+      to: result.user.email,
+      template: "request-rejected.html",
+      data: { requestType: "alumni status request" },
       subject: "Update on your alumni status request",
-      html,
     });
 
     return {

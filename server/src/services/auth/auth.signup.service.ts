@@ -2,8 +2,7 @@ import { encryptPassword } from "@/lib/bcrypt";
 import { SignupInputTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
 import { ENV } from "@/config/env";
-import { renderTemplate } from "@/utils/template";
-import { sendEmail } from "@/services/mail/mailer";
+import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const AuthSignupService = async (data: SignupInputTypes) => {
   const userRepository = new UserRepository();
@@ -19,6 +18,15 @@ export const AuthSignupService = async (data: SignupInputTypes) => {
         code: 400,
       };
 
+    const isStudentIdExisted = await userRepository.findByStudentIdNumber(data.studentIdNumber);
+
+    if (isStudentIdExisted)
+      return {
+        message: "This student ID number is already registered.",
+        status: "error",
+        code: 400,
+      };
+
     const response = await userRepository.signup(data);
 
     if (Object.keys(response).length === 0)
@@ -30,14 +38,13 @@ export const AuthSignupService = async (data: SignupInputTypes) => {
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 
-    const html = renderTemplate("signup-pending.html", {
-      backToLoginURL,
-    });
-
-    await sendEmail({
-      to: data.email ?? "",
+    // Best-effort: a failed welcome email must not fail a completed signup.
+    await sendNotificationEmail({
+      service: "AuthSignupService",
+      to: data.email,
+      template: "signup-pending.html",
+      data: { backToLoginURL },
       subject: "Registration received - pending approval",
-      html,
     });
 
     return {
@@ -47,6 +54,13 @@ export const AuthSignupService = async (data: SignupInputTypes) => {
     };
   } catch (error) {
     console.error("AuthSignupService", error);
+    // Race between the duplicate checks above and the insert.
+    if ((error as { code?: string })?.code === "P2002")
+      return {
+        message: "This student ID number is already registered.",
+        status: "error",
+        code: 400,
+      };
     return {
       code: 500,
       status: "error",

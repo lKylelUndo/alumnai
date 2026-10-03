@@ -41,6 +41,17 @@ export class UserRepository {
     });
   }
 
+  async findByStudentIdNumber(studentIdNumber: string) {
+    return await prisma.user.findUnique({
+      where: {
+        student_id_number: studentIdNumber,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
   async signup(data: SignupInputTypes) {
     return await prisma.user.create({
       data: {
