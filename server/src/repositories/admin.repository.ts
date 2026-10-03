@@ -15,6 +15,8 @@ export class AdminRepository {
   /**
    * Invalidate admin cache keys.
    * Pass specific targets to clear only those, or omit to clear all.
+   * Best-effort: a dead cache must never fail the request that triggered
+   * it (entries expire via TTL anyway).
    */
   async invalidateCache(targets?: ("dashboard-stats" | "all-users" | "unverified-users" | "top-mentors" | "top-alumni-skills")[]) {
     const keyMap: Record<string, string> = {
@@ -29,7 +31,26 @@ export class AdminRepository {
       ? targets.map((t) => keyMap[t]).filter(Boolean)
       : Object.values(keyMap);
 
-    if (keys.length > 0) await redis.del(...keys);
+    if (keys.length > 0) {
+      try {
+        await redis.del(...keys);
+      } catch (error) {
+        console.warn("[AdminRepository] invalidateCache failed:", error);
+      }
+    }
+  }
+
+  async findByStudentIdNumber(studentIdNumber: string) {
+    return await prisma.user.findUnique({
+      where: {
+        student_id_number: studentIdNumber,
+      },
+      select: {
+        id: true,
+        email: true,
+        isAccountVerified: true,
+      },
+    });
   }
 
   async findById(id: string) {
@@ -41,8 +62,13 @@ export class AdminRepository {
   async findUnverified() {
     const cacheKey = AdminRepository.CACHE_KEYS.unverifiedUsers;
 
-    // try cache first
-    const cached = await redis.get(cacheKey);
+    // try cache first (never fail the request on cache errors)
+    let cached: string | null = null;
+    try {
+      cached = await redis.get(cacheKey);
+    } catch (error) {
+      console.warn("[AdminRepository] cache read failed, falling back to DB:", error);
+    }
     if (cached) return JSON.parse(cached);
 
     // fallback to DB
@@ -58,7 +84,11 @@ export class AdminRepository {
       orderBy: { createdAt: "desc" },
     });
 
-    await redis.set(cacheKey, JSON.stringify(users), "PX", 1000 * 60 * 5);
+    try {
+      await redis.set(cacheKey, JSON.stringify(users), "PX", 1000 * 60 * 5);
+    } catch (error) {
+      console.warn("[AdminRepository] cache write failed:", error);
+    }
 
     return users;
   }
@@ -77,8 +107,13 @@ export class AdminRepository {
   async findAllUsers() {
     const cacheKey = AdminRepository.CACHE_KEYS.allUsers;
 
-    // try cache first
-    const cached = await redis.get(cacheKey);
+    // try cache first (never fail the request on cache errors)
+    let cached: string | null = null;
+    try {
+      cached = await redis.get(cacheKey);
+    } catch (error) {
+      console.warn("[AdminRepository] cache read failed, falling back to DB:", error);
+    }
     if (cached) return JSON.parse(cached);
 
     // fallback to DB — get all non-admin verified users
@@ -106,7 +141,11 @@ export class AdminRepository {
       status: user.accountStatus === "SUSPENDED" ? "Suspended" : (user.isAccountVerified ? "Active" : "Inactive"),
     }));
 
-    await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5);
+    try {
+      await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5);
+    } catch (error) {
+      console.warn("[AdminRepository] cache write failed:", error);
+    }
 
     return formatted;
   }
@@ -139,8 +178,13 @@ export class AdminRepository {
   async getDashboardStats() {
     const cacheKey = AdminRepository.CACHE_KEYS.dashboardStats;
 
-    // try cache first
-    const cached = await redis.get(cacheKey);
+    // try cache first (never fail the request on cache errors)
+    let cached: string | null = null;
+    try {
+      cached = await redis.get(cacheKey);
+    } catch (error) {
+      console.warn("[AdminRepository] cache read failed, falling back to DB:", error);
+    }
     if (cached) return JSON.parse(cached);
 
     const now = new Date();
@@ -177,7 +221,11 @@ export class AdminRepository {
       newCollaborationsThisMonth,
     };
 
-    await redis.set(cacheKey, JSON.stringify(stats), "PX", 1000 * 60 * 5);
+    try {
+      await redis.set(cacheKey, JSON.stringify(stats), "PX", 1000 * 60 * 5);
+    } catch (error) {
+      console.warn("[AdminRepository] cache write failed:", error);
+    }
 
     return stats;
   }

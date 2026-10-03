@@ -17,6 +17,8 @@ export class AlumniRepository {
   /**
    * Invalidate alumni cache keys.
    * Pass specific targets to clear only those, or omit to clear all.
+   * Best-effort: a dead cache must never fail the request that triggered
+   * it (entries expire via TTL anyway).
    */
   async invalidateCache(userId: string, targets?: ("alumni-requests" | "dashboard-stats" | "mentees" | "collaborations" | "mentorship-requests" | "find-collaborators")[]) {
     const keyMap: Record<string, string> = {
@@ -32,7 +34,13 @@ export class AlumniRepository {
       ? targets.map((t) => keyMap[t]).filter(Boolean)
       : Object.values(keyMap);
 
-    if (keys.length > 0) await redis.del(...keys);
+    if (keys.length > 0) {
+      try {
+        await redis.del(...keys);
+      } catch (error) {
+        console.warn("[AlumniRepository] invalidateCache failed:", error);
+      }
+    }
   }
 
   async findAlumniRequests() {

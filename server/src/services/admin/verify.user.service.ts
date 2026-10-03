@@ -1,15 +1,21 @@
 import { ENV } from "@/config/env";
 import { AdminRepository } from "@/repositories/admin.repository";
-import { renderTemplate } from "@/utils/template";
-import { sendEmail } from "@/services/mail/mailer";
+import { sendNotificationEmail } from "@/services/mail/notify";
 import { notifyRole } from "@/lib/socket";
 
 export const VerifyUserService = async (id: string) => {
   const adminRepository = new AdminRepository();
 
   try {
-    const account = await adminRepository.findById(id);
-    if (account?.isAccountVerified)
+    // Look up by student ID number — the same key verify() updates by.
+    const account = await adminRepository.findByStudentIdNumber(id);
+    if (!account)
+      return {
+        code: 404,
+        status: "error",
+        message: "User not found",
+      };
+    if (account.isAccountVerified)
       return {
         code: 400,
         status: "error",
@@ -30,15 +36,16 @@ export const VerifyUserService = async (id: string) => {
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 
-    const html = renderTemplate("verified-email.html", {
-      studentIdNumber: response.student_id_number,
-      backToLoginURL,
-    });
-
-    await sendEmail({
-      to: response.email ?? "",
+    // Best-effort: a failed notice must not fail a completed verification.
+    await sendNotificationEmail({
+      service: "VerifyUserService",
+      to: response.email,
+      template: "verified-email.html",
+      data: {
+        studentIdNumber: response.student_id_number,
+        backToLoginURL,
+      },
       subject: "You are now a verified user",
-      html,
     });
 
     // Notify all admin client components to refresh
@@ -51,6 +58,9 @@ export const VerifyUserService = async (id: string) => {
     };
   } catch (error) {
     console.error("VerifyUserService", error);
+    // Lost a race with another admin action on the same row.
+    if ((error as { code?: string })?.code === "P2025")
+      return { status: "error", code: 404, message: "User not found" };
     return { status: "error", code: 500, message: "Unable to verify a user" };
   }
 };
