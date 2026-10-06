@@ -171,16 +171,16 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
         showCloseButton={false}
       >
         <DialogHeader className="border-b px-4 pt-6 pb-4">
-          <DialogTitle className="text-xl font-bold text-primary">Add Tech or Tools</DialogTitle>
+          <DialogTitle className="text-lg font-bold text-primary sm:text-xl">Add Tech or Tools</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-5 px-4 py-5 sm:px-6">
+          <div className="space-y-4 px-4 py-4 sm:space-y-5 sm:px-6 sm:py-5">
             {/* Soft Skills */}
             <Field>
               <FieldLabel
                 htmlFor="dialog-softskills-tag-input"
-                className="text-sm font-semibold text-primary"
+                className="text-xs font-semibold text-primary sm:text-sm"
               >
                 Core / Soft Skills
               </FieldLabel>
@@ -237,7 +237,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel
                       htmlFor="dialog-skill-name"
-                      className="text-sm font-semibold text-primary"
+                      className="text-xs font-semibold text-primary sm:text-sm"
                     >
                       Tech/Tool Name
                     </FieldLabel>
@@ -260,7 +260,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel
                       htmlFor="dialog-skill-level"
-                      className="text-sm font-semibold text-primary"
+                      className="text-xs font-semibold text-primary sm:text-sm"
                     >
                       Proficiency Level (1-5)
                     </FieldLabel>
@@ -286,7 +286,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                   <Field>
                     <FieldLabel
                       htmlFor="dialog-skill-desc"
-                      className="text-sm font-semibold text-primary"
+                      className="text-xs font-semibold text-primary sm:text-sm"
                     >
                       Short Skill Description
                     </FieldLabel>
@@ -305,10 +305,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
             <Field>
               <FieldLabel
                 htmlFor="dialog-otherskills-tag-input"
-                className="text-sm font-semibold text-primary"
+                className="text-xs font-semibold text-primary sm:text-sm"
               >
                 Other Skills
-                <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                <span className="mt-0.5 block text-[11px] font-normal text-muted-foreground sm:ml-1.5 sm:mt-0 sm:inline sm:text-xs">
                   (e.g. Networking, Sound System Setup, Photography)
                 </span>
               </FieldLabel>
@@ -358,7 +358,11 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
 
             {/* Certifications */}
             <div className="space-y-3">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {/* Column labels only make sense where columns exist (desktop).
+                  On mobile the inputs stack full-width and each carries its
+                  own placeholder label, so showing this row would detach the
+                  labels from their inputs. */}
+              <div className="hidden grid-cols-1 gap-3 sm:grid sm:grid-cols-3">
                 <span className="text-sm font-semibold text-primary">
                   Certification{" "}
                   <span className="font-normal text-muted-foreground">
