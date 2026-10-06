@@ -18,7 +18,7 @@ const Logo = ({ size = "sm", priority = false, className = "" }: LogoProps) => {
 
   return (
     <Image
-      src="/logo/logoalumnaiv3.png"
+      src="/logo/finallogo.png"
       alt="alumnAI"
       width={226}
       height={237}
