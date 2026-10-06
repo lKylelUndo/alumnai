@@ -58,6 +58,13 @@ export class UserRepository {
         student_id_number: data.studentIdNumber,
         email: data.email,
         password: data.password,
+        // Seed the profile now so admin lists show the registrant's name
+        // instead of "Unknown" before they complete their profile.
+        profile: {
+          create: {
+            fullName: data.name,
+          },
+        },
       },
     });
   }

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSocketContext } from "@/context/SocketContext"
 import { adminService } from "@/services/admin.service"
 import { collaborationService } from "@/services/collaboration.service"
 import { mentorshipService } from "@/services/mentorship.service"
@@ -10,6 +11,18 @@ export type PendingCountSource =
   | "alumni-requests"
   | "collab-invites"
   | "mentorship-requests"
+
+// Which realtime event keeps each count fresh. Mirrors the target each
+// tab's own list already listens to — the badge just recounts on it.
+const SOURCE_SUBSCRIPTION: Record<
+  PendingCountSource,
+  { event: "admin:refresh" | "student:refresh" | "alumni:refresh"; target: string }
+> = {
+  unverified: { event: "admin:refresh", target: "unverified-users" },
+  "alumni-requests": { event: "admin:refresh", target: "alumni-requests" },
+  "collab-invites": { event: "student:refresh", target: "collaboration-invites" },
+  "mentorship-requests": { event: "alumni:refresh", target: "manage-mentorships" },
+}
 
 // Module-level in-flight cache: dedupes StrictMode double-mounts and
 // multiple badges watching the same source into one request.
@@ -64,6 +77,16 @@ type PendingCountBadgeProps = {
 
 const PendingCountBadge = ({ initial, source, label }: PendingCountBadgeProps) => {
   const [count, setCount] = useState(initial)
+  const [prevInitial, setPrevInitial] = useState(initial)
+  const { socket } = useSocketContext()
+
+  // Stay in step when SSR / router.refresh() delivers a new count.
+  // Adjusted during render (same pattern as AlumniStatCards) so no
+  // effect-sync is needed — useState(initial) alone only seeds mount.
+  if (prevInitial !== initial) {
+    setPrevInitial(initial)
+    setCount(initial)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -76,6 +99,27 @@ const PendingCountBadge = ({ initial, source, label }: PendingCountBadgeProps) =
       cancelled = true
     }
   }, [source])
+
+  // Recount whenever the owning tab's list would refresh, so the pill
+  // and the table can never disagree (e.g. after verify/reject/approve).
+  useEffect(() => {
+    if (!socket) return
+    const { event, target } = SOURCE_SUBSCRIPTION[source]
+
+    const handleRefresh = (data?: { targets?: string[] }) => {
+      if (data?.targets?.includes(target)) {
+        fetchCount(source).then((live) => {
+          if (live >= 0) setCount(live)
+        })
+      }
+    }
+
+    socket.on(event, handleRefresh)
+
+    return () => {
+      socket.off(event, handleRefresh)
+    }
+  }, [socket, source])
 
   if (count <= 0) return null
 

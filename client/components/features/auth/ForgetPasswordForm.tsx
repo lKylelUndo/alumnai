@@ -35,8 +35,8 @@ const ResetPasswordForm = ({ token }: { token: string}) => {
       }
       toast.success("Password reset successfully. Please log in.")
       router.push("/login")
-    } catch (error: any) {
-      const serverError = error?.response?.data
+    } catch (error) {
+      const serverError = (error as { response?: { data?: { message?: string } } })?.response?.data
       console.error("Reset password form error:", serverError)
       form.setError("root", { type: "server", message: serverError?.message ?? "Something went wrong" })
     }
