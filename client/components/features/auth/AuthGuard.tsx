@@ -17,8 +17,11 @@ export function AuthGuard({ children, mode = "GUEST" }: AuthGuardProps) {
   useEffect(() => {
     if (isLoading) return  // wait until auth is mahuman fetch
 
-    // not logged in — redirect to login
-    if (!isAuthenticated) {
+    // not logged in on a protected page — redirect to login.
+    // GUEST pages (login/register/forgot/reset) are public by design,
+    // so logged-out visitors must be allowed to stay (e.g. reset links
+    // opened from email while logged out).
+    if (!isAuthenticated && mode !== "GUEST") {
       router.push("/login")
       return
     }
