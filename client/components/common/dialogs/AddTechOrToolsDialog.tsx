@@ -5,7 +5,7 @@ import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusIcon, XIcon, PaperclipIcon, Trash2Icon } from "lucide-react"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
@@ -166,12 +166,22 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-2xl gap-0 p-0 lg:max-w-[800px]"
-        showCloseButton={false}
-      >
-        <DialogHeader className="border-b px-4 pt-6 pb-4">
+      <DialogContent className="max-w-2xl gap-0 p-0 lg:max-w-[800px]" showCloseButton={false}>
+        <DialogHeader className="sticky top-0 z-10 border-b border-border bg-popover px-4 pt-6 pb-4 pr-12">
           <DialogTitle className="text-lg font-bold text-primary sm:text-xl">Add Tech or Tools</DialogTitle>
+          {/* Own close button: the stock one is absolutely positioned with
+              z-auto, so this sticky header's background would paint over it. */}
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Close dialog"
+              className="absolute top-2 right-2 z-20 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+            >
+              <XIcon className="h-4 w-4" />
+            </Button>
+          </DialogClose>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -469,7 +479,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
             </div>
           </div>
 
-          <div className="flex items-center gap-3 px-4 py-4 sm:px-6">
+          <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-popover px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
             <Button
               type="button"
               variant="outline"
