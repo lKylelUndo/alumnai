@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s | AlumnAI",
   },
   description: "AlumnAI connects CPC computing students and alumni through AI-powered, evidence-based skill profiles. Find mentors, close skill gaps, and grow with real data.",
-  keywords: ["alumnai", "cpc", "skill", "gap", "github api", "platform", "student", "alumni", "mentorship", "collaboration"],
+  keywords: ["alumnai", "cpc", "computing","skill", "gap", "github api", "platform", "student", "alumni", "mentorship", "collaboration"],
   icons: {
     icon: "/icons/faviconalumnai.png",
     apple: "/apple-touch-icon.png",
