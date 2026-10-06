@@ -43,7 +43,7 @@ export const AuthSignupService = async (data: SignupInputTypes) => {
       service: "AuthSignupService",
       to: data.email,
       template: "signup-pending.html",
-      data: { backToLoginURL },
+      data: { backToLoginURL, name: data.name },
       subject: "Registration received - pending approval",
     });
 

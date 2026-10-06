@@ -36,8 +36,8 @@ class AuthController {
   }
 
   public signup = async (req: Request, res: Response) => {
-    const { studentIdNumber, email, password } = req.body ?? {};
-    const response = await AuthSignupService({studentIdNumber, email, password})
+    const { studentIdNumber, email, password, name } = req.body ?? {};
+    const response = await AuthSignupService({studentIdNumber, email, password, name})
     return res.status(response.code).json(response);
   };
 

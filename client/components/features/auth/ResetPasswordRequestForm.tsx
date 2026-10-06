@@ -34,8 +34,8 @@ export default function ForgotPasswordForm() {
       }
       setSent(true)
       toast.success("Reset link sent. Check your email.")
-    } catch (error: any) {
-      const serverError = error?.response?.data
+    } catch (error) {
+      const serverError = (error as { response?: { data?: { message?: string } } })?.response?.data
       console.error("Forgot password form error:", serverError)
       form.setError("root", { type: "server", message: serverError?.message ?? "Something went wrong" })
     }
