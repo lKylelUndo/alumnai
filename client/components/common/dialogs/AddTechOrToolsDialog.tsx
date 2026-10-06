@@ -5,7 +5,7 @@ import { useForm, Controller, useFieldArray, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusIcon, XIcon, PaperclipIcon, Trash2Icon } from "lucide-react"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
@@ -166,21 +166,31 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-2xl gap-0 p-0 lg:max-w-[800px]"
-        showCloseButton={false}
-      >
-        <DialogHeader className="border-b px-4 pt-6 pb-4">
-          <DialogTitle className="text-xl font-bold text-primary">Add Tech or Tools</DialogTitle>
+      <DialogContent className="max-w-2xl gap-0 p-0 lg:max-w-[800px]" showCloseButton={false}>
+        <DialogHeader className="sticky top-0 z-10 border-b border-border bg-popover px-4 pt-6 pb-4 pr-12">
+          <DialogTitle className="text-lg font-bold text-primary sm:text-xl">Add Tech or Tools</DialogTitle>
+          {/* Own close button: the stock one is absolutely positioned with
+              z-auto, so this sticky header's background would paint over it. */}
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Close dialog"
+              className="absolute top-2 right-2 z-20 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+            >
+              <XIcon className="h-4 w-4" />
+            </Button>
+          </DialogClose>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-5 px-4 py-5 sm:px-6">
+          <div className="space-y-4 px-4 py-4 sm:space-y-5 sm:px-6 sm:py-5">
             {/* Soft Skills */}
             <Field>
               <FieldLabel
                 htmlFor="dialog-softskills-tag-input"
-                className="text-sm font-semibold text-primary"
+                className="text-xs font-semibold text-primary sm:text-sm"
               >
                 Core / Soft Skills
               </FieldLabel>
@@ -237,7 +247,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel
                       htmlFor="dialog-skill-name"
-                      className="text-sm font-semibold text-primary"
+                      className="text-xs font-semibold text-primary sm:text-sm"
                     >
                       Tech/Tool Name
                     </FieldLabel>
@@ -260,7 +270,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel
                       htmlFor="dialog-skill-level"
-                      className="text-sm font-semibold text-primary"
+                      className="text-xs font-semibold text-primary sm:text-sm"
                     >
                       Proficiency Level (1-5)
                     </FieldLabel>
@@ -286,7 +296,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
                   <Field>
                     <FieldLabel
                       htmlFor="dialog-skill-desc"
-                      className="text-sm font-semibold text-primary"
+                      className="text-xs font-semibold text-primary sm:text-sm"
                     >
                       Short Skill Description
                     </FieldLabel>
@@ -305,10 +315,10 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
             <Field>
               <FieldLabel
                 htmlFor="dialog-otherskills-tag-input"
-                className="text-sm font-semibold text-primary"
+                className="text-xs font-semibold text-primary sm:text-sm"
               >
                 Other Skills
-                <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                <span className="mt-0.5 block text-[11px] font-normal text-muted-foreground sm:ml-1.5 sm:mt-0 sm:inline sm:text-xs">
                   (e.g. Networking, Sound System Setup, Photography)
                 </span>
               </FieldLabel>
@@ -358,7 +368,11 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
 
             {/* Certifications */}
             <div className="space-y-3">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {/* Column labels only make sense where columns exist (desktop).
+                  On mobile the inputs stack full-width and each carries its
+                  own placeholder label, so showing this row would detach the
+                  labels from their inputs. */}
+              <div className="hidden grid-cols-1 gap-3 sm:grid sm:grid-cols-3">
                 <span className="text-sm font-semibold text-primary">
                   Certification{" "}
                   <span className="font-normal text-muted-foreground">
@@ -465,7 +479,7 @@ export default function AddTechOrToolsDialog({ open, onOpenChange, skills, onSav
             </div>
           </div>
 
-          <div className="flex items-center gap-3 px-4 py-4 sm:px-6">
+          <div className="sticky bottom-0 z-10 flex items-center gap-3 border-t border-border bg-popover px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
             <Button
               type="button"
               variant="outline"
