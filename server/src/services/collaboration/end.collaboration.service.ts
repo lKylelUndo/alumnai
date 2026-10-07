@@ -31,7 +31,7 @@ export const EndCollaborationService = async (collaborationId: string) => {
     });
 
     notifyUser(response.fromAlumniId, "alumni:refresh", {
-      targets: ["your-collaborations"],
+      targets: ["stats", "your-collaborations"],
       message: `One of your collaboration has ended.`,
     });
 

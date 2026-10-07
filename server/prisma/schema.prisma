@@ -147,11 +147,13 @@ model Recognition {
   fromStudentId String
   toAlumniId    String
   message       String
+  isVisible     Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   fromStudent   User     @relation("RecognitionFrom", fields: [fromStudentId], references: [id])
   toAlumni      User     @relation("RecognitionTo", fields: [toAlumniId], references: [id])
 
+  @@unique([fromStudentId, toAlumniId])
   @@index([fromStudentId])
   @@index([toAlumniId])
 }

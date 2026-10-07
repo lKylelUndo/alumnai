@@ -31,7 +31,7 @@ export const AcceptMentorshipService = async (mentorshipId: string, alumniId: st
     });
 
     notifyUser(alumniId, "alumni:refresh", {
-      targets: ["your-mentees", "manage-mentorships"],
+      targets: ["stats", "your-mentees", "manage-mentorships"],
       message: "Mentorship request accepted!",
     });
 

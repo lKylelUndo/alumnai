@@ -15,6 +15,28 @@ export class CollaborationRepository {
     });
   }
 
+  async getPendingInvitesSentByAlumni(alumniUserId: string) {
+    return await prisma.collaboration.findMany({
+      where: { fromAlumniId: alumniUserId, status: "PENDING" },
+      include: {
+        toStudent: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                fullName: true,
+                profilePicture: true,
+                work_field: true,
+                yearLevel: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async send(userId: string, data: SendCollaborationInviteInputTypes) {
     return await prisma.collaboration.create({
       data: {

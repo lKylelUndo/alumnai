@@ -8,8 +8,15 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { mentorshipService } from "@/services/mentorship.service"
 import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship"
+import { toast } from "sonner"
 
-export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentMentorshipCardTypes> }) {
+export default function MentorshipRequestCard({
+  row,
+  onRemoved,
+}: {
+  row: Row<AlumniStudentMentorshipCardTypes>
+  onRemoved?: (id: string) => void
+}) {
   const request = row.original
   const router = useRouter()
   const [messageOpen, setMessageOpen] = useState(false)
@@ -22,7 +29,8 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentM
         mentorshipRecordId: request.mentorshipRecordId,
       })
       if (response.status === "success") {
-        router.refresh()
+        onRemoved?.(request.mentorshipRecordId)
+        toast.success("Mentorship request accepted")
       }
     } catch (error) {
       console.error("error accepting mentorship request:", error)
@@ -38,7 +46,8 @@ export default function MentorshipRequestCard({ row }: { row: Row<AlumniStudentM
         mentorshipRecordId: request.mentorshipRecordId,
       })
       if (response.status === "success") {
-        router.refresh()
+        onRemoved?.(request.mentorshipRecordId)
+        toast.success("Mentorship request declined")
       }
     } catch (error) {
       console.error("error declining mentorship request:", error)

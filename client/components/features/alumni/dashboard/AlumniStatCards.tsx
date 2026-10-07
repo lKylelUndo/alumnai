@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import DashboardQuickAction from "@/components/common/layout/DashboardQuickAction"
 import { Handshake, Mail, Users } from "lucide-react"
 import { alumniService } from "@/services/alumni.service"
+import { useAlumniSocket } from "@/hooks/useAlumniSocket"
 
 interface DashboardStats {
   activeCollaborators: number
@@ -46,6 +47,9 @@ const AlumniStatCards = ({ dashboardStats: initialStats }: { dashboardStats: Das
       })
       .catch((err) => console.error("Refetch alumni stats failed:", err))
   }, [])
+
+  // Silently refresh stats when the server emits a stats refresh event
+  useAlumniSocket({ target: "stats", onRefresh: refetchStats })
 
   if (prevInitialStats !== initialStats) {
     setPrevInitialStats(initialStats)

@@ -87,6 +87,10 @@ export class UserRepository {
             certifications: true,
           },
         },
+        // This is the alumni's own /me payload: deliberately NOT filtered by
+        // isVisible so the client can render the visibility toggle. `include`
+        // returns every scalar field, so each recognition carries its
+        // `isVisible` flag along with the relation below.
         receivedRecognitions: {
           include: {
             fromStudent: {

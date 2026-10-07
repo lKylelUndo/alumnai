@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { Profile } from "@/lib/types/profile"
 import { profileService } from "@/services/profile.service"
 import { skillService } from "@/services/skill.service"
@@ -10,7 +11,9 @@ import { mentorshipService } from "@/services/mentorship.service"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Certifications from "@/components/common/layout/Certifications"
-import ViewProfileHeaderCard from "@/components/common/profile/ViewProfileHeaderCard"
+import ViewProfileHeaderCard, {
+  PendingMentorshipRequest,
+} from "@/components/common/profile/ViewProfileHeaderCard"
 import InviteDialog from "@/components/common/dialogs/InviteDialog"
 import GithubSkillIndexResultCmp, { GithubSkillIndexResultData } from "@/components/common/skills/GithubSkillIndexResultCmp"
 import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
@@ -26,12 +29,26 @@ interface ViewProfileClientCmpProps {
   userId?: string
 }
 
+type ViewableProfile = Profile & {
+  alreadyInvitedCollaboration: boolean
+  pendingMentorshipRequest: PendingMentorshipRequest | null
+}
+
+const getApiErrorMessage = (error: unknown, fallback: string): string => {
+  if (error && typeof error === "object" && "response" in error) {
+    const data = (error as { response?: { data?: { message?: string } } }).response?.data
+    if (typeof data?.message === "string") return data.message
+  }
+  if (error instanceof Error && error.message) return error.message
+  return fallback
+}
+
 export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfileClientCmpProps) {
   const params = useParams()
   const router = useRouter()
   const targetUserId = propUserId || (params?.userId as string)
 
-  const [profile, setProfile] = useState<Profile | null>(null)
+  const [profile, setProfile] = useState<ViewableProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -41,7 +58,8 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   const [sendingInvite, setSendingInvite] = useState(false)
   const [inviteSuccess, setInviteSuccess] = useState(false)
   const [inviteError, setInviteError] = useState<string | null>(null)
-  const [alreadyInvited, setAlreadyInvited] = useState(false)
+
+  const [mentorshipRequestPending, setMentorshipRequestPending] = useState(false)
 
   // GitHub Skill Indexing state
   const [analyzingGithub, setAnalyzingGithub] = useState(false)
@@ -52,30 +70,41 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   } | null>(null)
   const [githubError, setGithubError] = useState<string | null>(null)
 
+  const fetchProfileRef = useRef<((silent?: boolean) => Promise<void>) | null>(null)
+
   useEffect(() => {
     if (!targetUserId) return
 
-    const fetchProfile = async () => {
+    const fetchProfile = async (silent = false) => {
       try {
-        setLoading(true)
+        if (!silent) setLoading(true)
         setError(null)
         const response = await profileService.viewProfile({ id: targetUserId })
 
         if (response.status === "success" && response.profile) {
           setProfile(response.profile)
-        } else {
+        } else if (!silent) {
           setError(response.message || "Failed to load profile.")
         }
-      } catch (err: any) {
-        console.error("Error fetching profile:", err)
-        setError("Unable to load profile data.")
+      } catch (error) {
+        console.error("Error fetching profile:", error)
+        if (!silent) setError("Unable to load profile data.")
       } finally {
-        setLoading(false)
+        if (!silent) setLoading(false)
       }
     }
 
+    fetchProfileRef.current = fetchProfile
     fetchProfile()
+
+    return () => {
+      fetchProfileRef.current = null
+    }
   }, [targetUserId])
+
+  const refreshProfile = useCallback(async () => {
+    await fetchProfileRef.current?.(true)
+  }, [])
 
   if (loading) {
     return (
@@ -131,11 +160,9 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
       } else {
         setGithubError(res.message || "Failed to analyze GitHub profile.")
       }
-    } catch (err: any) {
-      console.error("Failed to analyze github skills", err)
-      const msg =
-        err?.response?.data?.message || err?.message || "Unable to index skills from GitHub."
-      setGithubError(msg)
+    } catch (error) {
+      console.error("Failed to analyze github skills", error)
+      setGithubError(getApiErrorMessage(error, "Unable to index skills from GitHub."))
     } finally {
       setAnalyzingGithub(false)
     }
@@ -164,19 +191,45 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
       }
 
       setInviteSuccess(true)
-      setAlreadyInvited(true)
       setTimeout(() => {
         setInviteDialogOpen(false)
         setInviteSuccess(false)
         setInviteMessage("")
       }, 1500)
-    } catch (err: any) {
-      console.error("Failed to send invite", err)
-      const msg =
-        err?.response?.data?.message || "Failed to send invitation. Please try again."
-      setInviteError(msg)
+      await refreshProfile()
+    } catch (error) {
+      console.error("Failed to send invite", error)
+      setInviteError(getApiErrorMessage(error, "Failed to send invitation. Please try again."))
     } finally {
       setSendingInvite(false)
+    }
+  }
+
+  const handleMentorshipRequestAction = async (action: "ACCEPT" | "REJECT") => {
+    const request = profile.pendingMentorshipRequest
+    if (!request || mentorshipRequestPending) return
+
+    setMentorshipRequestPending(true)
+    try {
+      const response =
+        action === "ACCEPT"
+          ? await mentorshipService.acceptMentorship({
+              mentorshipRecordId: request.mentorshipRecordId,
+            })
+          : await mentorshipService.declineMentorship({
+              mentorshipRecordId: request.mentorshipRecordId,
+            })
+
+      if (response.status === "success") {
+        toast.success(
+          action === "ACCEPT" ? "Mentorship request accepted" : "Mentorship request declined"
+        )
+        await refreshProfile()
+      }
+    } catch (error) {
+      console.error("Failed to update mentorship request:", error)
+    } finally {
+      setMentorshipRequestPending(false)
     }
   }
 
@@ -212,9 +265,13 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
               profile={profile}
               isStudent={isStudent}
               isAlumni={isAlumni}
-              alreadyInvited={alreadyInvited}
+              alreadyInvited={profile.alreadyInvitedCollaboration}
               mentorshipStatus={isAlumni ? profile.mentorshipStatus : null}
+              pendingMentorshipRequest={profile.pendingMentorshipRequest}
+              requestActionPending={mentorshipRequestPending}
               onOpenInviteModal={openInviteModal}
+              onAcceptMentorshipRequest={() => handleMentorshipRequestAction("ACCEPT")}
+              onRejectMentorshipRequest={() => handleMentorshipRequestAction("REJECT")}
             />
           </div>
 

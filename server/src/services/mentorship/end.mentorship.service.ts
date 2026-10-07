@@ -31,7 +31,7 @@ export const EndMentorshipService = async (mentorshipId: string) => {
     });
 
     notifyUser(response.toAlumniId, "alumni:refresh", {
-      targets: ["your-mentees"],
+      targets: ["stats", "manage-mentorships", "your-mentees"],
       message: "One of your mentorships has ended.",
     });
 

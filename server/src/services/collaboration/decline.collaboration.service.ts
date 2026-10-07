@@ -20,8 +20,13 @@ export const DeclineCollaborationService = async (collaborationId: string) => {
     ]);
 
     notifyUser(response.fromAlumniId, "alumni:refresh", {
-      targets: ["your-collaborations"],
+      targets: ["stats", "your-collaborations"],
       message: "A student has declined your collaboration invite."
+    });
+
+    notifyUser(response.toStudentId, "student:refresh", {
+      targets: ["collaboration-invites", "your-collaborations"],
+      message: "You declined a collaboration invite."
     });
 
     return { status: "success", code: 200, message: "Successfully decline a collaboration" };

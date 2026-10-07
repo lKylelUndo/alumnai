@@ -26,7 +26,7 @@ export const SendMentorshipInviteService = async (userId: string, data: SendMent
     ]);
 
     notifyUser(data.toAlumniId, "alumni:refresh", {
-      targets: ["manage-mentorships"],
+      targets: ["stats", "manage-mentorships"],
       message: "You have received a new mentorship request!",
     });
 

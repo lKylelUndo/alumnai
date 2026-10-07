@@ -1,5 +1,6 @@
 import { axiosInstance, axiosServerInstance } from "@/lib/axios";
 import { AcceptMentorshipInviteInput, DeclineMentorshipInviteInput, SendMentorshipInviteInput, RecognizeAlumniInput } from "@/schema/mentorship";
+import { RecognitionVisibilityResponse } from "@/lib/types/mentorship";
 
 const getInstance = () => (typeof window !== "undefined" ? axiosInstance : axiosServerInstance)
 
@@ -52,6 +53,17 @@ export const mentorshipService = {
   getMentorRecognition: async (alumniId: string) => {
     const response = await axiosInstance.get(`/api/mentorship/v1/get-recognition/${alumniId}`);
     return response.data;
+  },
+
+  setRecognitionVisibility: async (
+    recognitionId: string,
+    isVisible: boolean
+  ): Promise<RecognitionVisibilityResponse> => {
+    const response = await axiosInstance.patch(
+      `/api/mentorship/v1/recognition/${recognitionId}/visibility`,
+      { isVisible }
+    );
+    return response.data as RecognitionVisibilityResponse;
   },
 };
 

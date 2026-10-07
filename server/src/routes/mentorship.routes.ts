@@ -4,7 +4,7 @@ import authMiddleware from "@/middlewares/auth-middleware";
 import { permittedRole } from "@/middlewares/rbac-middleware";
 import { RoleType } from "@/generated/prisma/enums";
 import { validateSchema } from "@/middlewares/validate-schema";
-import { acceptMentorshipInviteSchema, declineMentorshipInviteSchema, sendMentorshipInviteSchema, recognizeAlumniSchema } from "@/schema/mentorship";
+import { acceptMentorshipInviteSchema, declineMentorshipInviteSchema, sendMentorshipInviteSchema, recognizeAlumniSchema, setRecognitionVisibilitySchema } from "@/schema/mentorship";
 
 const router = Router();
 
@@ -21,5 +21,7 @@ router.post("/v1/send-mentorship-invite", authMiddleware.execute, permittedRole(
 router.delete("/v1/end-mentorship", authMiddleware.execute, permittedRole([RoleType.ALUMNI, RoleType.STUDENT]), validateSchema(declineMentorshipInviteSchema), mentorshipController.endMentorship);
 
 router.post("/v1/recognize-alumni", authMiddleware.execute, permittedRole([RoleType.STUDENT]), validateSchema(recognizeAlumniSchema), mentorshipController.recognizeAlumni);
+
+router.patch("/v1/recognition/:recognitionId/visibility", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), validateSchema(setRecognitionVisibilitySchema), mentorshipController.setRecognitionVisibility);
 
 export default router;

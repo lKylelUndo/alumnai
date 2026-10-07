@@ -6,16 +6,27 @@ import { Row } from "@tanstack/react-table";
 import { Award, CheckCircle2, User, UserCircle2, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import MentorRecognitionDialog from "./MentorRecognitionDialog";
+import ConfirmEndDialog from "@/components/common/dialogs/ConfirmEndDialog";
 
-export default function MentorCard({ row }: { row: Row<StudentMentorCardTypes> }) {
+export default function MentorCard({
+  row,
+  onRemoved,
+}: {
+  row: Row<StudentMentorCardTypes>;
+  onRemoved?: (id: string) => void;
+}) {
   const mentor = row.original;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [recognitionDialogOpen, setRecognitionDialogOpen] = useState(false);
   const [recognition, setRecognition] = useState(mentor.recognition ?? null);
+  const [endMentorshipOpen, setEndMentorshipOpen] = useState(false);
 
-  const handleEndMentorship = async () => {
+  const handleEndMentorship = () => setEndMentorshipOpen(true);
+
+  const handleConfirmEndMentorship = async () => {
     try {
       setLoading(true);
       const response = await mentorshipService.endMentorship({
@@ -23,7 +34,9 @@ export default function MentorCard({ row }: { row: Row<StudentMentorCardTypes> }
       });
 
       if (response.status === "success") {
-        router.refresh();
+        onRemoved?.(mentor.mentorshipRecordId);
+        toast.success("Mentorship ended");
+        setEndMentorshipOpen(false);
       }
     } catch (error) {
       console.error("Failed to end mentorship", error);
@@ -149,6 +162,17 @@ export default function MentorCard({ row }: { row: Row<StudentMentorCardTypes> }
           recognition,
         }}
         onRecognitionSaved={handleRecognitionSaved}
+      />
+
+      <ConfirmEndDialog
+        open={endMentorshipOpen}
+        onOpenChange={setEndMentorshipOpen}
+        onConfirm={handleConfirmEndMentorship}
+        title="End this mentorship?"
+        description="This is permanent. Ending the mentorship closes it along with its chat history. You can start a new mentorship with this person later by sending a request."
+        confirmLabel="End Mentorship"
+        pendingLabel="Ending..."
+        isPending={loading}
       />
     </div>
   );

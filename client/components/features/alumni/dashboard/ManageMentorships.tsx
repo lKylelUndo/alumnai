@@ -26,6 +26,10 @@ const ManageMentorships = ({ requests: initialRequests }: { requests: AlumniStud
       .catch((err) => console.error("Refetch mentorship requests failed:", err))
   }, [])
 
+  const removeItem = useCallback((id: string) => {
+    setRequests((prev) => prev.filter((item) => item.mentorshipRecordId !== id))
+  }, [])
+
   useAlumniSocket({
     target: "manage-mentorships",
     onRefresh: (data) => {
@@ -36,7 +40,7 @@ const ManageMentorships = ({ requests: initialRequests }: { requests: AlumniStud
 
   if (prevInitialRequests !== initialRequests) {
     setPrevInitialRequests(initialRequests)
-    if (initialRequests && initialRequests.length > 0) setRequests(initialRequests)
+    if (initialRequests) setRequests(initialRequests)
   }
 
   useEffect(() => {
@@ -58,7 +62,7 @@ const ManageMentorships = ({ requests: initialRequests }: { requests: AlumniStud
         columns={columns}
         data={requests}
         pageSize={9}
-        renderCard={(row) => <MentorshipRequestCard key={row.id} row={row} />}
+        renderCard={(row) => <MentorshipRequestCard key={row.id} row={row} onRemoved={removeItem} />}
       />
     </div>
   )

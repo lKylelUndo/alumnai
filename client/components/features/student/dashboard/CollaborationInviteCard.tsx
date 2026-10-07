@@ -8,8 +8,15 @@ import { MessageSquare, User, UserCircle2 } from "lucide-react";
 import { StudentCollabInviteCardTypes } from "@/lib/types/collaboration";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
-export default function CollaborationInviteCard({ row }: { row: Row<StudentCollabInviteCardTypes> }) {
+export default function CollaborationInviteCard({
+  row,
+  onRemoved,
+}: {
+  row: Row<StudentCollabInviteCardTypes>;
+  onRemoved?: (id: string) => void;
+}) {
   const invite = row.original;
   const router = useRouter();
   const [messageOpen, setMessageOpen] = useState(false);
@@ -22,7 +29,8 @@ export default function CollaborationInviteCard({ row }: { row: Row<StudentColla
         collaborationId: invite.collaborationId,
       });
       if (response.status === "success") {
-        router.refresh();
+        onRemoved?.(invite.collaborationId);
+        toast.success("Collaboration accepted");
       }
     } catch (error) {
       console.error("error accepting collaboration invite:", error);
@@ -38,7 +46,8 @@ export default function CollaborationInviteCard({ row }: { row: Row<StudentColla
         collaborationId: invite.collaborationId,
       });
       if (response.status === "success") {
-        router.refresh();
+        onRemoved?.(invite.collaborationId);
+        toast.success("Collaboration declined");
       }
     } catch (error) {
       console.error("error declining collaboration invite:", error);

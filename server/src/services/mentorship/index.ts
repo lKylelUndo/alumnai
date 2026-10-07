@@ -6,4 +6,5 @@ export { EndMentorshipService } from "@/services/mentorship/end.mentorship.servi
 export { GetMyMentorsService } from "@/services/mentorship/get.my.mentors.service";
 export { RecognizeAlumniService } from "@/services/mentorship/recognize.alumni.service";
 export { GetMentorRecognitionService } from "@/services/mentorship/get.mentor.recognition.service";
+export { SetRecognitionVisibilityService } from "@/services/mentorship/set.recognition.visibility.service";
 

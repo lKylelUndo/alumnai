@@ -25,7 +25,7 @@ export const DeclineMentorshipService = async (mentorshipId: string, alumniId: s
     });
 
     notifyUser(alumniId, "alumni:refresh", {
-      targets: ["manage-mentorships"],
+      targets: ["stats", "manage-mentorships"],
     });
 
     return { status: "success", code: 200, message: "Successfully decline a mentorship invite" };

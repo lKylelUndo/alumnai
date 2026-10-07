@@ -6,13 +6,24 @@ import { Row } from "@tanstack/react-table";
 import { User, UserCircle2, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
+import ConfirmEndDialog from "@/components/common/dialogs/ConfirmEndDialog";
 
-export default function CollaboratorCard({ row }: { row: Row<StudentCollaboratorCardTypes> }) {
+export default function CollaboratorCard({
+  row,
+  onRemoved,
+}: {
+  row: Row<StudentCollaboratorCardTypes>;
+  onRemoved?: (id: string) => void;
+}) {
   const collab = row.original;
   const router = useRouter();
   const [ending, setEnding] = useState(false);
+  const [endCollaborationOpen, setEndCollaborationOpen] = useState(false);
 
-  const handleEndCollaboration = async () => {
+  const handleEndCollaboration = () => setEndCollaborationOpen(true);
+
+  const handleConfirmEndCollaboration = async () => {
     try {
       setEnding(true);
       const response = await collaborationService.endCollab({
@@ -20,7 +31,9 @@ export default function CollaboratorCard({ row }: { row: Row<StudentCollaborator
       });
 
       if (response.status === "success") {
-        router.refresh();
+        onRemoved?.(collab.collaborationId);
+        toast.success("Collaboration ended");
+        setEndCollaborationOpen(false);
       }
     } catch (error) {
       console.error("Failed to end collaboration", error);
@@ -81,6 +94,17 @@ export default function CollaboratorCard({ row }: { row: Row<StudentCollaborator
           End Collab
         </button>
       </div>
+
+      <ConfirmEndDialog
+        open={endCollaborationOpen}
+        onOpenChange={setEndCollaborationOpen}
+        onConfirm={handleConfirmEndCollaboration}
+        title="End this collaboration?"
+        description="This is permanent. Ending the collaboration closes it along with its chat history. You can start a new collaboration with this person later by sending a request."
+        confirmLabel="End Collaboration"
+        pendingLabel="Ending..."
+        isPending={ending}
+      />
     </div>
   );
 }

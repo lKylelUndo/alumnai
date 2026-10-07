@@ -26,8 +26,13 @@ export const AcceptCollaborationService = async (collaborationId: string) => {
     ]);
 
     notifyUser(response.fromAlumniId, "alumni:refresh", {
-      targets: ["your-collaborations"],
+      targets: ["stats", "your-collaborations"],
       message: "A student has accepted your collaboration invite!"
+    });
+
+    notifyUser(response.toStudentId, "student:refresh", {
+      targets: ["collaboration-invites", "your-collaborations"],
+      message: "You accepted a collaboration invite."
     });
 
     return { status: "success", code: 200, message: "Successfully accept a collaboration" };

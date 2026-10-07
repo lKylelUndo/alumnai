@@ -1,4 +1,5 @@
 import { AcceptCollaborationService, DeclineCollaborationService, ViewAllCollaborationInvitesService, SendCollaborationInviteService, EndCollaborationService, GetMyStudentCollaborationsService, GetCollabRequestsService } from "@/services/collaboration";
+import { ViewSentCollabInvitesService } from "@/services/collaboration/view.sent.collab.invites.service";
 import { Request, Response } from "express";
 
 class CollaborationController {
@@ -42,6 +43,12 @@ class CollaborationController {
   public getCollabRequests = async (req: Request, res: Response) => {
     const userId = req.user!.userId;
     const response = await GetCollabRequestsService(userId);
+    return res.status(response.code).json(response);
+  };
+
+  public viewSentCollabInvites = async (req: Request, res: Response) => {
+    const { userId } = req.user!;
+    const response = await ViewSentCollabInvitesService(userId);
     return res.status(response.code).json(response);
   };
 }
