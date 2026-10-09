@@ -14,10 +14,10 @@ interface DataTableProps<TData, TValue> {
   filterPlaceholder: string
   statusFilterColumn?: string
   statusOptions?: string[]
+  pageSize?: number
 }
 
-export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder, statusFilterColumn, statusOptions }: DataTableProps<TData, TValue>) {
-  const [pageSize] = useState(5); // fixed page size for admin tables
+export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder, statusFilterColumn, statusOptions, pageSize = 5 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const table = useReactTable({
     data,

@@ -26,6 +26,10 @@ const YourCollaborations = ({ collaborations: initialCollaborations }: { collabo
       .catch((err) => console.error("Refetch collaborations failed:", err))
   }, [])
 
+  const removeItem = useCallback((id: string) => {
+    setCollaborations((prev) => prev.filter((item) => item.collaborationId !== id))
+  }, [])
+
   useAlumniSocket({
     target: "your-collaborations",
     onRefresh: (data) => {
@@ -40,7 +44,7 @@ const YourCollaborations = ({ collaborations: initialCollaborations }: { collabo
 
   if (prevInitialCollaborations !== initialCollaborations) {
     setPrevInitialCollaborations(initialCollaborations)
-    if (initialCollaborations && initialCollaborations.length > 0) setCollaborations(initialCollaborations)
+    if (initialCollaborations) setCollaborations(initialCollaborations)
   }
 
   useEffect(() => {
@@ -60,7 +64,7 @@ const YourCollaborations = ({ collaborations: initialCollaborations }: { collabo
         columns={columns}
         data={collaborations}
         pageSize={9}
-        renderCard={(row) => <CollaborationCard key={row.id} row={row} />}
+        renderCard={(row) => <CollaborationCard key={row.id} row={row} onRemoved={removeItem} />}
       />
     </div>
   )

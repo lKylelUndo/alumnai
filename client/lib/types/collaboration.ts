@@ -32,6 +32,18 @@ export type AlumniStudentCollaborationCardTypes = {
   profilePicture: string;
 };
 
+export type AlumniSentCollabInvite = {
+  collaborationId: string;
+  toStudentId: string;
+  studentName: string;
+  profilePicture: string | null;
+  track: string | null;
+  yearLevel: string | null;
+  message: string;
+  status: "PENDING";
+  createdAt: string;
+};
+
 export type Collaborator = {
   id: string
   name: string

@@ -38,5 +38,10 @@ export const collaborationService = {
     const response = await getInstance().get("/api/collaboration/v1/get-collab-requests");
     return response.data;
   },
+
+  getSentCollabInvites: async () => {
+    const response = await getInstance().get("/api/collaboration/v1/get-sent-collaboration-invites");
+    return response.data;
+  },
 };
 

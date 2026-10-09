@@ -26,6 +26,10 @@ const Mentors = ({ mentors: initialMentors }: { mentors: StudentMentorCardTypes[
       .catch((err) => console.error("Refetch mentors failed:", err));
   }, []);
 
+  const removeItem = useCallback((id: string) => {
+    setMentors((prev) => prev.filter((item) => item.mentorshipRecordId !== id));
+  }, []);
+
   useStudentSocket({
     target: "my-mentors",
     onRefresh: (data) => {
@@ -36,7 +40,7 @@ const Mentors = ({ mentors: initialMentors }: { mentors: StudentMentorCardTypes[
 
   if (prevInitialMentors !== initialMentors) {
     setPrevInitialMentors(initialMentors);
-    if (initialMentors && initialMentors.length > 0) setMentors(initialMentors);
+    if (initialMentors) setMentors(initialMentors);
   }
 
   useEffect(() => {
@@ -57,7 +61,7 @@ const Mentors = ({ mentors: initialMentors }: { mentors: StudentMentorCardTypes[
         data={mentors}
         pageSize={9}
         renderCard={(row) => (
-          <MentorCard key={row.id} row={row} />
+          <MentorCard key={row.id} row={row} onRemoved={removeItem} />
         )}
       />
     </div>

@@ -38,6 +38,16 @@ export class MentorshipRepository {
     });
   }
 
+  async findPendingBetween(fromStudentId: string, toAlumniId: string) {
+    return await prisma.mentorship.findFirst({
+      where: {
+        fromStudentId,
+        toAlumniId,
+        status: "PENDING",
+      },
+    });
+  }
+
   async getAllInvites(id: string) {
     return await prisma.mentorship.findMany({
       where: { toAlumniId: id },
@@ -85,6 +95,8 @@ export class MentorshipRepository {
             receivedRecognitions: {
               where: {
                 fromStudentId: studentUserId,
+                // Privacy: hidden recognitions must not surface to the student.
+                isVisible: true,
               },
               select: {
                 id: true,
@@ -116,5 +128,25 @@ export class MentorshipRepository {
     await redis.set(cacheKey, JSON.stringify(formatted), "PX", 1000 * 60 * 5);
 
     return formatted;
+  }
+
+  /**
+   * Best-effort invalidation of every student-facing cache that can hold
+   * recognitions (the my-mentors list and the find-mentors recognition counts).
+   * Best-effort: a dead cache must never fail the request that triggered it
+   * (entries expire via TTL anyway).
+   */
+  async invalidateRecognitionCaches() {
+    const patterns = [
+      `${ENV.STUDENT_REDIS_KEY}mentors-*`,
+      `${ENV.STUDENT_REDIS_KEY}find-mentors-*`,
+    ];
+
+    try {
+      const keys = (await Promise.all(patterns.map((pattern) => redis.keys(pattern)))).flat();
+      if (keys.length > 0) await redis.del(...keys);
+    } catch (error) {
+      console.warn("[MentorshipRepository] invalidateRecognitionCaches failed:", error);
+    }
   }
 }

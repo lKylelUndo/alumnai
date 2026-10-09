@@ -13,9 +13,11 @@ export const GetMentorRecognitionService = async (fromStudentId: string, toAlumn
       };
     }
 
+    // A student may only see this alumni's recognition if it is visible to them.
     const recognition = await recognitionRepository.findByStudentAndAlumni(
       fromStudentId,
-      toAlumniId
+      toAlumniId,
+      true
     );
 
     return {

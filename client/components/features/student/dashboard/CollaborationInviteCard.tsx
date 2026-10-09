@@ -8,11 +8,20 @@ import { MessageSquare, User, UserCircle2 } from "lucide-react";
 import { StudentCollabInviteCardTypes } from "@/lib/types/collaboration";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
+import ConfirmEndDialog from "@/components/common/dialogs/ConfirmEndDialog";
 
-export default function CollaborationInviteCard({ row }: { row: Row<StudentCollabInviteCardTypes> }) {
+export default function CollaborationInviteCard({
+  row,
+  onRemoved,
+}: {
+  row: Row<StudentCollabInviteCardTypes>;
+  onRemoved?: (id: string) => void;
+}) {
   const invite = row.original;
   const router = useRouter();
   const [messageOpen, setMessageOpen] = useState(false);
+  const [declineConfirmOpen, setDeclineConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function acceptCollaborationInvite() {
@@ -22,7 +31,8 @@ export default function CollaborationInviteCard({ row }: { row: Row<StudentColla
         collaborationId: invite.collaborationId,
       });
       if (response.status === "success") {
-        router.refresh();
+        onRemoved?.(invite.collaborationId);
+        toast.success("Collaboration accepted");
       }
     } catch (error) {
       console.error("error accepting collaboration invite:", error);
@@ -38,7 +48,9 @@ export default function CollaborationInviteCard({ row }: { row: Row<StudentColla
         collaborationId: invite.collaborationId,
       });
       if (response.status === "success") {
-        router.refresh();
+        onRemoved?.(invite.collaborationId);
+        toast.success("Collaboration declined");
+        setDeclineConfirmOpen(false);
       }
     } catch (error) {
       console.error("error declining collaboration invite:", error);
@@ -116,18 +128,30 @@ export default function CollaborationInviteCard({ row }: { row: Row<StudentColla
             <DialogClose asChild>
               <Button disabled={loading} onClick={acceptCollaborationInvite}>Accept</Button>
             </DialogClose>
-            <DialogClose asChild>
-              <Button
-                disabled={loading}
-                onClick={declineCollaborationInvite}
-                variant={"destructive"}
-              >
-                Decline
-              </Button>
-            </DialogClose>
+            <Button
+              disabled={loading}
+              onClick={() => {
+                setMessageOpen(false);
+                setDeclineConfirmOpen(true);
+              }}
+              variant={"destructive"}
+            >
+              Decline
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
+
+      <ConfirmEndDialog
+        open={declineConfirmOpen}
+        onOpenChange={setDeclineConfirmOpen}
+        onConfirm={declineCollaborationInvite}
+        title="Decline this invitation?"
+        description={`${invite.fullName || "This alumni"} will be notified that you declined their collaboration request. The request will be removed from your list and you can always send a new one later.`}
+        confirmLabel="Decline Invite"
+        pendingLabel="Declining..."
+        isPending={loading}
+      />
     </>
   );
 }

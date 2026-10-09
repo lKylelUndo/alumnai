@@ -3,21 +3,42 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import ProfileCardHeader from "@/components/common/profile/ProfileCardHeader";
-import { Award, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Award, ChevronLeft, ChevronRight, Eye, EyeOff, User } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
 import { RecognitionItem } from "@/lib/types/mentorship";
+import { useAuthContext } from "@/context/AuthContext";
+import { mentorshipService } from "@/services/mentorship.service";
 
 interface ProfileRecognitionsCardProps {
   recognitions?: RecognitionItem[] | null;
   pageSize?: number;
 }
 
+// `isVisible` is optional on RecognitionItem so the student's own recognition
+// payloads (which omit it) stay assignable. Absent means visible.
+const isRecognitionVisible = (recognition: RecognitionItem, override: boolean | undefined) =>
+  override ?? recognition.isVisible ?? true;
+
+const getApiErrorMessage = (error: unknown, fallback: string): string => {
+  if (error && typeof error === "object" && "response" in error) {
+    const data = (error as { response?: { data?: { message?: string } } }).response?.data;
+    if (typeof data?.message === "string") return data.message;
+  }
+  if (error instanceof Error && error.message) return error.message;
+  return fallback;
+};
+
 export default function ProfileRecognitionsCard({
   recognitions = [],
   pageSize = 3,
 }: ProfileRecognitionsCardProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const { user } = useAuthContext();
+
+  const [visibilityOverrides, setVisibilityOverrides] = useState<Record<string, boolean>>({});
+  const [pendingIds, setPendingIds] = useState<Record<string, boolean>>({});
 
   const items = recognitions || [];
   const totalPages = Math.ceil(items.length / pageSize);
@@ -37,6 +58,44 @@ export default function ProfileRecognitionsCard({
       return dateStr;
     }
   };
+
+  const isOwner = user?.role === "ALUMNI";
+
+  async function toggleVisibility(recognition: RecognitionItem, nextVisible: boolean) {
+    if (!recognition.id || pendingIds[recognition.id]) return;
+
+    setVisibilityOverrides((prev) => ({ ...prev, [recognition.id]: nextVisible }));
+    setPendingIds((prev) => ({ ...prev, [recognition.id]: true }));
+
+    try {
+      const response = await mentorshipService.setRecognitionVisibility(
+        recognition.id,
+        nextVisible
+      );
+      if (response.status === "success" && response.data) {
+        setVisibilityOverrides((prev) => ({
+          ...prev,
+          [recognition.id]: response.data?.isVisible ?? nextVisible,
+        }));
+        toast.success(
+          nextVisible ? "Recognition is now visible" : "Recognition hidden from your profile"
+        );
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      setVisibilityOverrides((prev) => ({ ...prev, [recognition.id]: !nextVisible }));
+      toast.error(
+        getApiErrorMessage(error, "Could not update recognition visibility")
+      );
+    } finally {
+      setPendingIds((prev) => {
+        const next = { ...prev };
+        delete next[recognition.id];
+        return next;
+      });
+    }
+  }
 
   return (
     <Card className="rounded-2xl p-6">
@@ -67,8 +126,17 @@ export default function ProfileRecognitionsCard({
             const studentAvatar = studentProfile?.profilePicture;
             const studentField = studentProfile?.work_field || "Student";
 
+            const isVisible = isRecognitionVisible(rec, visibilityOverrides[rec.id]);
+            const showToggle = isOwner && Boolean(user?.id) && rec.toAlumniId === user?.id;
+            const isPending = Boolean(pendingIds[rec.id]);
+
             return (
-              <div key={rec.id} className="space-y-2 border-b border-border pb-3 last:border-none last:pb-0">
+              <div
+                key={rec.id}
+                className={`space-y-2 border-b border-border pb-3 transition-opacity duration-300 last:border-none last:pb-0 ${
+                  isVisible ? "opacity-100" : "opacity-55"
+                }`}
+              >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex min-w-0 items-center gap-2.5">
                     <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
@@ -95,12 +163,45 @@ export default function ProfileRecognitionsCard({
                     </div>
                   </div>
 
-                  <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase text-muted-foreground">
-                    {studentField}
-                  </span>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {!isVisible && (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-muted px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-muted-foreground">
+                        <EyeOff className="h-2.5 w-2.5" aria-hidden="true" />
+                        Hidden
+                      </span>
+                    )}
+
+                    <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase text-muted-foreground">
+                      {studentField}
+                    </span>
+
+                    {showToggle && (
+                      <button
+                        type="button"
+                        onClick={() => toggleVisibility(rec, !isVisible)}
+                        disabled={isPending}
+                        aria-pressed={!isVisible}
+                        aria-label={isVisible ? "Hide this recognition" : "Show this recognition"}
+                        title={isVisible ? "Hide this recognition" : "Show this recognition"}
+                        className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {isVisible ? (
+                          <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+                        ) : (
+                          <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <div className="whitespace-pre-wrap rounded-lg bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground">
+                <div
+                  className={`whitespace-pre-wrap rounded-lg p-3 text-xs leading-relaxed text-muted-foreground ${
+                    isVisible
+                      ? "bg-muted/50"
+                      : "border border-dashed border-border bg-muted/20"
+                  }`}
+                >
                   {rec.message}
                 </div>
               </div>

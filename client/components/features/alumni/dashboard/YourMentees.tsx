@@ -26,6 +26,10 @@ const YourMentees = ({ mentees: initialMentees }: { mentees: AlumniStudentMentor
       .catch((err) => console.error("Refetch mentees failed:", err))
   }, [])
 
+  const removeItem = useCallback((id: string) => {
+    setMentees((prev) => prev.filter((item) => item.mentorshipRecordId !== id))
+  }, [])
+
   useAlumniSocket({
     target: "your-mentees",
     onRefresh: (data) => {
@@ -36,7 +40,7 @@ const YourMentees = ({ mentees: initialMentees }: { mentees: AlumniStudentMentor
 
   if (prevInitialMentees !== initialMentees) {
     setPrevInitialMentees(initialMentees)
-    if (initialMentees && initialMentees.length > 0) setMentees(initialMentees)
+    if (initialMentees) setMentees(initialMentees)
   }
 
   useEffect(() => {
@@ -57,7 +61,7 @@ const YourMentees = ({ mentees: initialMentees }: { mentees: AlumniStudentMentor
           data={mentees}
           pageSize={9}
           renderCard={(row) => (
-            <MenteeCard key={row.id} row={row} />
+            <MenteeCard key={row.id} row={row} onRemoved={removeItem} />
           )}
         />
     </div>

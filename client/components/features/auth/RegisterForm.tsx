@@ -67,7 +67,10 @@ export default function RegisterForm() {
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                     type="text"
-                    placeholder="2018-00001"
+                    placeholder="20180001"
+                    inputMode="numeric"
+                    maxLength={8}
+                    pattern="[0-9]*"
                     required
                   />
                   {fieldState.invalid && (

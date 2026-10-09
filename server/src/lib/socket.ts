@@ -80,3 +80,11 @@ export const notifyUser = (userId: string, event: string, payload: any) => {
     io?.to(`user:${userId}`).emit(event, payload);
 };
 
+// Presence check: does this user currently hold a live socket connection?
+// Members join `user:${userId}` on connect, so an empty (or missing) room means
+// offline. When `io` is not initialised yet this returns false, which is the
+// safe default — callers fall back to email.
+export function isUserOnline(userId: string): boolean {
+    return (io?.sockets.adapter.rooms.get(`user:${userId}`)?.size ?? 0) > 0;
+}
+

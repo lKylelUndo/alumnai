@@ -26,6 +26,10 @@ const CollaborationInvites = ({ invites: initialInvites }: { invites: StudentCol
       .catch((err) => console.error("Refetch collaboration invites failed:", err));
   }, []);
 
+  const removeItem = useCallback((id: string) => {
+    setInvites((prev) => prev.filter((item) => item.collaborationId !== id));
+  }, []);
+
   useStudentSocket({
     target: "collaboration-invites",
     onRefresh: (data) => {
@@ -40,7 +44,7 @@ const CollaborationInvites = ({ invites: initialInvites }: { invites: StudentCol
 
   if (prevInitialInvites !== initialInvites) {
     setPrevInitialInvites(initialInvites);
-    if (initialInvites && initialInvites.length > 0) setInvites(initialInvites);
+    if (initialInvites) setInvites(initialInvites);
   }
 
   useEffect(() => {
@@ -62,7 +66,7 @@ const CollaborationInvites = ({ invites: initialInvites }: { invites: StudentCol
         data={invites}
         pageSize={9}
         renderCard={(row) => (
-          <CollaborationInviteCard key={row.id} row={row} />
+          <CollaborationInviteCard key={row.id} row={row} onRemoved={removeItem} />
         )}
       />
     </div>

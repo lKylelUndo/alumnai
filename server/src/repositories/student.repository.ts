@@ -15,6 +15,7 @@ export class StudentRepository {
     /**
      * Invalidate student cache keys.
      * Pass specific targets to clear only those, or omit to clear all.
+     * Best-effort: a dead cache must never fail the request that triggered it (entries expire via TTL anyway).
      */
     async invalidateCache(userId: string, targets?: ("dashboard-stats" | "mentors" | "collaborations" | "collab-requests" | "find-mentors")[]) {
         const keyMap: Record<string, string> = {
@@ -29,7 +30,13 @@ export class StudentRepository {
             ? targets.map((t) => keyMap[t]).filter(Boolean)
             : Object.values(keyMap);
 
-        if (keys.length > 0) await redis.del(...keys);
+        if (keys.length > 0) {
+            try {
+                await redis.del(...keys);
+            } catch (error) {
+                console.warn("[StudentRepository] invalidateCache failed:", error);
+            }
+        }
     }
 
     async getStudentDashboardStats(userId: string) {
@@ -105,6 +112,8 @@ export class StudentRepository {
                     select: { id: true, status: true },
                 },
                 receivedRecognitions: {
+                    // Privacy: only count recognitions the alumni chose to show.
+                    where: { isVisible: true },
                     select: { id: true },
                 },
             },

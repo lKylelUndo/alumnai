@@ -2,6 +2,16 @@ import { RecognitionItem } from "./auth";
 
 export type { RecognitionItem };
 
+export interface RecognitionVisibilityResponse {
+  status: "success" | "error";
+  code: number;
+  message: string;
+  data?: {
+    id: string;
+    isVisible: boolean;
+  };
+}
+
 export interface Mentor {
   id: string;
   name: string;
