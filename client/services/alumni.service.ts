@@ -1,16 +1,5 @@
 import { axiosInstance, axiosServerInstance } from "@/lib/axios";
 
-export type AlumniStudentCard = {
-  id: string
-  recordId: string
-  name: string
-  track: string
-  year: string
-  status: string
-  profilePicture?: string | null
-  message?: string
-}
-
 const getInstance = () => (typeof window !== "undefined" ? axiosInstance : axiosServerInstance)
 
 export const alumniService = {

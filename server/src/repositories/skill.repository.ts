@@ -18,10 +18,6 @@ export class SkillRepository {
     })
   }
 
-  async find() {
-
-  }
-
   async findAlumniSkillsByWorkField(workField?: string | null) {
     const alumniSkills = await prisma.skill.findMany({
       where: {

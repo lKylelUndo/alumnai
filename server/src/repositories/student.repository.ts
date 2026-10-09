@@ -60,7 +60,6 @@ export class StudentRepository {
 
         const activeCollaborators = stats?.receivedCollaborations.filter((c) => c.status === "ACTIVE").length ?? 0
         const activeMentorships = stats?.sentMentorships.filter((m) => m.status === "ACTIVE").length ?? 0
-        const pendingMentorships = stats?.sentMentorships.filter((m) => m.status === "PENDING").length ?? 0
         const pendingCollaborations = stats?.receivedCollaborations.filter((c) => c.status === "PENDING").length ?? 0
 
         const formatted = {

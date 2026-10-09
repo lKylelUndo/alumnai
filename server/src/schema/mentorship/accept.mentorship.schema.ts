@@ -5,5 +5,3 @@ export const acceptMentorshipInviteSchema = z.object({
     mentorshipRecordId: z.string().min(1, "Mentorship id is required"),
   }),
 });
-
-export type AcceptMentorshipInviteTypes = z.infer<typeof acceptMentorshipInviteSchema>["body"];

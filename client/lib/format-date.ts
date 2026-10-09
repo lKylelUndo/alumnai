@@ -76,11 +76,3 @@ export function getDateLabel(dateStr: string): string {
   }
 }
 
-/** Check if two date strings fall on the same calendar day. */
-export function isSameDay(a: string, b: string): boolean {
-  try {
-    return new Date(a).toDateString() === new Date(b).toDateString();
-  } catch {
-    return false;
-  }
-}

@@ -17,28 +17,6 @@ export class RecognitionRepository {
     });
   }
 
-  async findById(id: string) {
-    return await prisma.recognition.findUnique({
-      where: { id },
-      include: {
-        fromStudent: {
-          select: {
-            id: true,
-            email: true,
-            profile: true,
-          },
-        },
-        toAlumni: {
-          select: {
-            id: true,
-            email: true,
-            profile: true,
-          },
-        },
-      },
-    });
-  }
-
   async upsert(fromStudentId: string, toAlumniId: string, message: string) {
     const existing = await this.findByStudentAndAlumni(fromStudentId, toAlumniId);
 
@@ -84,29 +62,6 @@ export class RecognitionRepository {
         id: true,
         isVisible: true,
       },
-    });
-  }
-
-  async getRecognitionsForAlumni(toAlumniId: string) {
-    return await prisma.recognition.findMany({
-      where: { toAlumniId },
-      include: {
-        fromStudent: {
-          select: {
-            id: true,
-            email: true,
-            profile: {
-              select: {
-                fullName: true,
-                profilePicture: true,
-                work_field: true,
-                current_position: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
     });
   }
 }

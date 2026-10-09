@@ -17,8 +17,3 @@ export interface Skill {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export interface SkillCategory {
-  title: string;
-  skills: Skill[];
-}

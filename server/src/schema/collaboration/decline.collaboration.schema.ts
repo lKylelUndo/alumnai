@@ -5,5 +5,3 @@ export const declineCollaborationInviteSchema = z.object({
     collaborationId: z.string().min(1, "Collaboration id is required"),
   }),
 });
-
-export type DeclineCollaborationInviteInputTypes = z.infer<typeof declineCollaborationInviteSchema>["body"];

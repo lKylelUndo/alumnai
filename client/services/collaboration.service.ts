@@ -4,11 +4,6 @@ import { AcceptCollaborationInviteInput, DeclineCollaborationInviteInput, SendCo
 const getInstance = () => (typeof window !== "undefined" ? axiosInstance : axiosServerInstance)
 
 export const collaborationService = {
-  viewMyCollabInvites: async () => {
-    const response = await axiosInstance.post("/api/collaboration/v1/view-my-collab-invites");
-    return response.data;
-  },
-
   acceptCollab: async (data: AcceptCollaborationInviteInput) => {
     const response = await axiosInstance.post("/api/collaboration/v1/accept-collab", data);
     return response.data;
