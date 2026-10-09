@@ -8,7 +8,6 @@ import CollaborationCard from "./CollaborationCard"
 import { useState, useEffect, useCallback } from "react"
 import { useAlumniSocket } from "@/hooks/useAlumniSocket"
 import { alumniService } from "@/services/alumni.service"
-import { toast } from "sonner"
 
 export const columns: ColumnDef<AlumniStudentCollaborationCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
@@ -32,12 +31,7 @@ const YourCollaborations = ({ collaborations: initialCollaborations }: { collabo
 
   useAlumniSocket({
     target: "your-collaborations",
-    onRefresh: (data) => {
-      if (data?.message) {
-        toast.info(data.message)
-      } else {
-        toast.info("Your collaboration status has been updated.")
-      }
+    onRefresh: () => {
       refetchCollaborations()
     },
   })

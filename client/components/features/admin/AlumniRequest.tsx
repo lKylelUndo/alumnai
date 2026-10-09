@@ -170,9 +170,7 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
   }, [])
 
   // Listen for realtime updates when a student submits an alumni request
-  useAdminSocket({ target: "alumni-requests", onRefresh: (data) => {
-      if (data?.message) toast.info(data.message)
-      else toast.info("A new alumni upgrade request has been submitted!")
+  useAdminSocket({ target: "alumni-requests", onRefresh: () => {
       refetchAlumniRequests()
     },
   })

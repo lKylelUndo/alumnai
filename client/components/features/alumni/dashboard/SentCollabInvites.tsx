@@ -10,7 +10,6 @@ import { MessageSquare, User, UserCircle2 } from "lucide-react"
 import { useState, useEffect, useCallback } from "react"
 import { useAlumniSocket } from "@/hooks/useAlumniSocket"
 import { collaborationService } from "@/services/collaboration.service"
-import { toast } from "sonner"
 
 export const columns: ColumnDef<AlumniSentCollabInvite>[] = [
   { accessorKey: "studentName", header: "Name" },
@@ -116,12 +115,7 @@ const SentCollabInvites = ({ invites: initialInvites }: { invites: AlumniSentCol
 
   useAlumniSocket({
     target: "manage-mentorships",
-    onRefresh: (data) => {
-      if (data?.message) {
-        toast.info(data.message)
-      } else {
-        toast.info("Your sent collaboration invites have been updated.")
-      }
+    onRefresh: () => {
       refetchInvites()
     },
   })
