@@ -9,6 +9,7 @@ import { StudentCollabInviteCardTypes } from "@/lib/types/collaboration";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import ConfirmEndDialog from "@/components/common/dialogs/ConfirmEndDialog";
 
 export default function CollaborationInviteCard({
   row,
@@ -20,6 +21,7 @@ export default function CollaborationInviteCard({
   const invite = row.original;
   const router = useRouter();
   const [messageOpen, setMessageOpen] = useState(false);
+  const [declineConfirmOpen, setDeclineConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function acceptCollaborationInvite() {
@@ -48,6 +50,7 @@ export default function CollaborationInviteCard({
       if (response.status === "success") {
         onRemoved?.(invite.collaborationId);
         toast.success("Collaboration declined");
+        setDeclineConfirmOpen(false);
       }
     } catch (error) {
       console.error("error declining collaboration invite:", error);
@@ -125,18 +128,30 @@ export default function CollaborationInviteCard({
             <DialogClose asChild>
               <Button disabled={loading} onClick={acceptCollaborationInvite}>Accept</Button>
             </DialogClose>
-            <DialogClose asChild>
-              <Button
-                disabled={loading}
-                onClick={declineCollaborationInvite}
-                variant={"destructive"}
-              >
-                Decline
-              </Button>
-            </DialogClose>
+            <Button
+              disabled={loading}
+              onClick={() => {
+                setMessageOpen(false);
+                setDeclineConfirmOpen(true);
+              }}
+              variant={"destructive"}
+            >
+              Decline
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
+
+      <ConfirmEndDialog
+        open={declineConfirmOpen}
+        onOpenChange={setDeclineConfirmOpen}
+        onConfirm={declineCollaborationInvite}
+        title="Decline this invitation?"
+        description={`${invite.fullName || "This alumni"} will be notified that you declined their collaboration request. The request will be removed from your list and you can always send a new one later.`}
+        confirmLabel="Decline Invite"
+        pendingLabel="Declining..."
+        isPending={loading}
+      />
     </>
   );
 }

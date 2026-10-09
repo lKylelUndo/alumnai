@@ -3,7 +3,9 @@ import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { ChatRepository } from "@/repositories/chat.repository";
-import { notifyUser } from "@/lib/socket";
+import { ENV } from "@/config/env";
+import { notifyPeer } from "@/services/mail/notify";
+import { prisma } from "@/lib/prisma";
 
 export const EndMentorshipService = async (mentorshipId: string) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -25,14 +27,47 @@ export const EndMentorshipService = async (mentorshipId: string) => {
       chatRepository.invalidateCache([response.toAlumniId, response.fromStudentId]),
     ]);
 
-    notifyUser(response.fromStudentId, "student:refresh", {
+    // One batched lookup covers both recipients; if it fails, notifyPeer
+    // falls back to its own per-user lookup.
+    const recipients = await prisma.user
+      .findMany({
+        where: { id: { in: [response.fromStudentId, response.toAlumniId] } },
+        select: { id: true, email: true },
+      })
+      .catch(() => null);
+    const emailOf = (id: string) =>
+      recipients?.find((recipient) => recipient.id === id)?.email ?? null;
+
+    await notifyPeer({
+      service: "EndMentorshipService",
+      userId: response.fromStudentId,
+      to: emailOf(response.fromStudentId),
+      event: "student:refresh",
       targets: ["my-mentors"],
       message: "One of your mentorships has ended.",
+      template: "request-update.html",
+      emailData: {
+        title: "Mentorship ended",
+        message: "One of your mentorships has ended. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "A mentorship has ended",
     });
 
-    notifyUser(response.toAlumniId, "alumni:refresh", {
+    await notifyPeer({
+      service: "EndMentorshipService",
+      userId: response.toAlumniId,
+      to: emailOf(response.toAlumniId),
+      event: "alumni:refresh",
       targets: ["stats", "manage-mentorships", "your-mentees"],
       message: "One of your mentorships has ended.",
+      template: "request-update.html",
+      emailData: {
+        title: "Mentorship ended",
+        message: "One of your mentorships has ended. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "A mentorship has ended",
     });
 
     return { status: "success", code: 200, message: "Successfully ended mentorship" };

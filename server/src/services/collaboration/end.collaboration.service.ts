@@ -3,7 +3,9 @@ import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { ChatRepository } from "@/repositories/chat.repository";
-import { notifyUser } from "@/lib/socket";
+import { ENV } from "@/config/env";
+import { notifyPeer } from "@/services/mail/notify";
+import { prisma } from "@/lib/prisma";
 
 export const EndCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
@@ -25,14 +27,47 @@ export const EndCollaborationService = async (collaborationId: string) => {
       chatRepository.invalidateCache([response.fromAlumniId, response.toStudentId]),
     ]);
 
-    notifyUser(response.toStudentId, "student:refresh", {
+    // One batched lookup covers both recipients; if it fails, notifyPeer
+    // falls back to its own per-user lookup.
+    const recipients = await prisma.user
+      .findMany({
+        where: { id: { in: [response.fromAlumniId, response.toStudentId] } },
+        select: { id: true, email: true },
+      })
+      .catch(() => null);
+    const emailOf = (id: string) =>
+      recipients?.find((recipient) => recipient.id === id)?.email ?? null;
+
+    await notifyPeer({
+      service: "EndCollaborationService",
+      userId: response.toStudentId,
+      to: emailOf(response.toStudentId),
+      event: "student:refresh",
       targets: ["your-collaborations"],
       message: `One of your collaboration has ended.`,
+      template: "request-update.html",
+      emailData: {
+        title: "Collaboration ended",
+        message: "One of your collaborations has ended. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "A collaboration has ended",
     });
 
-    notifyUser(response.fromAlumniId, "alumni:refresh", {
+    await notifyPeer({
+      service: "EndCollaborationService",
+      userId: response.fromAlumniId,
+      to: emailOf(response.fromAlumniId),
+      event: "alumni:refresh",
       targets: ["stats", "your-collaborations"],
       message: `One of your collaboration has ended.`,
+      template: "request-update.html",
+      emailData: {
+        title: "Collaboration ended",
+        message: "One of your collaborations has ended. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "A collaboration has ended",
     });
 
     return { status: "success", code: 200, message: "Successfully end a collaboration" };

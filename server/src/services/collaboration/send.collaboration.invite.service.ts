@@ -4,7 +4,8 @@ import { SendCollaborationInviteInputTypes } from "@/schema/collaboration";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
-import { notifyUser } from "@/lib/socket";
+import { notifyPeer } from "@/services/mail/notify";
+import { prisma } from "@/lib/prisma";
 
 export const SendCollaborationInviteService = async (userId: string, data: SendCollaborationInviteInputTypes) => {
   const collaborationRepository = new CollaborationRepository();
@@ -37,9 +38,25 @@ export const SendCollaborationInviteService = async (userId: string, data: SendC
       studentRepository.invalidateCache(data.toStudentId),
     ]);
 
-    notifyUser(data.toStudentId, "student:refresh", {
+    // One minimal lookup for the student's address (only used when offline).
+    const student = await prisma.user
+      .findUnique({ where: { id: data.toStudentId }, select: { email: true } })
+      .catch(() => null);
+
+    await notifyPeer({
+      service: "SendCollaborationInviteService",
+      userId: data.toStudentId,
+      to: student?.email ?? null,
+      event: "student:refresh",
       targets: ["collaboration-invites", "stats"],
-      message: "You have received a new collaboration invite!"
+      message: "You have received a new collaboration invite!",
+      template: "request-update.html",
+      emailData: {
+        title: "New collaboration request",
+        message: "An alumni sent you a collaboration request. Sign in to review it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "You have a new collaboration request",
     });
 
     return { status: "success", code: 200, message: "Successfully send an invitation" };
