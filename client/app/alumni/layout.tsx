@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import AlumniHeader from "@/components/features/alumni/dashboard/AlumniHeader";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
 import ChatBox from "@/components/common/ChatBoxDynamic";
+import RefreshToasts from "@/components/common/layout/RefreshToasts";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function AlumniDashboardLayout({ children }: { children: ReactNod
         </footer>
       </main>
       <ChatBox />
+      <RefreshToasts event="alumni:refresh" />
     </AuthGuard>
   )
 }

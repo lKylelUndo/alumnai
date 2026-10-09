@@ -1,4 +1,3 @@
-import { notifyRole } from "@/lib/socket";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 
 export const GetAlumniRequestsService = async () => {

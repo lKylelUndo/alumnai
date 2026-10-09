@@ -17,7 +17,4 @@ router.get("/v1/skill-gap-analysis", authMiddleware.execute, permittedRole([Role
 // Production Github Skill Index
 router.post("/v1/github-skill-index", authMiddleware.execute, permittedRole([RoleType.ALUMNI, RoleType.STUDENT]), validateSchema(githubSkillIndexSchema), skillController.githubSkillIndex);
 
-// Development Github Skill Index
-// router.post("/v1/github-skill-index", validateSchema(githubSkillIndexSchema), skillController.githubSkillIndex);
-
 export default router;

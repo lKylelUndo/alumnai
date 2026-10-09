@@ -1,4 +1,4 @@
-import { User } from "@/context/AuthContext"
+import { User } from "@/lib/types/auth"
 
 export type { User }
 

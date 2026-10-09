@@ -37,15 +37,3 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
     throw new Error(`Resend error: ${error.message}`);
   }
 }
-
-export const sendEmailWithTimeout = async (
-  { to, subject, html }: SendEmailParams,
-  timeoutMs = 30000
-) => {
-  return Promise.race([
-    sendEmail({ to, subject, html }),
-    new Promise<null>((_, reject) =>
-      setTimeout(() => reject(new Error("Email send timeout")), timeoutMs)
-    ),
-  ]);
-};

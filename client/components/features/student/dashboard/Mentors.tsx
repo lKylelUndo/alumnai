@@ -8,7 +8,6 @@ import MentorCard from "./MentorCard";
 import { useState, useEffect, useCallback } from "react";
 import { useStudentSocket } from "@/hooks/useStudentSocket";
 import { mentorshipService } from "@/services/mentorship.service";
-import { toast } from "sonner";
 
 export const columns: ColumnDef<StudentMentorCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
@@ -32,8 +31,7 @@ const Mentors = ({ mentors: initialMentors }: { mentors: StudentMentorCardTypes[
 
   useStudentSocket({
     target: "my-mentors",
-    onRefresh: (data) => {
-      if (data?.message) toast.info(data.message);
+    onRefresh: () => {
       refetchMentors();
     },
   });

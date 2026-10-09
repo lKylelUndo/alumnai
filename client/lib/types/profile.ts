@@ -1,7 +1,5 @@
-import { UserRole, RecognitionItem } from "./auth";
-import { Skill, SkillLevel, SkillCategory } from "./skill";
-
-export type { UserRole, SkillLevel, SkillCategory, Skill };
+import { RecognitionItem } from "./auth";
+import { Skill } from "./skill";
 
 export interface Certification {
   id: string;
@@ -41,11 +39,4 @@ export interface Profile {
     role?: "STUDENT" | "ALUMNI" | "ADMIN" | string;
     receivedRecognitions?: RecognitionItem[];
   };
-}
-
-export interface ViewProfileResponse {
-  status: string;
-  code: number;
-  message: string;
-  profile: Profile;
 }

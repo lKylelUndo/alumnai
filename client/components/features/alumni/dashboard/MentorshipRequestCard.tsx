@@ -20,11 +20,9 @@ export default function MentorshipRequestCard({
   const request = row.original
   const router = useRouter()
   const [messageOpen, setMessageOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
 
   async function acceptMentorshipRequest() {
     try {
-      setLoading(true)
       const response = await mentorshipService.acceptMentorship({
         mentorshipRecordId: request.mentorshipRecordId,
       })
@@ -34,14 +32,11 @@ export default function MentorshipRequestCard({
       }
     } catch (error) {
       console.error("error accepting mentorship request:", error)
-    } finally {
-      setLoading(false)
     }
   }
 
   async function declineMentorshipRequest() {
     try {
-      setLoading(true)
       const response = await mentorshipService.declineMentorship({
         mentorshipRecordId: request.mentorshipRecordId,
       })
@@ -51,8 +46,6 @@ export default function MentorshipRequestCard({
       }
     } catch (error) {
       console.error("error declining mentorship request:", error)
-    } finally {
-      setLoading(false)
     }
   }
 

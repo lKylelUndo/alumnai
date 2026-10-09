@@ -8,7 +8,6 @@ import { AlumniStudentMentorshipCardTypes } from "@/lib/types/mentorship"
 import { useState, useEffect, useCallback } from "react"
 import { useAlumniSocket } from "@/hooks/useAlumniSocket"
 import { mentorshipService } from "@/services/mentorship.service"
-import { toast } from "sonner"
 
 export const columns: ColumnDef<AlumniStudentMentorshipCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
@@ -32,8 +31,7 @@ const ManageMentorships = ({ requests: initialRequests }: { requests: AlumniStud
 
   useAlumniSocket({
     target: "manage-mentorships",
-    onRefresh: (data) => {
-      if (data?.message) toast.info(data.message)
+    onRefresh: () => {
       refetchRequests()
     },
   })
