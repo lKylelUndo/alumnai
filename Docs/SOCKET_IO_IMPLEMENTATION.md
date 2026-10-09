@@ -11,7 +11,8 @@ This document provides a complete, start-to-finish reference and code templates 
    - [Socket Manager & Cookie Authentication](#a-socket-manager--authentication-serversrclibsocketts)
    - [Server Entry Point](#b-server-entry-point-serversrcserverts)
    - [Triggering Events from Services](#c-triggering-real-time-events-from-services)
-   - [Redis Cache Invalidation Workflow](#d-redis-cache-invalidation-workflow)
+    - [Redis Cache Invalidation Workflow](#d-redis-cache-invalidation-workflow)
+    - [Presence-Gated Notifications (Online Socket / Offline Email)](#e-presence-gated-notifications-online-socket--offline-email)
 4. [Frontend Implementation (Client)](#4-frontend-implementation-client)
    - [Global Socket Context](#a-socket-context-clientcontextsocketcontexttsx)
    - [Root Layout Integration](#b-root-layout-clientapplayouttsx)
@@ -20,7 +21,8 @@ This document provides a complete, start-to-finish reference and code templates 
    - [Example A: Alumni Status Requests (with Toast Alert)](#example-a-alumni-status-requests-with-toast-alert)
    - [Example B: User Management](#example-b-user-management)
    - [Example C: Admin Metric Cards](#example-c-admin-metric-cards)
-   - [Tab Persistence with Radix UI (`forceMount`)](#tab-persistence-with-radix-ui-tabscontent)
+    - [Tab Persistence with Radix UI (`forceMount`)](#tab-persistence-with-radix-ui-tabscontent)
+    - [App-Wide Toasts (`RefreshToasts`) + Instant Local Removal](#example-d-app-wide-toasts-refreshtoasts--instant-local-removal)
 6. [Real-Time Chat & User Notifications (Extension Template)](#6-real-time-chat--user-notifications-extension-template)
 7. [Troubleshooting & Common Gotchas](#7-troubleshooting--common-gotchas)
 
@@ -184,6 +186,15 @@ export const notifyRole = (
 export const notifyUser = (userId: string, event: string, payload: any) => {
   io?.to(`user:${userId}`).emit(event, payload);
 };
+
+/**
+ * Presence check: does this user have a live socket connection?
+ * Room occupancy covers multiple tabs/devices. Returns false when the
+ * server is uninitialized — callers treat that as "offline" (email path).
+ */
+export function isUserOnline(userId: string): boolean {
+  return (io?.sockets.adapter.rooms.get(`user:${userId}`)?.size ?? 0) > 0;
+}
 ```
 
 ---
@@ -297,6 +308,41 @@ async approveAlumniRequest(studentId: string) {
   return { updatedUser };
 }
 ```
+
+> [!NOTE]
+> **Cache operations are best-effort.** `invalidateCache` methods wrap `redis.del` in try/catch (log + continue), and cache reads fall back to the database when Redis throws. A dead cache must never convert a completed mutation into a 500 — entries expire via TTL anyway, and clients refetch on mount regardless.
+
+---
+
+### E. Presence-Gated Notifications (Online Socket / Offline Email)
+
+Peer-to-peer notifications (collaboration / mentorship invites, acceptances, declines, endings) follow one rule: **if the recipient has a live socket connection, send the realtime event only; if they are offline, send an email only — never both.** This keeps Resend usage to offline cases only. Admin action emails (verify, reject, suspend, activate, signup, password reset) are deliberately exempt and always send.
+
+The branch lives in `server/src/services/mail/notify.ts`, next to the failure-isolated `sendNotificationEmail`:
+
+```typescript
+export async function notifyPeer({ service, userId, to, event, targets, message, template, emailData, subject }) {
+  if (isUserOnline(userId)) {
+    notifyUser(userId, event, { targets, message });  // realtime only
+    return;
+  }
+  // Offline: resolve the address (or look it up) and email only.
+  await sendNotificationEmail({ service, to: resolvedEmail, template, data: emailData, subject });
+}
+```
+
+The whole body is wrapped in try/catch — a failed lookup or send is logged and swallowed so the enclosing mutation still reports success. All offline peer emails share one generic template, `server/src/services/mail/templates/request-update.html` (`{{title}}`, `{{message}}`, `{{backToLoginURL}}`), with per-event subjects:
+
+| Event | Recipient | Online event + targets | Offline email subject |
+|---|---|---|---|
+| Collaboration invite sent | student | `student:refresh` / `["collaboration-invites", "stats"]` | "You have a new collaboration request" |
+| Collaboration accepted / declined | alumni sender + acting student (gated independently) | their existing events | "Your collaboration request was …" |
+| Collaboration ended | other party (each side gated independently) | their existing event | "A collaboration has ended" |
+| Mentorship request sent | alumni | `alumni:refresh` / `["stats", "manage-mentorships"]` | "You have a new mentorship request" |
+| Mentorship accepted / declined | student sender + acting alumni (gated independently) | their existing events | "Your mentorship request was …" |
+| Mentorship ended | other party (gated independently) | their existing event | "A mentorship has ended" |
+
+Accepted trade-off: a socket that drops between the presence check and the emit loses the notification. The database remains the source of truth — next-visit fetch and badge recounts cover it. No retry queue by design.
 
 ---
 
@@ -474,10 +520,8 @@ export function useAdminSocket({ target, onRefresh }: UseAdminSocketOptions) {
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { useRouter } from "next/navigation"
 import { adminService } from "@/services/admin.service"
 import { useAdminSocket } from "@/hooks/useAdminSocket"
-import { toast } from "sonner"
 import type { AlumniRequest } from "@/lib/types/alumni"
 import { DataTable } from "@/components/common/tables/DataTable"
 
@@ -494,15 +538,11 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
       .catch((err) => console.error("Client fetch alumni requests failed:", err))
   }, [])
 
-  // Listen for realtime updates when a student submits an alumni request
+  // Lists refetch silently — toasts are owned by RefreshToasts (see Example D),
+  // so dashboard users never get double toasts for one event.
   useAdminSocket({
     target: "alumni-requests",
-    onRefresh: (data) => {
-      if (data?.message) {
-        toast.info(data.message)
-      } else {
-        toast.info("A new alumni upgrade request has been submitted!")
-      }
+    onRefresh: () => {
       refetchAlumniRequests()
     },
   })
@@ -612,6 +652,43 @@ In [AdminDashboard.tsx](file:///c:/Users/Kyle%20Ando/Desktop/practice/alumnai/cl
 
 ---
 
+### Example D: App-Wide Toasts (`RefreshToasts`) + Instant Local Removal
+
+Socket listeners live in dashboard components, so a user on a profile or search page would silently miss events (and, under presence-gating, also miss the email — they count as "online"). Two patterns close that gap:
+
+**1. One global toast listener per role layout** (`client/components/common/layout/RefreshToasts.tsx`), mounted next to `ChatBox` in `app/{student,alumni,admin}/layout.tsx`:
+
+```tsx
+"use client"
+
+import { useEffect } from "react"
+import { toast } from "sonner"
+import { useSocketContext } from "@/context/SocketContext"
+
+const RefreshToasts = ({ event }: { event: "student:refresh" | "alumni:refresh" | "admin:refresh" }) => {
+  const { socket } = useSocketContext()
+
+  useEffect(() => {
+    if (!socket) return
+    const handleRefresh = (data?: { targets?: string[]; message?: string }) => {
+      if (data?.message) toast.info(data.message)
+    }
+    socket.on(event, handleRefresh)
+    return () => {
+      socket.off(event, handleRefresh)
+    }
+  }, [socket, event])
+
+  return null
+}
+```
+
+No target filtering — it toasts for every event of its role. List components keep their silent refetches; the toast lives in exactly one place so it can never double-fire.
+
+**2. Instant local removal instead of `router.refresh()`.** After a successful mutation, action cards (e.g. `CollaborationInviteCard`) call an `onRemoved(id)` callback from the parent list, which filters the item out of local state immediately — no network, no socket dependency, works with the socket disconnected. The parent's prop-sync guard must accept empty arrays (`if (initialInvites)` not `length > 0`) so a removed last item can actually clear. `router.refresh()` is a no-op in production (SSR re-fetch 401s on the cross-domain cookie), so it is not used for UI updates anywhere.
+
+---
+
 ## 6. Real-Time Chat & User Notifications (Extension Template)
 
 When you are ready to implement 1-on-1 real-time chat between students and alumni:
@@ -681,3 +758,6 @@ export function useChatMessages(initialMessages: any[]) {
 | **Tab doesn't update when clicked** | Radix unmounted the tab and loaded stale SSR `initialData`. | Add `forceMount` to `<TabsContent>` and call `refetch()` in `useEffect`. |
 | **Socket connects & disconnects rapidly** | Next.js Strict Mode runs effects twice in dev, or auth state fluctuates. | Expected in development Strict Mode; in production it mounts once. |
 | **401 Authentication error in socket** | Browser didn't pass cookie or handshake failed. | Ensure `withCredentials: true` is set on both server and client configs. |
+| **Event fires but nothing visible off-dashboard** | Refresh listeners live in dashboard components; profile/search pages have none. Under presence-gating, an "online" user there also gets no email. | `RefreshToasts` (Example D) covers toasts app-wide; lists and badges update when mounted and mount-fetch everywhere else. |
+| **Offline user never notified** | Socket events are fire-and-forget — no queue, no retry. | By design: offline recipients get email instead (Section E). Verify in Resend logs, not the socket. |
+| **`Unknown argument X` / `P2022 ColumnNotFound` on new Prisma fields** | Generated Prisma client or database predates the schema change. | Run `npx prisma generate`, apply pending migrations (`npx prisma migrate deploy`), then restart the dev server. |
