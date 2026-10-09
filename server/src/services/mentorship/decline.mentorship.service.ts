@@ -1,7 +1,9 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
-import { notifyUser } from "@/lib/socket";
+import { ENV } from "@/config/env";
+import { notifyPeer } from "@/services/mail/notify";
+import { prisma } from "@/lib/prisma";
 
 export const DeclineMentorshipService = async (mentorshipId: string, alumniId: string) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -19,13 +21,49 @@ export const DeclineMentorshipService = async (mentorshipId: string, alumniId: s
       studentRepository.invalidateCache(response.fromStudentId),
     ]);
 
-    notifyUser(response.fromStudentId, "student:refresh", {
+    // One batched lookup covers both recipients; if it fails, notifyPeer
+    // falls back to its own per-user lookup.
+    const recipients = await prisma.user
+      .findMany({
+        where: { id: { in: [response.fromStudentId, alumniId] } },
+        select: { id: true, email: true },
+      })
+      .catch(() => null);
+    const emailOf = (id: string) =>
+      recipients?.find((recipient) => recipient.id === id)?.email ?? null;
+
+    await notifyPeer({
+      service: "DeclineMentorshipService",
+      userId: response.fromStudentId,
+      to: emailOf(response.fromStudentId),
+      event: "student:refresh",
       targets: ["my-mentors"],
       message: "An alumni has declined your mentorship request.",
+      template: "request-update.html",
+      emailData: {
+        title: "Mentorship request declined",
+        message: "An alumni has declined your mentorship request. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "Your mentorship request was declined",
     });
 
-    notifyUser(alumniId, "alumni:refresh", {
-      targets: ["manage-mentorships"],
+    // The original realtime payload carried no message, so an empty string keeps
+    // the emitted shape's behaviour identical for client toast guards.
+    await notifyPeer({
+      service: "DeclineMentorshipService",
+      userId: alumniId,
+      to: emailOf(alumniId),
+      event: "alumni:refresh",
+      targets: ["stats", "manage-mentorships"],
+      message: "",
+      template: "request-update.html",
+      emailData: {
+        title: "Mentorship request declined",
+        message: "You declined a mentorship request. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "Your mentorship request was declined",
     });
 
     return { status: "success", code: 200, message: "Successfully decline a mentorship invite" };

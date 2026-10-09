@@ -9,6 +9,7 @@ export class ChatRepository {
 
   /**
    * Invalidate chat caches for given users and optional conversation
+   * Best-effort: a dead cache must never fail the request that triggered it (entries expire via TTL anyway).
    */
   async invalidateCache(userIds: string[], conversationId?: string) {
     const keys: string[] = userIds.map((id) => ChatRepository.CACHE_KEYS.conversations(id));
@@ -16,7 +17,11 @@ export class ChatRepository {
       keys.push(ChatRepository.CACHE_KEYS.messages(conversationId));
     }
     if (keys.length > 0) {
-      await redis.del(...keys);
+      try {
+        await redis.del(...keys);
+      } catch (error) {
+        console.warn("[ChatRepository] invalidateCache failed:", error);
+      }
     }
   }
 

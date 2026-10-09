@@ -2,7 +2,9 @@ import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { SendMentorshipInviteTypes } from "@/schema/mentorship";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
-import { notifyUser } from "@/lib/socket";
+import { ENV } from "@/config/env";
+import { notifyPeer } from "@/services/mail/notify";
+import { prisma } from "@/lib/prisma";
 
 export const SendMentorshipInviteService = async (userId: string, data: SendMentorshipInviteTypes) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -25,9 +27,25 @@ export const SendMentorshipInviteService = async (userId: string, data: SendMent
       alumniRepository.invalidateCache(data.toAlumniId),
     ]);
 
-    notifyUser(data.toAlumniId, "alumni:refresh", {
-      targets: ["manage-mentorships"],
+    // One minimal lookup for the alumni's address (only used when offline).
+    const alumni = await prisma.user
+      .findUnique({ where: { id: data.toAlumniId }, select: { email: true } })
+      .catch(() => null);
+
+    await notifyPeer({
+      service: "SendMentorshipInviteService",
+      userId: data.toAlumniId,
+      to: alumni?.email ?? null,
+      event: "alumni:refresh",
+      targets: ["stats", "manage-mentorships"],
       message: "You have received a new mentorship request!",
+      template: "request-update.html",
+      emailData: {
+        title: "New mentorship request",
+        message: "A student sent you a mentorship request. Sign in to review it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "You have a new mentorship request",
     });
 
     return { status: "success", code: 200, message: "Successfully send mentorship invite" };

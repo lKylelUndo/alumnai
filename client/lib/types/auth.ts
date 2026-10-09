@@ -7,6 +7,7 @@ export interface RecognitionItem {
   fromStudentId?: string;
   toAlumniId?: string;
   message: string;
+  isVisible?: boolean;
   createdAt: string;
   updatedAt?: string;
   fromStudent?: {

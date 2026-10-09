@@ -1,12 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
 export class RecognitionRepository {
-  async findByStudentAndAlumni(fromStudentId: string, toAlumniId: string) {
+  async findByStudentAndAlumni(fromStudentId: string, toAlumniId: string, onlyVisible = false) {
     return await prisma.recognition.findFirst({
-      where: {
-        fromStudentId,
-        toAlumniId,
-      },
+      where: onlyVisible
+        ? { fromStudentId, toAlumniId, isVisible: true }
+        : { fromStudentId, toAlumniId },
       select: {
         id: true,
         fromStudentId: true,
@@ -58,6 +57,32 @@ export class RecognitionRepository {
         fromStudentId,
         toAlumniId,
         message,
+      },
+    });
+  }
+
+  /**
+   * Toggle visibility of a recognition. The update is scoped to BOTH the
+   * recognition id and the receiving alumni's user id, so anyone other than
+   * the recipient matches no rows. Returns the updated row, or null when it
+   * does not exist (or is not owned by this alumni).
+   */
+  async setVisibility(recognitionId: string, alumniUserId: string, isVisible: boolean) {
+    const result = await prisma.recognition.updateMany({
+      where: {
+        id: recognitionId,
+        toAlumniId: alumniUserId,
+      },
+      data: { isVisible },
+    });
+
+    if (result.count === 0) return null;
+
+    return await prisma.recognition.findUnique({
+      where: { id: recognitionId },
+      select: {
+        id: true,
+        isVisible: true,
       },
     });
   }

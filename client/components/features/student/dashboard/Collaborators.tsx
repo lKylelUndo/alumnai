@@ -25,6 +25,10 @@ const Collaborators = ({ collaborators: initialCollaborators }: { collaborators:
       .catch((err) => console.error("Refetch collaborations failed:", err));
   }, []);
 
+  const removeItem = useCallback((id: string) => {
+    setCollaborators((prev) => prev.filter((item) => item.collaborationId !== id));
+  }, []);
+
   useStudentSocket({
     target: "your-collaborations",
     onRefresh: (data) => {
@@ -35,7 +39,7 @@ const Collaborators = ({ collaborators: initialCollaborators }: { collaborators:
 
   if (prevInitialCollaborators !== initialCollaborators) {
     setPrevInitialCollaborators(initialCollaborators);
-    if (initialCollaborators && initialCollaborators.length > 0) setCollaborators(initialCollaborators);
+    if (initialCollaborators) setCollaborators(initialCollaborators);
   }
 
   useEffect(() => {
@@ -57,7 +61,7 @@ const Collaborators = ({ collaborators: initialCollaborators }: { collaborators:
         data={collaborators}
         pageSize={9}
         renderCard={(row) => (
-          <CollaboratorCard key={row.id} row={row} />
+          <CollaboratorCard key={row.id} row={row} onRemoved={removeItem} />
         )}
       />
     </div>

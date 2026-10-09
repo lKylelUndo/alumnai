@@ -1,5 +1,6 @@
-import { AcceptMentorshipService, DeclineMentorshipService, ViewAllMentorshipInvitesService, SendMentorshipInviteService, EndMentorshipService, GetMyMentorsService, RecognizeAlumniService, GetMentorRecognitionService } from "@/services/mentorship";
+import { AcceptMentorshipService, DeclineMentorshipService, ViewAllMentorshipInvitesService, SendMentorshipInviteService, EndMentorshipService, GetMyMentorsService, RecognizeAlumniService, GetMentorRecognitionService, SetRecognitionVisibilityService } from "@/services/mentorship";
 import { GetMyMenteesService, GetMentorshipRequestsService } from "@/services/alumni";
+import { SetRecognitionVisibilityTypes } from "@/schema/mentorship";
 import { Request, Response } from "express";
 
 class MentorshipController {
@@ -65,6 +66,21 @@ class MentorshipController {
     const { userId: studentId } = req.user!;
     const { alumniId } = req.params;
     const response = await GetMentorRecognitionService(studentId, alumniId);
+    return res.status(response.code).json(response);
+  };
+
+  public setRecognitionVisibility = async (req: Request, res: Response) => {
+    // Only the alumni who received the recognition may change its visibility.
+    const { userId: alumniId } = req.user!;
+    const { recognitionId } = req.params;
+    if (typeof recognitionId !== "string") {
+      return res
+        .status(400)
+        .json({ status: "error", code: 400, message: "Recognition id is required" });
+    }
+    // Body shape already enforced by setRecognitionVisibilitySchema.
+    const { isVisible } = (req.body ?? {}) as SetRecognitionVisibilityTypes;
+    const response = await SetRecognitionVisibilityService(recognitionId, alumniId, isVisible);
     return res.status(response.code).json(response);
   };
 }

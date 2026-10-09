@@ -5,20 +5,33 @@ import { mentorshipService } from "@/services/mentorship.service"
 import { Row } from "@tanstack/react-table"
 import { User, UserCircle2, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { useState } from "react"
+import ConfirmEndDialog from "@/components/common/dialogs/ConfirmEndDialog"
 
-export default function MenteeCard({ row }: {row: Row<AlumniStudentMentorshipCardTypes>}) {
+export default function MenteeCard({
+  row,
+  onRemoved,
+}: {
+  row: Row<AlumniStudentMentorshipCardTypes>
+  onRemoved?: (id: string) => void
+}) {
   const mentee = row.original
   const router = useRouter()
+  const [endMentorshipOpen, setEndMentorshipOpen] = useState(false)
 
-  const handleEndMentorship = async () => {
+  const handleEndMentorship = () => setEndMentorshipOpen(true)
+
+  const handleConfirmEndMentorship = async () => {
     try {
       const response = await mentorshipService.endMentorship({
         mentorshipRecordId: mentee.mentorshipRecordId,
       })
 
       if (response.status === "success") {
-        console.log("ended")
-        router.refresh();
+        onRemoved?.(mentee.mentorshipRecordId)
+        toast.success("Mentorship ended")
+        setEndMentorshipOpen(false)
       }
     } catch (error) {
       console.error("Failed to end mentorship", error)
@@ -76,6 +89,16 @@ export default function MenteeCard({ row }: {row: Row<AlumniStudentMentorshipCar
           End Mentorship
         </button>
       </div>
+
+      <ConfirmEndDialog
+        open={endMentorshipOpen}
+        onOpenChange={setEndMentorshipOpen}
+        onConfirm={handleConfirmEndMentorship}
+        title="End this mentorship?"
+        description="This is permanent. Ending the mentorship closes it along with its chat history. You can start a new mentorship with this person later by sending a request."
+        confirmLabel="End Mentorship"
+        pendingLabel="Ending..."
+      />
     </div>
   )
 }

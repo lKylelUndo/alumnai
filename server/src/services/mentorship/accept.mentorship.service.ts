@@ -3,7 +3,9 @@ import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { ChatRepository } from "@/repositories/chat.repository";
-import { notifyUser } from "@/lib/socket";
+import { ENV } from "@/config/env";
+import { notifyPeer } from "@/services/mail/notify";
+import { prisma } from "@/lib/prisma";
 
 export const AcceptMentorshipService = async (mentorshipId: string, alumniId: string) => {
   const mentorshipRepository = new MentorshipRepository();
@@ -25,14 +27,47 @@ export const AcceptMentorshipService = async (mentorshipId: string, alumniId: st
       chatRepository.invalidateCache([alumniId, response.fromStudentId]),
     ]);
 
-    notifyUser(response.fromStudentId, "student:refresh", {
+    // One batched lookup covers both recipients; if it fails, notifyPeer
+    // falls back to its own per-user lookup.
+    const recipients = await prisma.user
+      .findMany({
+        where: { id: { in: [response.fromStudentId, alumniId] } },
+        select: { id: true, email: true },
+      })
+      .catch(() => null);
+    const emailOf = (id: string) =>
+      recipients?.find((recipient) => recipient.id === id)?.email ?? null;
+
+    await notifyPeer({
+      service: "AcceptMentorshipService",
+      userId: response.fromStudentId,
+      to: emailOf(response.fromStudentId),
+      event: "student:refresh",
       targets: ["my-mentors"],
       message: "An alumni has accepted your mentorship request!",
+      template: "request-update.html",
+      emailData: {
+        title: "Mentorship request accepted",
+        message: "An alumni has accepted your mentorship request. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "Your mentorship request was accepted",
     });
 
-    notifyUser(alumniId, "alumni:refresh", {
-      targets: ["your-mentees", "manage-mentorships"],
+    await notifyPeer({
+      service: "AcceptMentorshipService",
+      userId: alumniId,
+      to: emailOf(alumniId),
+      event: "alumni:refresh",
+      targets: ["stats", "your-mentees", "manage-mentorships"],
       message: "Mentorship request accepted!",
+      template: "request-update.html",
+      emailData: {
+        title: "Mentorship request accepted",
+        message: "You accepted a mentorship request. Sign in to view it.",
+        backToLoginURL: `${ENV.FRONTEND_URL}/login`,
+      },
+      subject: "Your mentorship request was accepted",
     });
 
     return { status: "success", code: 200, message: "Successfully accept a mentorship" };

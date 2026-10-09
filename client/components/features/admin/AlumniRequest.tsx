@@ -13,6 +13,7 @@ import { toast } from "sonner"
 const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const router = useRouter()
   const studentId = row.getValue("studentId") as string
+  const documents = row.getValue("documents") as string | undefined
 
   const handleApprove = async () => {
     const response = await adminService.approveAlumniRequest(studentId)
@@ -50,12 +51,26 @@ const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
       >
         <XCircle className="h-4 w-4" />
       </button>
-      <button
-        title="Inspect Documents"
-        className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-white"
-      >
-        <ArrowUpRight className="h-4 w-4" />
-      </button>
+      {documents ? (
+        <a
+          href={documents}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="View Document"
+          aria-label="View Document"
+          className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-white"
+        >
+          <ArrowUpRight className="h-4 w-4" />
+        </a>
+      ) : (
+        <span
+          title="No document available"
+          aria-label="No document available"
+          className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-white"
+        >
+          <ArrowUpRight className="h-4 w-4" />
+        </span>
+      )}
     </div>
   )
 }
@@ -82,12 +97,29 @@ export const columns: ColumnDef<AlumniRequest>[] = [
   {
     accessorKey: "documents",
     header: "Documents",
-    cell: ({ row }) => (
-      <div className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-primary hover:underline">
-        <FileText className="h-4 w-4" />
-        <span>{row.getValue("documents")}</span>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const documents = row.getValue("documents") as string | undefined
+      if (!documents) {
+        return (
+          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+            <FileText className="h-4 w-4" />
+            <span>No document</span>
+          </div>
+        )
+      }
+      return (
+        <a
+          href={documents}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="View Document"
+          className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+        >
+          <FileText className="h-4 w-4" />
+          <span>{documents}</span>
+        </a>
+      )
+    },
   },
   {
     accessorKey: "status",
