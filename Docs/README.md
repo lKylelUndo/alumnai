@@ -151,6 +151,11 @@ For detailed code patterns, connection lifecycles, and troubleshooting, refer to
   - `"alumni-requests"`: Triggers refetching alumni upgrade requests table.
   - `"top-mentors"`: Triggers refetching top-rated alumni mentors list.
 
+### Student / Alumni Real-Time Events
+- **Events**: `student:refresh`, `alumni:refresh` — same `{ targets, message? }` payload shape, role-specific target unions (e.g. `"collaboration-invites"`, `"manage-mentorships"`, `"stats"`).
+- **Toasts**: a single `RefreshToasts` listener per role layout surfaces `message` on every authenticated page; list components refetch silently so toasts never double-fire.
+- **Presence gating**: peer notifications go realtime-only when the recipient has a live socket, email-only when offline (Resend). Admin action emails always send. See [the presence-gating section](file:///c:/Users/Kyle%20Ando/Desktop/practice/alumnai/Docs/SOCKET_IO_IMPLEMENTATION.md) for the full rule and per-event table.
+
 ---
 
 ## 📱 Progressive Web App (PWA)
