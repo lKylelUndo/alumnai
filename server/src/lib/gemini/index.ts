@@ -15,5 +15,4 @@ export const AVAILABLE_GEMINI_MODELS = [
   "gemini-3.7-flash"
 ] as const;
 
-export const EMBEDDING_MODEL = "gemini-embedding-2";
 export const genAI = new GoogleGenAI({ apiKey: ENV.GEMINI_KEY });

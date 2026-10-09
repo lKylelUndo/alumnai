@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Settings, Target, Sparkles, Loader2, Code, Database, Box, Layers, Globe, Server, CheckCircle, RefreshCw } from "lucide-react"
+import { Settings, Target, Sparkles, Loader2, Code, Database, Box, Layers, Globe, Server, CheckCircle } from "lucide-react"
 import { skillService } from "@/services/skill.service"
 import { Button } from "@/components/ui/button"
 

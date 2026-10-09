@@ -14,5 +14,3 @@ export const IT_FIELDS = [
   "UI/UX Design",
   "Other IT Field",
 ] as const
-
-export type ITField = (typeof IT_FIELDS)[number]

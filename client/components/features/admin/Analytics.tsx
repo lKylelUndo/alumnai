@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 import { RefreshCw, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { axiosInstance } from "@/lib/axios"
+import { adminService } from "@/services/admin.service"
 import { SkillAnalyticsData } from "@/lib/types/analytics"
 
 const ChartPie = dynamic(() => import("./PieChart").then((mod) => mod.ChartPie), {
@@ -24,9 +24,9 @@ const Analytics = ({ data }: { data?: SkillAnalyticsData }) => {
     let cancelled = false
     ;(async () => {
       try {
-        const res = await axiosInstance.get("/api/skill/v1/get-top-alumni-skills")
-        if (!cancelled && res.data?.data?.skills) {
-          setAnalytics(res.data.data.skills)
+        const res = await adminService.getSkillTrendAnalytics()
+        if (!cancelled && res.data?.skills) {
+          setAnalytics(res.data.skills)
         } else if (!cancelled) {
           setLoadError(true)
         }
@@ -47,9 +47,9 @@ const Analytics = ({ data }: { data?: SkillAnalyticsData }) => {
   const handleRefreshAnalytics = async () => {
     try {
       setIsRefreshing(true)
-      const res = await axiosInstance.get("/api/skill/v1/get-top-alumni-skills?refresh=true")
-      if (res.data?.data?.skills) {
-        setAnalytics(res.data.data.skills)
+      const res = await adminService.getSkillTrendAnalytics(true)
+      if (res.data?.skills) {
+        setAnalytics(res.data.skills)
         setLoadError(false)
       }
     } catch (error) {

@@ -1,5 +1,5 @@
 import ResetPasswordForm from "@/components/features/auth/ForgetPasswordForm"
-import { axiosServerInstance } from "@/lib/axios"
+import { authService } from "@/services/auth.service"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 
@@ -12,9 +12,9 @@ export default async function ResetPasswordPage({ params}: { params: Promise<{ t
   const { token } = await params
 
   try {
-    const response = await axiosServerInstance.post('/api/auth/v1/verify-reset-password-token', {token})
+    const response = await authService.verifyResetPasswordToken({token})
 
-    if (response.data?.status === "error") {
+    if (response?.status === "error") {
       notFound()
     }
   } catch {

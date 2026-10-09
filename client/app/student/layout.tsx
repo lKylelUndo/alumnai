@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import StudentHeader from "@/components/features/student/dashboard/StudentHeader";
 import { AuthGuard } from "@/components/features/auth/AuthGuard";
 import ChatBox from "@/components/common/ChatBoxDynamic";
+import RefreshToasts from "@/components/common/layout/RefreshToasts";
 
 export const metadata: Metadata = {
   title: "AlumnAI - Student Dashboard",
@@ -22,6 +23,7 @@ export default function StudentDashboardLayout({ children }: { children: React.R
                 </footer>
             </main>
             <ChatBox />
+            <RefreshToasts event="student:refresh" />
         </AuthGuard>
     )
 }

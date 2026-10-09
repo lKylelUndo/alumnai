@@ -8,7 +8,6 @@ import CollaborationInviteCard from "./CollaborationInviteCard";
 import { useState, useEffect, useCallback } from "react";
 import { useStudentSocket } from "@/hooks/useStudentSocket";
 import { collaborationService } from "@/services/collaboration.service";
-import { toast } from "sonner";
 
 export const columns: ColumnDef<StudentCollabInviteCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
@@ -32,12 +31,7 @@ const CollaborationInvites = ({ invites: initialInvites }: { invites: StudentCol
 
   useStudentSocket({
     target: "collaboration-invites",
-    onRefresh: (data) => {
-      if (data?.message) {
-        toast.info(data.message);
-      } else {
-        toast.info("You have a new collaboration request!");
-      }
+    onRefresh: () => {
       refetchInvites();
     },
   });

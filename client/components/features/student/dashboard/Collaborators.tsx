@@ -7,7 +7,6 @@ import CollaboratorCard from "./CollaboratorCard";
 import { useState, useEffect, useCallback } from "react";
 import { useStudentSocket } from "@/hooks/useStudentSocket";
 import { collaborationService } from "@/services/collaboration.service";
-import { toast } from "sonner";
 
 export const columns: ColumnDef<StudentCollaboratorCardTypes>[] = [
   { accessorKey: "name", header: "Name" },
@@ -31,8 +30,7 @@ const Collaborators = ({ collaborators: initialCollaborators }: { collaborators:
 
   useStudentSocket({
     target: "your-collaborations",
-    onRefresh: (data) => {
-      if (data?.message) toast.info(data.message);
+    onRefresh: () => {
       refetchCollaborators();
     },
   });

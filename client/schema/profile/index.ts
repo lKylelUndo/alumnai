@@ -1,4 +1,3 @@
-export { viewProfileSchema } from "./view-profile.schema";
 export { updateProfileSchema } from "./update-profile.schema";
 
 export type { ViewProfileInput } from "./view-profile.schema";
