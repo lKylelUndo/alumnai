@@ -246,7 +246,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
 
   return (
     <div className="bg-muted/40 lg:min-h-screen">
-      <main className="mx-auto max-w-[1280px] px-4 md:px-8 py-8 md:py-16">
+      <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:py-16">
         {/* Back Button */}
         <div className="mb-4">
           <button
@@ -258,7 +258,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12">
           {/* Header / Hero Section - Full Width */}
           <div className="lg:col-span-12">
             <ViewProfileHeaderCard
@@ -276,7 +276,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
           </div>
 
           {/* Left Column: About & Skills */}
-          <div className="lg:col-span-8 flex flex-col gap-8">
+          <div className="flex flex-col gap-6 sm:gap-8 lg:col-span-8">
             {/* About Section */}
             <Card className="rounded-2xl p-6 md:p-8">
               <ProfileCardHeader icon={User} title="About" />
@@ -451,7 +451,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
           </div>
 
           {/* Right Column */}
-          <div className="lg:col-span-4 flex flex-col gap-8">
+          <div className="flex flex-col gap-6 sm:gap-8 lg:col-span-4">
             {/* Recognitions or Mentors overview card */}
             {isAlumni ? (
               <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />

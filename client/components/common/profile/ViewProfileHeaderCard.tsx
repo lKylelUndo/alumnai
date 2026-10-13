@@ -53,10 +53,10 @@ export default function ViewProfileHeaderCard({
 
   return (
     <>
-      <Card className="relative flex flex-col items-start justify-between gap-6 overflow-hidden rounded-2xl p-6 md:flex-row md:items-center md:p-8">
-        <div className="z-10 flex w-full flex-col items-center gap-6 md:w-auto md:flex-row">
+      <Card className="relative flex flex-col items-start justify-between gap-5 overflow-hidden rounded-2xl p-5 sm:p-6 md:flex-row md:items-center md:gap-6 md:p-8">
+        <div className="z-10 flex w-full min-w-0 flex-col items-center gap-5 md:w-auto md:flex-row md:gap-6">
           {/* Avatar */}
-          <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-card bg-muted">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-card bg-muted sm:h-24 sm:w-24">
             {profile.profilePicture ? (
               <Image
                 src={profile.profilePicture}
@@ -73,7 +73,7 @@ export default function ViewProfileHeaderCard({
           {/* Profile Details */}
           <div className="min-w-0 text-center md:text-left">
             <div className="mb-2 flex flex-col items-center gap-3 md:flex-row md:items-center">
-              <h1 className="text-3xl font-bold text-foreground">
+              <h1 className="break-words text-2xl font-bold text-foreground sm:text-3xl">
                 {profile.fullName || "Unnamed User"}
               </h1>
 
@@ -106,7 +106,7 @@ export default function ViewProfileHeaderCard({
               )}
             </div>
 
-            <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:gap-x-4">
+            <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-sm text-muted-foreground md:text-left">
               {/* Role specific lines */}
               {isStudent && profile.user?.student_id_number && (
                 <span className="font-semibold text-foreground">
@@ -153,7 +153,7 @@ export default function ViewProfileHeaderCard({
                   className="flex min-w-0 items-center gap-1 transition-colors hover:text-primary"
                 >
                   <LinkIcon className="h-[18px] w-[18px] shrink-0 text-primary" />
-                  <span className="truncate">LinkedIn</span>
+                  <span className="truncate">{isStudent ? "GitHub" : "LinkedIn"}</span>
                 </a>
               )}
             </div>

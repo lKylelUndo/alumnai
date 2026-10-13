@@ -50,13 +50,17 @@ const StudentProfileHeader = () => {
             </span>
             {user?.profile?.socialLink && (
               <a
-                href={user.profile.socialLink}
+                href={
+                  user.profile.socialLink.startsWith("http")
+                    ? user.profile.socialLink
+                    : `https://${user.profile.socialLink}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex min-w-0 items-center gap-1 transition-colors hover:text-primary"
               >
                 <LinkIcon className="h-[18px] w-[18px] shrink-0" />
-                <span className="truncate">LinkedIn</span>
+                <span className="truncate">GitHub</span>
               </a>
             )}
           </div>
