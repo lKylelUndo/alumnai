@@ -1,10 +1,12 @@
 import { ENV } from "@/config/env";
 import { AdminRepository } from "@/repositories/admin.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { sendNotificationEmail } from "@/services/mail/notify";
 import { notifyRole } from "@/lib/socket";
 
 export const VerifyUserService = async (id: string) => {
   const adminRepository = new AdminRepository();
+  const profileRepository = new ProfileRepository();
 
   try {
     // Look up by student ID number — the same key verify() updates by.
@@ -32,7 +34,10 @@ export const VerifyUserService = async (id: string) => {
       };
 
     // Invalidate admin caches
-    await adminRepository.invalidateCache(["unverified-users", "all-users", "dashboard-stats"]);
+    await Promise.all([
+      adminRepository.invalidateCache(["unverified-users", "all-users", "dashboard-stats"]),
+      profileRepository.invalidateCache(),
+    ]);
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 
