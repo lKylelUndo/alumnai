@@ -1,9 +1,11 @@
 import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const SuspendUserService = async (id: string) => {
     const adminRepository = new AdminRepository();
+    const profileRepository = new ProfileRepository();
 
     try {
         const user = await adminRepository.findById(id)
@@ -22,7 +24,13 @@ export const SuspendUserService = async (id: string) => {
         if (!suspendedUser)
             return { status: "error", code: 500, message: "Unable to suspend a user" };
 
-        await adminRepository.invalidateCache(["all-users", "dashboard-stats"]);
+        // Profile caches hold the user's status, so they must be dropped too —
+        // otherwise a viewer keeps reading the pre-suspension profile until
+        // the viewprofile:v2:* TTL expires.
+        await Promise.all([
+            adminRepository.invalidateCache(["all-users", "dashboard-stats"]),
+            profileRepository.invalidateCache(),
+        ]);
 
         // Best-effort: a failed notice must not fail a completed suspension.
         await sendNotificationEmail({

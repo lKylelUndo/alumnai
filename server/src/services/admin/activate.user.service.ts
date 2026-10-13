@@ -1,10 +1,12 @@
 import { notifyRole } from "@/lib/socket";
 import { AdminRepository } from "@/repositories/admin.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { ENV } from "@/config/env";
 import { sendNotificationEmail } from "@/services/mail/notify";
 
 export const ActivateUserService = async (id: string) => {
   const adminRepository = new AdminRepository();
+  const profileRepository = new ProfileRepository();
 
   try {
     const user = await adminRepository.findById(id);
@@ -21,7 +23,10 @@ export const ActivateUserService = async (id: string) => {
     if (!activatedUser)
       return { status: "error", code: 500, message: "Unable to activate user" };
 
-    await adminRepository.invalidateCache(["all-users", "dashboard-stats"]);
+    await Promise.all([
+      adminRepository.invalidateCache(["all-users", "dashboard-stats"]),
+      profileRepository.invalidateCache(),
+    ]);
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 

@@ -34,14 +34,14 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
 
   return (
     <div className="bg-muted/40 lg:min-h-screen">
-      <main className="mx-auto max-w-[1280px] px-4 md:px-8 py-8 md:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:py-16">
+        <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12">
           {/* Header - Full Width */}
           <div className="lg:col-span-12">
-            <Card className="relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-2xl p-6 md:flex-row md:items-center md:p-8">
-              <div className="z-10 flex w-full flex-col items-center gap-6 md:w-auto md:flex-row md:items-center">
+            <Card className="relative flex flex-col items-center justify-between gap-5 overflow-hidden rounded-2xl p-5 sm:p-6 md:flex-row md:items-center md:gap-6 md:p-8">
+              <div className="z-10 flex w-full min-w-0 flex-col items-center gap-5 md:w-auto md:flex-row md:items-center md:gap-6">
                 {/* Avatar */}
-                <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-card bg-muted">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-card bg-muted sm:h-24 sm:w-24">
                   {profile.profilePicture ? (
                     <Image
                       src={profile.profilePicture}
@@ -58,7 +58,7 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
                 {/* Info */}
                 <div className="min-w-0 text-center md:text-left">
                   <div className="mb-2 flex flex-col items-center gap-3 md:flex-row md:items-center">
-                    <h1 className="text-3xl font-bold text-foreground">
+                    <h1 className="break-words text-2xl font-bold text-foreground sm:text-3xl">
                       {profile.fullName || "Unnamed User"}
                     </h1>
 
@@ -70,7 +70,7 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
                     </span>
                   </div>
 
-                  <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:gap-x-4">
+                  <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-sm text-muted-foreground md:text-left">
                     {isStudent && profile.user?.student_id_number && (
                       <span className="font-semibold text-foreground">
                         Student ID: {profile.user.student_id_number}
@@ -116,7 +116,9 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
                         className="flex min-w-0 items-center gap-1 transition-colors hover:text-primary"
                       >
                         <LinkIcon className="h-[18px] w-[18px] shrink-0 text-primary" />
-                        <span className="truncate">LinkedIn</span>
+                        <span className="truncate">
+                          {isAlumni ? "LinkedIn" : "GitHub"}
+                        </span>
                       </a>
                     )}
                   </div>
@@ -126,7 +128,7 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
           </div>
 
           {/* Left Column: About & Skills */}
-          <div className="lg:col-span-8 flex flex-col gap-8">
+          <div className="flex flex-col gap-6 sm:gap-8 lg:col-span-8">
             {/* About */}
             <Card className="rounded-2xl p-6 md:p-8">
               <ProfileCardHeader icon={User} title="About" />
@@ -269,7 +271,7 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
           </div>
 
           {/* Right Column: Recognitions & Certifications */}
-          <div className="lg:col-span-4 flex flex-col gap-8">
+          <div className="flex flex-col gap-6 sm:gap-8 lg:col-span-4">
             {isAlumni && (
               <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />
             )}
@@ -277,8 +279,12 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
               <Card className="rounded-2xl p-6">
                 <ProfileCardHeader
                   icon={CheckCircle}
-                  title="Available for Mentoring"
-                  description="Student profile"
+                  title="Available for Collaboration"
+                  description={
+                    profile.isAvailableForCollaboration === false
+                      ? "Not accepting collaboration invites"
+                      : "Open to collaboration invites"
+                  }
                 />
               </Card>
             )}

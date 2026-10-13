@@ -32,6 +32,7 @@ export class MentorRepository {
     });
 
     const ranked = mentors.map((mentor, index) => ({
+      id: mentor.id,
       ranking: index + 1,
       name: mentor.profile?.fullName ?? "Unknown",
       mentees: mentor._count.receivedMentorships,
