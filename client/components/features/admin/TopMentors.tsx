@@ -1,12 +1,30 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { Award, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import type { TopMentors } from "@/lib/types/mentorship"
 import { useAdminSocket } from "@/hooks/useAdminSocket"
+import { useRouter } from "next/navigation"
+
+const ActionCell = ({ row }: { row: Row<TopMentors> }) => {
+  const router = useRouter()
+  const id = row.original.id
+
+  if (!id) return null
+
+  return (
+    <button
+      title="View Profile"
+      onClick={() => router.push(`/admin/view-user-profile/${id}`)}
+      className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors"
+    >
+      <ArrowUpRight className="h-4 w-4" />
+    </button>
+  )
+}
 
 export const columns: ColumnDef<TopMentors>[] = [
   {
@@ -43,11 +61,7 @@ export const columns: ColumnDef<TopMentors>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: () => (
-      <button className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-white transition-colors">
-        <ArrowUpRight className="h-4 w-4" />
-      </button>
-    ),
+    cell: ({ row }) => <ActionCell row={row} />,
   },
 ]
 

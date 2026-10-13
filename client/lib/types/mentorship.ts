@@ -45,7 +45,8 @@ export type AlumniStudentMentorshipCardTypes = {
 };
 
 export type TopMentors = {
-  ranking: string | number
+  id: string
+  ranking: number
   name: string
-  mentees: string | number
+  mentees: number
 }
