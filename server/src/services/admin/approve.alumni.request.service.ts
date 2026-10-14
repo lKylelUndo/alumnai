@@ -36,6 +36,7 @@ export const ApproveAlumniRequestService = async (studentId: string) => {
     ]);
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
+    const profileUpdateURL = `${ENV.FRONTEND_URL}/alumni/profile/update`;
 
     // Best-effort: a failed notice must not fail a completed approval.
     await sendNotificationEmail({
@@ -45,6 +46,7 @@ export const ApproveAlumniRequestService = async (studentId: string) => {
       data: {
         studentIdNumber: studentId,
         backToLoginURL,
+        profileUpdateURL,
       },
       subject: "Alumni status approved",
     });

@@ -9,7 +9,7 @@ export const updateProfileSchema = z
       aboutMe: z.string().optional(),
       graduatedYear: z.string().optional(),
       yearLevel: z.string().optional(),
-      fullName: z.string().optional(),
+      fullName: z.string().trim().min(1, "Full name is required").optional(),
       work_field: z.string().optional(),
       socialLink: z.string().optional(),
       companyName: z.string().optional(),

@@ -29,13 +29,11 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
     ) || []
   const otherSkills = profile.skills?.filter((s) => !s.type) || []
 
-  const isAlumni = Boolean(profile.graduatedYear)
+  const isAlumni = profile.user?.role === "ALUMNI" || Boolean(profile.graduatedYear)
   const isStudent = !isAlumni
 
   return (
-    <div className="bg-muted/40 lg:min-h-screen">
-      <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:py-16">
-        <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12">
+    <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12">
           {/* Header - Full Width */}
           <div className="lg:col-span-12">
             <Card className="relative flex flex-col items-center justify-between gap-5 overflow-hidden rounded-2xl p-5 sm:p-6 md:flex-row md:items-center md:gap-6 md:p-8">
@@ -291,8 +289,6 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
             <Certifications certifications={profile.certifications} />
           </div>
         </div>
-      </main>
-    </div>
   )
 }
 

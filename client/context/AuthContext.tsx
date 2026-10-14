@@ -2,6 +2,7 @@
 import { LoginInputTypes, SignupInputTypes } from "@/schema/auth"
 import type { User } from "@/lib/types/auth"
 import { authService } from "@/services/auth.service"
+import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react"
 
@@ -95,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const response = await authService.signup(data)
         if (response.code === 200 || response.code === 201) {
+          toast.success(response.message ?? "Registration received — wait for approval")
           router.push("/login")
         } else {
           console.log("Failed to signup")

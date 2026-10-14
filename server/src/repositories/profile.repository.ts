@@ -7,12 +7,18 @@ export class ProfileRepository {
   /**
    * Invalidate profile-related caches.
    * Clears the global profiles list and all view-profile caches.
+   * Best-effort: a dead cache must never fail the request that triggered
+   * it (entries expire via TTL anyway).
    */
   async invalidateCache() {
-    await redis.del("all-profiles");
-    // Clear all view-profile caches (pattern-based)
-    const viewKeys = await redis.keys("viewprofile:v2:*");
-    if (viewKeys.length > 0) await redis.del(...viewKeys);
+    try {
+      await redis.del("all-profiles");
+      // Clear all view-profile caches (pattern-based)
+      const viewKeys = await redis.keys("viewprofile:v2:*");
+      if (viewKeys.length > 0) await redis.del(...viewKeys);
+    } catch (error) {
+      console.warn("[ProfileRepository] invalidateCache failed:", error);
+    }
   }
 
   async all() {
