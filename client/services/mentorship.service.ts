@@ -40,6 +40,13 @@ export const mentorshipService = {
     return response.data;
   },
 
+  // Viewer-safe: fetch ACTIVE mentors of any student by id (used when viewing
+  // someone else's profile — alumni, students, and admins alike).
+  getStudentMentors: async (studentId: string) => {
+    const response = await getInstance().get(`/api/mentorship/v1/student-mentors/${studentId}`);
+    return response.data;
+  },
+
   recognizeAlumni: async (data: RecognizeAlumniInput) => {
     const response = await axiosInstance.post("/api/mentorship/v1/recognize-alumni", data);
     return response.data;

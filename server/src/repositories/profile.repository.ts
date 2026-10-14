@@ -13,8 +13,10 @@ export class ProfileRepository {
   async invalidateCache() {
     try {
       await redis.del("all-profiles");
-      // Clear all view-profile caches (pattern-based)
-      const viewKeys = await redis.keys("viewprofile:v2:*");
+      // Clear all view-profile caches (pattern-based). v2 keys are covered
+      // too — they predate the student_id_number privacy strip and must not
+      // survive alongside the v3 payloads.
+      const viewKeys = await redis.keys("viewprofile:v*:*");
       if (viewKeys.length > 0) await redis.del(...viewKeys);
     } catch (error) {
       console.warn("[ProfileRepository] invalidateCache failed:", error);
@@ -43,7 +45,9 @@ export class ProfileRepository {
   }
 
   async findById(profileId: string, userIdWhoRequested: string) {
-    const cacheKey = `viewprofile:v2:${userIdWhoRequested}:${profileId}`;
+    // v3: v2 payloads could carry student_id_number to non-admin viewers.
+    // Bumped so stale cached copies stop serving the field immediately.
+    const cacheKey = `viewprofile:v3:${userIdWhoRequested}:${profileId}`;
 
     // Owner-aware recognition visibility: every other viewer sees only
     // recognitions the alumni chose to show; the alumni viewing their OWN
@@ -158,6 +162,14 @@ export class ProfileRepository {
           }
         : null,
     };
+
+    // Privacy: student_id_number is admin-only. Strip it for every other
+    // viewer (including the profile owner — they see their own ID on their
+    // own pages via auth context, never via this visitor payload) so it can
+    // never leak through the API response or a cached copy.
+    if (viewer?.role !== RoleType.ADMIN && profileWithMentorshipStatus.user) {
+      delete (profileWithMentorshipStatus.user as { student_id_number?: string | null }).student_id_number;
+    }
 
     await redis.set(cacheKey, JSON.stringify(profileWithMentorshipStatus), "PX", 1000 * 60 * 2);
 

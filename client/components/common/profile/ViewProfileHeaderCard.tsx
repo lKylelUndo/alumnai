@@ -106,7 +106,7 @@ export default function ViewProfileHeaderCard({
               )}
             </div>
 
-            <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-sm text-muted-foreground md:text-left">
+            <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-sm text-muted-foreground md:justify-start md:text-left">
               {isAlumni && profile.current_position && (
                 <span className="flex min-w-0 items-center gap-1">
                   <Briefcase className="h-[18px] w-[18px] shrink-0 text-primary" />

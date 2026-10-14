@@ -12,9 +12,11 @@ import NoProfileCreated from "./NoProfileCreated"
 
 interface ViewProfileProps {
   profile?: Profile | null
+  /** Admin drill-down only: gate for the privacy-sensitive student ID. */
+  showStudentId?: boolean
 }
 
-const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
+const ViewProfileServerCmp = ({ profile, showStudentId = false }: ViewProfileProps) => {
   if (!profile) {
     return (
       <NoProfileCreated error="No profile created"/>
@@ -69,7 +71,10 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
                   </div>
 
                   <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-sm text-muted-foreground md:text-left">
-                    {isStudent && profile.user?.student_id_number && (
+                    {/* Privacy: student ID renders for admin viewers only
+                        (see showStudentId). The backend also strips the field
+                        for non-admins, so a stale cache can never leak it. */}
+                    {isStudent && showStudentId && profile.user?.student_id_number && (
                       <span className="font-semibold text-foreground">
                         Student ID: {profile.user.student_id_number}
                       </span>

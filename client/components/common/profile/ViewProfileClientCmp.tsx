@@ -19,6 +19,7 @@ import InviteDialog from "@/components/common/dialogs/InviteDialog"
 import GithubSkillIndexResultCmp, { GithubSkillIndexResultData } from "@/components/common/skills/GithubSkillIndexResultCmp"
 import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
 import { RefreshCw, ArrowLeft, Users, Loader2, User, Sparkles } from "lucide-react"
+import Image from "next/image"
 import ProfileCardHeader from "./ProfileCardHeader"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -61,6 +62,19 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
 
   const [mentorshipRequestPending, setMentorshipRequestPending] = useState(false)
 
+  // Mentors of the viewed student (visitor-safe endpoint — works for alumni,
+  // student, and admin viewers alike). Same shape as getMyMentors.
+  interface ViewedMentor {
+    toAlumniId: string
+    fullName: string
+    currentPosition?: string | null
+    companyName?: string | null
+    profilePicture?: string | null
+  }
+
+  const [viewedMentors, setViewedMentors] = useState<ViewedMentor[]>([])
+  const [mentorsLoading, setMentorsLoading] = useState(false)
+
   // GitHub Skill Indexing state
   const [analyzingGithub, setAnalyzingGithub] = useState(false)
   const [githubResult, setGithubResult] = useState<{
@@ -101,6 +115,30 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
       fetchProfileRef.current = null
     }
   }, [targetUserId])
+
+  // Fetch the viewed student's mentors once the profile loads and we know
+  // it's a student. Alumni viewers previously saw a hardcoded empty card.
+  useEffect(() => {
+    if (!targetUserId || !profile) return
+    const role = profile.user?.role
+    const viewingStudent = role === "STUDENT" || (!profile.graduatedYear && role !== "ALUMNI")
+    if (!viewingStudent) return
+
+    const fetchMentors = async () => {
+      try {
+        setMentorsLoading(true)
+        const res = await mentorshipService.getStudentMentors(profile.userId)
+        if (res.status === "success" && Array.isArray(res.data)) {
+          setViewedMentors(res.data)
+        }
+      } catch (err) {
+        console.error("Failed to fetch viewed student mentors:", err)
+      } finally {
+        setMentorsLoading(false)
+      }
+    }
+    fetchMentors()
+  }, [targetUserId, profile])
 
   const refreshProfile = useCallback(async () => {
     await fetchProfileRef.current?.(true)
@@ -460,12 +498,56 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                 <ProfileCardHeader
                   icon={Users}
                   title="Current Mentors"
-                  description="Student mentorship connections"
+                  description={
+                    mentorsLoading
+                      ? "Loading mentors..."
+                      : viewedMentors.length > 0
+                      ? `Currently have ${viewedMentors.length} mentor${viewedMentors.length > 1 ? "s" : ""}`
+                      : "Student mentorship connections"
+                  }
                 />
-                <div className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
-                  <Users className="mb-2 h-10 w-10 text-muted-foreground/50" />
-                  <p className="text-sm">No active mentors connected yet.</p>
-                </div>
+                {viewedMentors.length > 0 ? (
+                  <div className="space-y-4">
+                    {viewedMentors.map((mentor) => (
+                      <div
+                        key={mentor.toAlumniId}
+                        className="flex items-center justify-between rounded-lg border border-transparent p-3 transition-colors"
+                      >
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                            {mentor.profilePicture ? (
+                              <Image
+                                src={mentor.profilePicture}
+                                alt={mentor.fullName}
+                                width={40}
+                                height={40}
+                                className="h-full w-full rounded-full object-cover"
+                              />
+                            ) : (
+                              <User className="h-5 w-5 text-muted-foreground" />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate font-semibold leading-tight text-foreground">
+                              {mentor.fullName}
+                            </p>
+                            <p className="truncate text-xs text-muted-foreground">
+                              {mentor.currentPosition || "Mentor"}
+                              {mentor.companyName ? ` @ ${mentor.companyName}` : ""}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  !mentorsLoading && (
+                    <div className="flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
+                      <Users className="mb-2 h-10 w-10 text-muted-foreground/50" />
+                      <p className="text-sm">No active mentors connected yet.</p>
+                    </div>
+                  )
+                )}
               </Card>
             )}
 
