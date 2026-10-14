@@ -27,4 +27,46 @@ export class CertificateRepository {
       data,
     });
   }
+
+  /**
+   * Update visibility, scoped to the owning user through the profile.
+   * Returns null when the row does not exist (or is not owned by this user).
+   */
+  async setVisibility(certificationId: string, userId: string, isVisible: boolean) {
+    const result = await prisma.certification.updateMany({
+      where: {
+        id: certificationId,
+        profile: { userId },
+      },
+      data: { isVisible },
+    });
+
+    if (result.count === 0) return null;
+
+    return await prisma.certification.findUnique({
+      where: { id: certificationId },
+      select: { id: true, isVisible: true },
+    });
+  }
+
+  /**
+   * Delete a single certification, scoped to the owning user through the
+   * profile. Returns the deleted row, or null when it does not exist
+   * (or is not owned by this user).
+   */
+  async deleteOne(certificationId: string, userId: string) {
+    const target = await prisma.certification.findFirst({
+      where: {
+        id: certificationId,
+        profile: { userId },
+      },
+      select: { id: true },
+    });
+
+    if (!target) return null;
+
+    return await prisma.certification.delete({
+      where: { id: certificationId },
+    });
+  }
 }

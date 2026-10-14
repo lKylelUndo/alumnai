@@ -8,6 +8,7 @@ export interface Certification {
   title?: string;
   issuer: string;
   fileUrl?: string;
+  isVisible?: boolean;
   issueDate?: string;
   createdAt?: string;
   updatedAt?: string;

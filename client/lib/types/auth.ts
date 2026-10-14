@@ -28,6 +28,7 @@ export interface User {
       name: string;
       issuer: string;
       fileUrl: string;
+      isVisible?: boolean;
     }>;
     skills?: Skill[];
   } | null;

@@ -314,7 +314,7 @@ export default function ProfileFormFields({
         <FieldLabel className="font-semibold text-primary">
           Tech or Tools
         </FieldLabel>
-        <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring">
+        <div className="flex h-11 items-center gap-2 rounded-lg border border-input bg-transparent px-3 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
           <span className="flex-1 truncate text-muted-foreground">
             {hardSkills.length > 0
               ? hardSkills.map((s) => s.name).join(", ")
@@ -324,7 +324,7 @@ export default function ProfileFormFields({
             type="button"
             id="open-tech-tools-dialog-btn"
             onClick={onOpenDialog}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
             title="Add Tech or Tools"
           >
             <PlusIcon size={14} />
@@ -346,7 +346,7 @@ export default function ProfileFormFields({
                 (Optional)
               </span>
             </FieldLabel>
-            <div className="flex items-center gap-2 rounded-lg border border-input bg-transparent px-3 py-2 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+            <div className="flex h-11 items-center gap-2 rounded-lg border border-input bg-transparent px-3 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
               <input
                 {...field}
                 id="update-profile-linkedin"

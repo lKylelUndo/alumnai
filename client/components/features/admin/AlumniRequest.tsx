@@ -5,21 +5,18 @@ import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/common/tables/DataTable"
 import { FileText, CheckCircle2, XCircle, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
-import { useRouter } from "next/navigation"
 import type { AlumniRequest } from "@/lib/types/alumni"
-import { useAdminSocket } from "@/hooks/useAdminSocket"
 import { toast } from "sonner"
 
-const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
-  const router = useRouter()
+const ActionCell = ({ row, onDone }: { row: Row<AlumniRequest>; onDone: (studentId: string) => void }) => {
   const studentId = row.getValue("studentId") as string
   const documents = row.getValue("documents") as string | undefined
 
   const handleApprove = async () => {
     const response = await adminService.approveAlumniRequest(studentId)
     if (response.code === 200) {
+      onDone(studentId)
       toast.success("Alumni request approved successfully")
-      router.refresh()
     } else {
       toast.error(response.message || "Failed to approve alumni request")
     }
@@ -28,8 +25,8 @@ const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   const handleReject = async () => {
     const response = await adminService.rejectAlumniRequest(studentId)
     if (response.code === 200) {
+      onDone(studentId)
       toast.success("Alumni request rejected")
-      router.refresh()
     } else {
       toast.error(response.message || "Failed to reject alumni request")
     }
@@ -75,7 +72,9 @@ const ActionCell = ({ row }: { row: Row<AlumniRequest> }) => {
   )
 }
 
-export const columns: ColumnDef<AlumniRequest>[] = [
+const getColumns = (
+  onDone: (studentId: string) => void
+): ColumnDef<AlumniRequest>[] => [
   {
     accessorKey: "studentId",
     header: "Student ID",
@@ -152,8 +151,8 @@ export const columns: ColumnDef<AlumniRequest>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => <ActionCell row={row} />,
-  },
+    cell: ({ row }) => <ActionCell row={row} onDone={onDone} />
+  }
 ]
 
 export default function AlumniRequest({ data: initialData }: { data: AlumniRequest[] }) {
@@ -169,11 +168,9 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
       .catch((err) => console.error("Client fetch alumni requests failed:", err))
   }, [])
 
-  // Listen for realtime updates when a student submits an alumni request
-  useAdminSocket({ target: "alumni-requests", onRefresh: () => {
-      refetchAlumniRequests()
-    },
-  })
+  const handleDone = useCallback((studentId: string) => {
+    setRequests((prev) => prev.filter((r) => r.studentId !== studentId))
+  }, [])
 
   // Sync state whenever router.refresh() provides new initialData
   useEffect(() => {
@@ -195,7 +192,7 @@ export default function AlumniRequest({ data: initialData }: { data: AlumniReque
         </p>
       </div>
       <DataTable
-        columns={columns}
+        columns={getColumns(handleDone)}
         data={requests}
         filterColumn="studentId"
         filterPlaceholder="Search by Student Id..."

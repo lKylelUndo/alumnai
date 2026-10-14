@@ -145,9 +145,9 @@ export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPl
             </TableBody>
           </Table>
         </div>
-        {/* Pagination — compact sliding window shared with alumni/student tables */}
+        {/* Pagination — five-page blocks shared with alumni/student tables */}
         {totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-center gap-2 py-4">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2 py-4">
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
