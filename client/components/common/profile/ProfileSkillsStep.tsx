@@ -18,6 +18,7 @@ import {
   PROFILE_TAG_CLASS,
   PROFILE_TAG_REMOVE_CLASS,
 } from "./profileSteps"
+import { getProficiencyColor, PROFICIENCY_LEVELS } from "@/utils/skill"
 
 interface ProfileSkillsStepProps {
   /** Staged skills. This is the exact array the page submits. */
@@ -177,6 +178,33 @@ const ProfileSkillsStep = ({
           aria-hidden="true"
           className="mt-2.5 h-px w-full border-t border-dashed border-border/70"
         />
+        {/* Scale legend directly under the section header, above the inputs —
+            full width so it never wraps into a stack. The typed level
+            highlights its chip. */}
+        <div className="mt-3 rounded-lg border border-border/60 bg-muted/40 px-3.5 py-3">
+          <div className="flex flex-wrap gap-x-5 gap-y-1.5">
+            {PROFICIENCY_LEVELS.map((item) => {
+              const isActive = Number(techDraft.level) === item.level
+              return (
+                <span
+                  key={item.level}
+                  className={
+                    isActive
+                      ? "flex items-center gap-1.5 text-xs font-semibold text-foreground"
+                      : "flex items-center gap-1.5 text-xs text-muted-foreground"
+                  }
+                >
+                  <span
+                    className="h-2 w-2 rounded-full ring-1 ring-foreground/10"
+                    style={{ backgroundColor: getProficiencyColor(item.level) }}
+                    aria-hidden="true"
+                  />
+                  {item.level} {item.label}
+                </span>
+              )
+            })}
+          </div>
+        </div>
         <div className="mt-4 space-y-4">
           <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[1fr_9rem]">
             <Field>
@@ -214,6 +242,7 @@ const ProfileSkillsStep = ({
               />
             </Field>
           </div>
+
           <Field>
             <FieldLabel htmlFor="update-profile-tech-desc" className={PROFILE_LABEL_CLASS}>
               Short Skill Description

@@ -1,3 +1,13 @@
+// Shared 1-5 scale: 5 is the highest. Single source of truth for the legend
+// and every inline explainer, so the words can never drift apart.
+export const PROFICIENCY_LEVELS = [
+  { level: 1, label: "Beginner", hint: "Learning the basics" },
+  { level: 2, label: "Basic", hint: "Can do simple tasks" },
+  { level: 3, label: "Intermediate", hint: "Works independently" },
+  { level: 4, label: "Advanced", hint: "Handles complex work" },
+  { level: 5, label: "Expert", hint: "Can teach and lead" },
+] as const
+
 // Maps a 1-5 level to its proficiency color.
 // Deliberately not theme-bound: these are semantic status colors, kept in one
 // place so the skill dots and the legend can never drift apart.
