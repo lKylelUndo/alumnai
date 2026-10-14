@@ -19,7 +19,7 @@ import ProfileSkillsStep from "./ProfileSkillsStep"
 import ProfileCertificationsStep from "./ProfileCertificationsStep"
 import { createProfileSteps, PROFILE_RULE_CLASS } from "./profileSteps"
 import { profileService } from "@/services/profile.service"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { getProfileFormDefaultValues, User } from "@/utils/profile"
 import { addSkillSchema } from "@/schema/skill"
 import { authService } from "@/services/auth.service"
@@ -50,6 +50,7 @@ const UpdateProfileForm = () => {
   const stepIndexRef = useRef(0)
 
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   // this form is responsible sa profile update
   const form = useForm<z.infer<typeof updateProfileSchema>>({
@@ -76,6 +77,19 @@ const UpdateProfileForm = () => {
   const currentStep = steps[stepIndex]
   const isLastStep = stepIndex === steps.length - 1
   const profileId = user?.profile?.id ?? ""
+
+  // Deep-link support: /profile/update?step=skills lands directly on the
+  // Skills step (used by the profile page's Add Skill button now that the
+  // quick-add popup is gone). Unknown values fall back to Personal.
+  useEffect(() => {
+    const requested = searchParams.get("step")
+    if (!requested) return
+    const target = steps.findIndex((s) => s.id === requested)
+    if (target < 0) return
+    stepIndexRef.current = target
+    setStepIndex(target)
+    setFurthestIndex((prev) => Math.max(prev, target))
+  }, [searchParams, steps])
 
   const goToStep = useCallback(
     (next: number) => {
