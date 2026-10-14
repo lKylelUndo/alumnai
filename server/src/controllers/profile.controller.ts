@@ -1,4 +1,4 @@
-import { ViewProfileService, UpdateProfileService, AllProfilesService } from "@/services/profile";
+import { ViewProfileService, UpdateProfileService, AllProfilesService, SetCertificationVisibilityService, DeleteCertificationService } from "@/services/profile";
 import type { Request, Response } from "express";
 
 class ProfileController {
@@ -21,6 +21,34 @@ class ProfileController {
 
     public allProfiles = async (req: Request, res: Response) => {
         const response = await AllProfilesService();
+        return res.status(response.code).json(response);
+    }
+
+    public setCertificationVisibility = async (req: Request, res: Response) => {
+        // SECURITY: userId always comes from the verified token, never the body.
+        const userId = req.user!.userId;
+        const { id: certificationId } = req.params;
+        if (typeof certificationId !== "string") {
+          return res
+            .status(400)
+            .json({ status: "error", code: 400, message: "Certification id is required" });
+        }
+        // Body shape already enforced by setCertificationVisibilitySchema.
+        const { isVisible } = req.body ?? {};
+        const response = await SetCertificationVisibilityService(certificationId, userId, isVisible);
+        return res.status(response.code).json(response);
+    }
+
+    public deleteCertification = async (req: Request, res: Response) => {
+        // SECURITY: userId always comes from the verified token, never the body.
+        const userId = req.user!.userId;
+        const { id: certificationId } = req.params;
+        if (typeof certificationId !== "string") {
+          return res
+            .status(400)
+            .json({ status: "error", code: 400, message: "Certification id is required" });
+        }
+        const response = await DeleteCertificationService(certificationId, userId);
         return res.status(response.code).json(response);
     }
  

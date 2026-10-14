@@ -1,6 +1,7 @@
 import { encryptPassword } from "@/lib/bcrypt";
 import { SignupInputTypes } from "@/schema/auth";
 import { UserRepository } from "@/repositories/user.repository";
+import { AdminRepository } from "@/repositories/admin.repository";
 import { ENV } from "@/config/env";
 import { sendNotificationEmail } from "@/services/mail/notify";
 
@@ -35,6 +36,12 @@ export const AuthSignupService = async (data: SignupInputTypes) => {
         status: "error",
         code: 400,
       };
+
+    // The new row changes the unverified queue and the dashboard totals —
+    // drop both keys so the next admin read repopulates fresh instead of
+    // serving up to 5 minutes of stale cache. Best-effort (never throws).
+    const adminRepository = new AdminRepository();
+    await adminRepository.invalidateCache(["unverified-users", "dashboard-stats"]);
 
     const backToLoginURL = `${ENV.FRONTEND_URL}/login`;
 

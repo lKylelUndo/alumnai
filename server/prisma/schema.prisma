@@ -61,6 +61,7 @@ model Certification {
   name      String
   issuer    String
   fileUrl   String
+  isVisible Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)

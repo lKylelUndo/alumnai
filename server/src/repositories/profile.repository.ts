@@ -32,7 +32,8 @@ export class ProfileRepository {
     const profiles = await prisma.profile.findMany({
       include: {
         skills: true,
-        certifications: true,
+        // Privacy: general listings never expose hidden certifications.
+        certifications: { where: { isVisible: true } },
       },
     });
 
@@ -93,7 +94,11 @@ export class ProfileRepository {
           },
         },
         skills: true,
-        certifications: true,
+        // Privacy: only visible certifications ever leave the system,
+        // except that the owner sees their own hidden ones too (for toggling).
+        certifications: isOwnProfile
+          ? true
+          : { where: { isVisible: true } },
       },
     });
 

@@ -5,7 +5,6 @@ import { DataTable } from "@/components/common/tables/DataTable"
 import { adminService } from "@/services/admin.service"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { CheckCircle2, XCircle } from "lucide-react"
-import { useAdminSocket } from "@/hooks/useAdminSocket"
 import { toast } from "sonner"
 
 export type VerifyStudents = {
@@ -14,12 +13,13 @@ export type VerifyStudents = {
   email: string
 }
 
-const ActionCell = ({ row }: { row: Row<VerifyStudents> }) => {
+const ActionCell = ({ row, onDone }: { row: Row<VerifyStudents>; onDone: (studentId: string) => void }) => {
   const studentId = row.getValue("student_id_number") as string
 
   const handleApprove = async () => {
     const response = await adminService.verifyUser(studentId)
     if (response.code === 200) {
+      onDone(studentId)
       toast("Student verified successfully")
     } else {
       toast(response.message || "Failed to verify student")
@@ -29,6 +29,7 @@ const ActionCell = ({ row }: { row: Row<VerifyStudents> }) => {
   const handleReject = async () => {
     const response = await adminService.rejectUser(studentId)
     if (response.code === 200) {
+      onDone(studentId)
       toast("Student rejected successfully")
     } else {
       toast(response.message || "Failed to reject student")
@@ -55,7 +56,9 @@ const ActionCell = ({ row }: { row: Row<VerifyStudents> }) => {
   )
 }
 
-export const columns: ColumnDef<VerifyStudents>[] = [
+const getColumns = (
+  onDone: (studentId: string) => void
+): ColumnDef<VerifyStudents>[] => [
   {
     accessorKey: "student_id_number",
     header: "Student ID",
@@ -101,23 +104,16 @@ export const columns: ColumnDef<VerifyStudents>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => <ActionCell row={row} />
+    cell: ({ row }) => <ActionCell row={row} onDone={onDone} />
   }
 ]
 
 export default function VerifyStudents({ data: initialData }: { data: VerifyStudents[] }) {
   const [students, setStudents] = useState<VerifyStudents[]>(initialData ?? []);
 
-  const refetchStudents = useCallback(() => {
-    adminService.getUnverifiedUsers()
-      .then((res) => {
-        if (res?.data?.users) setStudents(res.data.users)
-    })
-      .catch((err) => console.error("Refetch unverified users failed:", err))
+  const handleDone = useCallback((studentId: string) => {
+    setStudents((prev) => prev.filter((s) => s.student_id_number !== studentId))
   }, [])
-
-  // Listen for realtime updates
-  useAdminSocket({ target: "unverified-users", onRefresh: refetchStudents })
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {
@@ -141,7 +137,7 @@ export default function VerifyStudents({ data: initialData }: { data: VerifyStud
           Approve or reject student verification requests
         </p>
       </div>
-      <DataTable columns={columns} data={students} filterColumn="student_id_number" filterPlaceholder="Search by Student Id..." />
+      <DataTable columns={getColumns(handleDone)} data={students} filterColumn="student_id_number" filterPlaceholder="Search by Student Id..." />
     </div>
   )
 }

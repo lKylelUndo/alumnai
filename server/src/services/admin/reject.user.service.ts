@@ -24,7 +24,7 @@ export const RejectUserService = async (id: string) => {
             subject: "Update on your account registration",
         });
 
-        notifyRole("admin", "admin:refresh", { targets: ["alumni-requests", "stats"] });
+        notifyRole("admin", "admin:refresh", { targets: ["unverified-users", "stats"] });
 
         return {
             status: "success",

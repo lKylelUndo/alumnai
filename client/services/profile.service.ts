@@ -12,4 +12,19 @@ export const profileService = {
     const response = await axiosInstance.post("/api/profile/v1/update-profile", data);
     return response.data;
   },
+
+  setCertificationVisibility: async (certificationId: string, isVisible: boolean) => {
+    const response = await axiosInstance.patch(
+      `/api/profile/v1/certifications/${certificationId}/visibility`,
+      { isVisible }
+    );
+    return response.data;
+  },
+
+  deleteCertification: async (certificationId: string) => {
+    const response = await axiosInstance.delete(
+      `/api/profile/v1/certifications/${certificationId}`
+    );
+    return response.data;
+  },
 };

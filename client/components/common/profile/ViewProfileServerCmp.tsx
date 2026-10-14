@@ -286,7 +286,7 @@ const ViewProfileServerCmp = ({ profile }: ViewProfileProps) => {
                 />
               </Card>
             )}
-            <Certifications certifications={profile.certifications} />
+            <Certifications certifications={profile.certifications} ownerUserId={profile.userId} />
           </div>
         </div>
   )

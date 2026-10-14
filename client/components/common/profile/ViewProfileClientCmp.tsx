@@ -470,7 +470,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
             )}
 
             {/* Certifications Card */}
-            <Certifications certifications={profile.certifications} />
+            <Certifications certifications={profile.certifications} ownerUserId={profile.userId} />
           </div>
         </div>
       </main>

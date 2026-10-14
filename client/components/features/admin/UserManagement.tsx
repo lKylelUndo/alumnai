@@ -6,7 +6,6 @@ import { ColumnDef, Row } from "@tanstack/react-table"
 import { UserCheck, UserX, ArrowUpRight } from "lucide-react"
 import { adminService } from "@/services/admin.service"
 import { useRouter } from "next/navigation"
-import { useAdminSocket } from "@/hooks/useAdminSocket"
 import { toast } from "sonner"
 
 export type UserManagement = {
@@ -17,14 +16,14 @@ export type UserManagement = {
   role: "Student" | "Alumni"
 }
 
-const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
+const ActionCell = ({ row, onStatusChange }: { row: Row<UserManagement>; onStatusChange: (id: string, status: "Active" | "Suspended") => void }) => {
   const router = useRouter()
   const id = row.original.id
 
   const handleActivate = async () => {
     const response = await adminService.activateUser(id)
     if (response.code === 200) {
-      router.refresh();
+      onStatusChange(id, "Active")
       toast("User activated successfully");
     } else {
       toast(response.message || "Failed to activate user")
@@ -34,7 +33,7 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   const handleSuspend = async () => {
     const response = await adminService.suspendUser(id)
     if (response.code === 200) {
-      router.refresh();
+      onStatusChange(id, "Suspended")
       toast("User suspended successfully");
     } else {
       toast(response.message || "Failed to suspend user")
@@ -68,7 +67,9 @@ const ActionCell = ({ row }: { row: Row<UserManagement> }) => {
   )
 }
 
-export const columns: ColumnDef<UserManagement>[] = [
+export const getColumns = (
+  onStatusChange: (id: string, status: "Active" | "Suspended") => void
+): ColumnDef<UserManagement>[] => [
   {
     accessorKey: "user",
     header: "User",
@@ -123,7 +124,7 @@ export const columns: ColumnDef<UserManagement>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => <ActionCell row={row} />,
+    cell: ({ row }) => <ActionCell row={row} onStatusChange={onStatusChange} />,
   },
 ]
 
@@ -139,8 +140,9 @@ export default function UserManagement({ data: initialData }: { data: UserManage
       .catch((err) => console.error("Refetch users failed:", err))
   }, [])
 
-  // Listen for realtime updates
-  useAdminSocket({ target: "all-users", onRefresh: refetchUsers })
+  const handleStatusChange = useCallback((id: string, status: "Active" | "Suspended") => {
+    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status } : u)))
+  }, [])
 
   // Sync fresh server data without cascading renders
   if (prevInitialData !== initialData) {
@@ -167,7 +169,7 @@ export default function UserManagement({ data: initialData }: { data: UserManage
         </p>
       </div>
       <DataTable
-        columns={columns}
+        columns={getColumns(handleStatusChange)}
         data={users}
         filterColumn="user"
         filterPlaceholder="Search by user..."
