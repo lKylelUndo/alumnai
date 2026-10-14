@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import StudentBanner from "@/components/features/student/dashboard/StudentBanner"
 import StudentDashboard from "@/components/features/student/dashboard/StudentDashboard"
+import ProfileCompletionBanner from "@/components/common/profile/ProfileCompletionBanner"
 
 function StudentBannerSkeleton() {
   return (
@@ -54,6 +55,9 @@ export default function StudentDashboardPage() {
       <Suspense fallback={<StudentBannerSkeleton />}>
         <StudentBanner />
       </Suspense>
+      <div className="mt-6">
+        <ProfileCompletionBanner role="STUDENT" />
+      </div>
       <Suspense fallback={<StudentPanelSkeleton />}>
         <StudentDashboard />
       </Suspense>
