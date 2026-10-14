@@ -248,7 +248,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
     <div className="bg-muted/40 lg:min-h-screen">
       <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:py-16">
         {/* Back Button */}
-        <div className="mb-4">
+        <div className="mb-4 print:hidden">
           <Link
             href={isAlumni ? "/student/find-mentors" : "/alumni/find-collaborators"}
             className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
@@ -296,7 +296,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
                     size="sm"
                     onClick={() => handleAnalyzeGithub()}
                     disabled={analyzingGithub}
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-lg border-primary/30 bg-primary/10 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-lg border-primary/30 bg-primary/10 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground print:hidden"
                   >
                     {analyzingGithub ? (
                       <>
