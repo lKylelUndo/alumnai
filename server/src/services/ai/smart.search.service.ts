@@ -25,6 +25,21 @@ export const SmartSearchService = async (rawSearch: string) => {
     const extractedSkills = Array.from(new Set(await Promise.all(canonicalSkillsPromises)));
     console.log("SmartSearchService - canonical extractedSkills:", extractedSkills);
 
+    // No skills detected (e.g. a name typed into the skills box) — skip the
+    // DB match and the ranking call entirely so the client can show guidance
+    // instead of a silent empty list.
+    const hasSkills = extractedSkills.some(
+      (s) => typeof s === "string" && s.trim().length > 0
+    );
+    if (!hasSkills) {
+      return {
+        status: "success",
+        code: 200,
+        recommendedStudents: [],
+        noSkillsDetected: true,
+      };
+    }
+
     // Get matching candidates
     const students = await profileRepository.matchSkill(extractedSkills);
     console.log("SmartSearchService - students:", students);
