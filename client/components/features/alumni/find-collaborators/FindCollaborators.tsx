@@ -27,9 +27,12 @@ export default function FindCollaborators() {
   const [recommendedStudents, setRecommendedStudents] = useState<RecommendedStudent[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [nameQuery, setNameQuery] = useState("")
+  const [noSkillsDetected, setNoSkillsDetected] = useState(false)
   const [selectedField, setSelectedField] = useState("")
   const debounceSearchQuery = useDebounce(searchQuery, 2000)
   const isSearching = debounceSearchQuery.trim().length > 0
+  const isFilteringByName = nameQuery.trim().length > 0
 
   useEffect(() => {
     const fetchCollaborators = async () => {
@@ -57,9 +60,11 @@ export default function FindCollaborators() {
     const intelligentSearch = async () => {
       try {
         setLoading(true)
+        setNoSkillsDetected(false)
         const response = await aiService.smartSearch(debounceSearchQuery)
         if (response.status === "success") {
           setRecommendedStudents(response.recommendedStudents)
+          setNoSkillsDetected(response.noSkillsDetected === true)
         }
       } catch (error) {
         console.error("Failed to fetch AI recommendations", error)
@@ -78,9 +83,12 @@ export default function FindCollaborators() {
       if (collaborator.isAvailableForCollaboration === false) return false
       const matchesField =
         selectedField === "" || collaborator.work_field === selectedField
-      return matchesField
+      const matchesName =
+        !isFilteringByName ||
+        (collaborator.name || "").toLowerCase().includes(nameQuery.trim().toLowerCase())
+      return matchesField && matchesName
     })
-  }, [collaborators, selectedField])
+  }, [collaborators, selectedField, isFilteringByName, nameQuery])
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen">
@@ -94,17 +102,39 @@ export default function FindCollaborators() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-4 mb-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm p-4 mb-2 flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
           {/* AI Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC]" />
-            <input
-              type="text"
-              placeholder="Search by name, skills, or role... (AI-powered)"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-base sm:text-sm text-[#131b2e] placeholder:text-[#A4B1CC] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-text"
-            />
+            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-[#1A216D]">
+              Discover by skills
+            </p>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC]" />
+              <input
+                type="text"
+                placeholder="Search skills… (AI-powered) — try React, Python, UI design"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-base sm:text-sm text-[#131b2e] placeholder:text-[#A4B1CC] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-text"
+              />
+            </div>
+          </div>
+
+          {/* Name Search Input */}
+          <div className="relative flex-1">
+            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-[#1A216D]">
+              Find by name
+            </p>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC]" />
+              <input
+                type="text"
+                placeholder="Search by student name…"
+                value={nameQuery}
+                onChange={(e) => setNameQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-base sm:text-sm text-[#131b2e] placeholder:text-[#A4B1CC] focus:outline-none focus:ring-2 focus:ring-[#1A216D]/20 focus:border-[#1A216D]/40 transition-all cursor-text"
+              />
+            </div>
           </div>
 
           {/* Field Dropdown */}
@@ -123,6 +153,9 @@ export default function FindCollaborators() {
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A4B1CC] pointer-events-none" />
           </div>
         </div>
+        <p className="mb-8 text-xs text-[#A4B1CC]">
+          AI search matches on skills — know their name? Use the name search instead.
+        </p>
 
         {/* Loading */}
         {loading && (
@@ -140,8 +173,16 @@ export default function FindCollaborators() {
               <Search className="h-8 w-8 text-[#1877F2]/40" />
             </div>
             <p className="text-base font-semibold text-[#131b2e]">
-              No matching students found for &quot;{debounceSearchQuery}&quot;
+              {noSkillsDetected
+                ? "No skills detected in your search"
+                : `No matching students found for "${debounceSearchQuery}"`}
             </p>
+            {noSkillsDetected && (
+              <p className="mt-2 max-w-md text-sm text-[#434657]">
+                Try skill keywords like React, Python, or UI design — or search
+                by student name above.
+              </p>
+            )}
           </div>
         )}
 
@@ -233,7 +274,7 @@ export default function FindCollaborators() {
         )}
 
         {/* Default collaborator list */}
-        {!loading && !isSearching && filteredCollaborators.length === 0 && (
+        {!loading && (!isSearching || isFilteringByName) && filteredCollaborators.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#e0e0ff]">
               <Search className="h-8 w-8 text-[#1877F2]/40" />
@@ -246,7 +287,7 @@ export default function FindCollaborators() {
           </div>
         )}
 
-        {!loading && !isSearching && filteredCollaborators.length > 0 && (
+        {!loading && (!isSearching || isFilteringByName) && filteredCollaborators.length > 0 && (
           <CardDataTable
             columns={columns}
             data={filteredCollaborators}

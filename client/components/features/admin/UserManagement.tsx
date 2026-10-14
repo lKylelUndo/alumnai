@@ -173,6 +173,8 @@ export default function UserManagement({ data: initialData }: { data: UserManage
         filterPlaceholder="Search by user..."
         statusFilterColumn="status"
         statusOptions={["Active", "Inactive", "Suspended"]}
+        roleFilterColumn="role"
+        roleOptions={["Student", "Alumni"]}
         pageSize={10}
       />
     </div>

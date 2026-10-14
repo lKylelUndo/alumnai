@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
+import Link from "next/link"
 import { toast } from "sonner"
 import { Profile } from "@/lib/types/profile"
 import { profileService } from "@/services/profile.service"
@@ -45,7 +46,6 @@ const getApiErrorMessage = (error: unknown, fallback: string): string => {
 
 export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfileClientCmpProps) {
   const params = useParams()
-  const router = useRouter()
   const targetUserId = propUserId || (params?.userId as string)
 
   const [profile, setProfile] = useState<ViewableProfile | null>(null)
@@ -249,13 +249,13 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
       <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:py-16">
         {/* Back Button */}
         <div className="mb-4">
-          <button
-            onClick={() => router.back()}
+          <Link
+            href={isAlumni ? "/student/find-mentors" : "/alumni/find-collaborators"}
             className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
           >
             <ArrowLeft className="h-4 w-4" />
             {isAlumni ? "Back to Find Mentors" : "Back to Find Collaborators"}
-          </button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12">

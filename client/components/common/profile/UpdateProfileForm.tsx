@@ -26,6 +26,7 @@ import { getProfileFormDefaultValues, User } from "@/utils/profile"
 import { addSkillSchema } from "@/schema/skill"
 import { authService } from "@/services/auth.service"
 import { skillService } from "@/services/skill.service"
+import { toast } from "sonner"
 
 const UpdateProfileForm = () => {
   const { user, setUser } = useAuthContext()
@@ -132,9 +133,11 @@ const UpdateProfileForm = () => {
           localStorage.setItem("user", JSON.stringify(meResponse.data.user))
       }
 
+      toast.success("Profile updated successfully")
       router.push(user?.role === "ALUMNI" ? "/alumni/profile" : "/student/profile")
     } catch (error) {
       console.error(error)
+      toast.error("Couldn't update profile")
     }
   }
 
