@@ -75,7 +75,9 @@ export default function AdminViewProfileClientCmp({ userId }: { userId: string }
   }
 
   if (profile) {
-    return <ViewProfileServerCmp profile={profile} />
+    // Admin drill-down: the viewer is always an admin, so the privacy-gated
+    // student ID is allowed here.
+    return <ViewProfileServerCmp profile={profile} showStudentId />
   }
 
   // Genuinely missing row — the user never completed a profile.

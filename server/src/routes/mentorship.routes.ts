@@ -12,6 +12,7 @@ router.get("/v1/view-my-mentorship-invites", authMiddleware.execute, permittedRo
 router.get("/v1/get-my-mentees", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), mentorshipController.getMyMentees);
 router.get("/v1/get-mentorship-requests", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), mentorshipController.getMentorshipRequests);
 router.get("/v1/get-my-mentors", authMiddleware.execute, permittedRole([RoleType.STUDENT]), mentorshipController.getMyMentors);
+router.get("/v1/student-mentors/:studentId", authMiddleware.execute, permittedRole([RoleType.ALUMNI, RoleType.STUDENT, RoleType.ADMIN]), mentorshipController.getStudentMentors);
 router.get("/v1/get-recognition/:alumniId", authMiddleware.execute, permittedRole([RoleType.STUDENT]), mentorshipController.getMentorRecognition);
 router.post("/v1/accept-mentorship", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), validateSchema(acceptMentorshipInviteSchema),mentorshipController.acceptMentorship);
 router.delete("/v1/decline-mentorship", authMiddleware.execute, permittedRole([RoleType.ALUMNI]), validateSchema(declineMentorshipInviteSchema), mentorshipController.declineMentorship);
