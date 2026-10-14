@@ -6,9 +6,10 @@ type ProfileCardHeaderProps = {
   title: string
   description?: string
   badge?: ReactNode
+  action?: ReactNode
 }
 
-const ProfileCardHeader = ({ icon: Icon, title, description, badge }: ProfileCardHeaderProps) => {
+const ProfileCardHeader = ({ icon: Icon, title, description, badge, action }: ProfileCardHeaderProps) => {
   return (
     <div className="mb-5 flex items-center gap-3">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -21,6 +22,7 @@ const ProfileCardHeader = ({ icon: Icon, title, description, badge }: ProfileCar
         </div>
         {description && <p className="text-sm text-muted-foreground">{description}</p>}
       </div>
+      {action && <div className="ml-auto shrink-0">{action}</div>}
     </div>
   )
 }

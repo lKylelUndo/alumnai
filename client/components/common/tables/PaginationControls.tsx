@@ -20,9 +20,12 @@ const activePillClass =
 const pagePillClass =
   "flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all duration-200 border border-[#E2E6F3] bg-white text-[#1A216D] hover:border-[#1A216D] hover:bg-[#1A216D]/5"
 
-// Two-pill sliding window anchored so two numbers show whenever possible.
-function getWindowStart(currentPage: number, totalPages: number): number {
-  return Math.min(Math.max(currentPage, 0), Math.max(totalPages - 2, 0))
+// Five-page block windows: pages 1-5, 6-10, ... A partial last block
+// renders as-is. Ellipses jump to the adjacent block boundary.
+const WINDOW_SIZE = 5
+
+function getBlockStart(currentPage: number): number {
+  return Math.floor(Math.max(currentPage, 0) / WINDOW_SIZE) * WINDOW_SIZE
 }
 
 export function PaginationControls({
@@ -36,10 +39,10 @@ export function PaginationControls({
 }: PaginationControlsProps) {
   if (totalPages <= 1) return null
 
-  // Small sets stay fully visible — compact only when it matters.
-  const showAll = totalPages <= 3
-  const start = showAll ? 0 : getWindowStart(currentPage, totalPages)
-  const end = showAll ? totalPages - 1 : Math.min(start + 1, totalPages - 1)
+  // Small sets stay fully visible — blocks only when it matters.
+  const showAll = totalPages <= WINDOW_SIZE
+  const start = showAll ? 0 : getBlockStart(currentPage)
+  const end = showAll ? totalPages - 1 : Math.min(start + WINDOW_SIZE - 1, totalPages - 1)
   const visiblePages = Array.from({ length: end - start + 1 }, (_, i) => start + i)
   const showLeadingEllipsis = !showAll && start > 0
   const showTrailingEllipsis = !showAll && end < totalPages - 1
@@ -52,7 +55,7 @@ export function PaginationControls({
 
       {showLeadingEllipsis && (
         <Button
-          onClick={() => onSelectPage(Math.max(currentPage - 2, 0))}
+          onClick={() => onSelectPage(Math.max(start - 1, 0))}
           className={pagePillClass}
           aria-label="Previous pages"
         >
@@ -74,7 +77,7 @@ export function PaginationControls({
 
       {showTrailingEllipsis && (
         <Button
-          onClick={() => onSelectPage(Math.min(currentPage + 2, totalPages - 1))}
+          onClick={() => onSelectPage(Math.min(start + WINDOW_SIZE, totalPages - 1))}
           className={pagePillClass}
           aria-label="More pages"
         >

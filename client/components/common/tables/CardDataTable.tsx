@@ -71,9 +71,9 @@ export function CardDataTable<TData, TValue>({
         )
       )}
 
-      {/* Pagination — compact sliding window shared with admin tables */}
+      {/* Pagination — five-page blocks shared with admin tables */}
       {totalPages > 1 && (
-        <div className="mt-10 flex items-center justify-center gap-2">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}
