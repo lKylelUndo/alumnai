@@ -1,9 +1,11 @@
+import { useState } from "react"
 import Image from "next/image"
-import { Profile } from "@/lib/types/profile"
+import { Profile, ProfileRelationRow } from "@/lib/types/profile"
 import { Card } from "@/components/ui/card"
 import Certifications from "@/components/common/layout/Certifications"
 import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
-import { Briefcase, LinkIcon, User, Building2, Mail, CheckCircle, GraduationCap, Sparkles } from "lucide-react"
+import { Briefcase, LinkIcon, User, Building2, Mail, CheckCircle, GraduationCap, Sparkles, Users, Handshake, ChevronLeft, ChevronRight } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import ProfileCardHeader from "./ProfileCardHeader"
 import { getProficiencyColor } from "@/utils/skill"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -14,6 +16,92 @@ interface ViewProfileProps {
   profile?: Profile | null
   /** Admin drill-down only: gate for the privacy-sensitive student ID. */
   showStudentId?: boolean
+}
+
+interface RelationCardProps {
+  icon: LucideIcon
+  title: string
+  rows?: ProfileRelationRow[] | null
+}
+
+const RELATION_PAGE_SIZE = 3
+
+const RelationCard = ({ icon, title, rows }: RelationCardProps) => {
+  const [currentPage, setCurrentPage] = useState(1)
+  const items = rows ?? []
+
+  if (items.length === 0) {
+    return null
+  }
+
+  const totalPages = Math.ceil(items.length / RELATION_PAGE_SIZE)
+  const safePage = Math.min(currentPage, Math.max(totalPages, 1))
+  const startIndex = (safePage - 1) * RELATION_PAGE_SIZE
+  const currentItems = items.slice(startIndex, startIndex + RELATION_PAGE_SIZE)
+
+  return (
+    <Card className="rounded-2xl p-6">
+      <ProfileCardHeader icon={icon} title={title} />
+      <div className="space-y-4">
+        {currentItems.map((row) => (
+          <div
+            key={row.id}
+            className="flex items-center gap-2.5 border-b border-border pb-3 last:border-none last:pb-0"
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
+              {row.profilePicture ? (
+                <Image
+                  src={row.profilePicture}
+                  alt={row.fullName}
+                  width={32}
+                  height={32}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <User className="h-4 w-4 text-muted-foreground" />
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-bold text-foreground">{row.fullName}</p>
+              {row.subtitle && (
+                <p className="truncate text-[10px] text-muted-foreground">{row.subtitle}</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-border pt-3 text-xs">
+          <span className="text-[11px] text-muted-foreground">
+            Page {safePage} of {totalPages}
+          </span>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={safePage === 1}
+              className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+              <span>Prev</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={safePage === totalPages}
+              className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <span>Next</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+    </Card>
+  )
 }
 
 const ViewProfileServerCmp = ({ profile, showStudentId = false }: ViewProfileProps) => {
@@ -290,6 +378,15 @@ const ViewProfileServerCmp = ({ profile, showStudentId = false }: ViewProfilePro
                   }
                 />
               </Card>
+            )}
+            {isStudent && (
+              <RelationCard icon={Users} title="Current Mentors" rows={profile.mentors} />
+            )}
+            {isAlumni && (
+              <RelationCard icon={Users} title="Current Mentees" rows={profile.mentees} />
+            )}
+            {isAlumni && (
+              <RelationCard icon={Handshake} title="Collaborations" rows={profile.collaborations} />
             )}
             <Certifications certifications={profile.certifications} ownerUserId={profile.userId} />
           </div>
