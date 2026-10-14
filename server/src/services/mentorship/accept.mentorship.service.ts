@@ -3,6 +3,7 @@ import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { ChatRepository } from "@/repositories/chat.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { ENV } from "@/config/env";
 import { notifyPeer } from "@/services/mail/notify";
 import { prisma } from "@/lib/prisma";
@@ -13,6 +14,7 @@ export const AcceptMentorshipService = async (mentorshipId: string, alumniId: st
   const studentRepository = new StudentRepository();
   const adminRepository = new AdminRepository();
   const chatRepository = new ChatRepository();
+  const profileRepository = new ProfileRepository();
 
   try {
     const response = await mentorshipRepository.accept(mentorshipId, alumniId);
@@ -25,6 +27,9 @@ export const AcceptMentorshipService = async (mentorshipId: string, alumniId: st
       studentRepository.invalidateCache(response.fromStudentId),
       adminRepository.invalidateCache(["dashboard-stats", "top-mentors"]),
       chatRepository.invalidateCache([alumniId, response.fromStudentId]),
+      // View-profile relation sections ride the profile cache: clear it so
+      // the new mentorship appears without waiting out the TTL.
+      profileRepository.invalidateCache(),
     ]);
 
     // One batched lookup covers both recipients; if it fails, notifyPeer

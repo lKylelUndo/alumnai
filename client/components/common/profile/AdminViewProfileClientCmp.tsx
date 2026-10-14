@@ -48,7 +48,13 @@ export default function AdminViewProfileClientCmp({ userId }: { userId: string }
       const response = await profileService.viewProfile({ id: userId })
 
       if (response?.status === "success" && response?.profile) {
-        setProfile(response.profile)
+        const profilePayload: Profile = response.profile
+        setProfile({
+          ...profilePayload,
+          mentors: response.mentors ?? profilePayload.mentors,
+          mentees: response.mentees ?? profilePayload.mentees,
+          collaborations: response.collaborations ?? profilePayload.collaborations,
+        })
       } else if (response?.code === 404) {
         setError({ status: 404, message: response?.message || "Profile not found" })
       } else {

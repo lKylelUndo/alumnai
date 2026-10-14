@@ -3,6 +3,7 @@ import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
 import { ChatRepository } from "@/repositories/chat.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { ENV } from "@/config/env";
 import { notifyPeer } from "@/services/mail/notify";
 import { prisma } from "@/lib/prisma";
@@ -13,6 +14,7 @@ export const EndCollaborationService = async (collaborationId: string) => {
   const studentRepository = new StudentRepository();
   const adminRepository = new AdminRepository();
   const chatRepository = new ChatRepository();
+  const profileRepository = new ProfileRepository();
 
   try {
     const response = await collaborationRepository.end(collaborationId);
@@ -25,6 +27,9 @@ export const EndCollaborationService = async (collaborationId: string) => {
       studentRepository.invalidateCache(response.toStudentId),
       adminRepository.invalidateCache(["dashboard-stats"]),
       chatRepository.invalidateCache([response.fromAlumniId, response.toStudentId]),
+      // View-profile relation sections ride the profile cache: clear it so
+      // the ended collaboration disappears without waiting out the TTL.
+      profileRepository.invalidateCache(),
     ]);
 
     // One batched lookup covers both recipients; if it fails, notifyPeer

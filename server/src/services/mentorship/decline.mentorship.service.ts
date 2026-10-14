@@ -1,6 +1,7 @@
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { ENV } from "@/config/env";
 import { notifyPeer } from "@/services/mail/notify";
 import { prisma } from "@/lib/prisma";
@@ -9,6 +10,7 @@ export const DeclineMentorshipService = async (mentorshipId: string, alumniId: s
   const mentorshipRepository = new MentorshipRepository();
   const alumniRepository = new AlumniRepository();
   const studentRepository = new StudentRepository();
+  const profileRepository = new ProfileRepository();
 
   try {
     const response = await mentorshipRepository.decline(mentorshipId, alumniId);
@@ -19,6 +21,9 @@ export const DeclineMentorshipService = async (mentorshipId: string, alumniId: s
     await Promise.all([
       alumniRepository.invalidateCache(alumniId),
       studentRepository.invalidateCache(response.fromStudentId),
+      // View-profile relation sections ride the profile cache: clear it so
+      // the declined request disappears without waiting out the TTL.
+      profileRepository.invalidateCache(),
     ]);
 
     // One batched lookup covers both recipients; if it fails, notifyPeer

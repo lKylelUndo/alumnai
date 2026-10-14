@@ -1,6 +1,7 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
+import { ProfileRepository } from "@/repositories/profile.repository";
 import { ENV } from "@/config/env";
 import { notifyPeer } from "@/services/mail/notify";
 import { prisma } from "@/lib/prisma";
@@ -9,6 +10,7 @@ export const DeclineCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
   const alumniRepository = new AlumniRepository();
   const studentRepository = new StudentRepository();
+  const profileRepository = new ProfileRepository();
 
   try {
     const response = await collaborationRepository.decline(collaborationId);
@@ -19,6 +21,9 @@ export const DeclineCollaborationService = async (collaborationId: string) => {
     await Promise.all([
       alumniRepository.invalidateCache(response.fromAlumniId),
       studentRepository.invalidateCache(response.toStudentId),
+      // View-profile relation sections ride the profile cache: clear it so
+      // the removed collaboration disappears without waiting out the TTL.
+      profileRepository.invalidateCache(),
     ]);
 
     // One batched lookup covers both recipients; if it fails, notifyPeer
