@@ -1,4 +1,4 @@
-import { AcceptMentorshipService, DeclineMentorshipService, ViewAllMentorshipInvitesService, SendMentorshipInviteService, EndMentorshipService, GetMyMentorsService, RecognizeAlumniService, GetMentorRecognitionService, SetRecognitionVisibilityService } from "@/services/mentorship";
+import { AcceptMentorshipService, DeclineMentorshipService, ViewAllMentorshipInvitesService, SendMentorshipInviteService, EndMentorshipService, GetMyMentorsService, GetStudentMentorsService, RecognizeAlumniService, GetMentorRecognitionService, SetRecognitionVisibilityService } from "@/services/mentorship";
 import { GetMyMenteesService, GetMentorshipRequestsService } from "@/services/alumni";
 import { SetRecognitionVisibilityTypes } from "@/schema/mentorship";
 import { Request, Response } from "express";
@@ -52,6 +52,19 @@ class MentorshipController {
   public getMyMentors = async (req: Request, res: Response) => {
     const userId = req.user!.userId;
     const response = await GetMyMentorsService(userId);
+    return res.status(response.code).json(response);
+  };
+
+  public getStudentMentors = async (req: Request, res: Response) => {
+    // Viewer-safe: the student id comes from the URL so any authenticated
+    // viewer (alumni, student, admin) can see a student's ACTIVE mentors.
+    const { studentId } = req.params;
+    if (typeof studentId !== "string") {
+      return res
+        .status(400)
+        .json({ status: "error", code: 400, message: "Student id is required", data: [] });
+    }
+    const response = await GetStudentMentorsService(studentId);
     return res.status(response.code).json(response);
   };
 
