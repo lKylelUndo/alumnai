@@ -107,13 +107,6 @@ export default function ViewProfileHeaderCard({
             </div>
 
             <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-sm text-muted-foreground md:text-left">
-              {/* Role specific lines */}
-              {isStudent && profile.user?.student_id_number && (
-                <span className="font-semibold text-foreground">
-                  Student ID: {profile.user.student_id_number}
-                </span>
-              )}
-
               {isAlumni && profile.current_position && (
                 <span className="flex min-w-0 items-center gap-1">
                   <Briefcase className="h-[18px] w-[18px] shrink-0 text-primary" />
@@ -161,7 +154,7 @@ export default function ViewProfileHeaderCard({
         </div>
 
         {/* Action Button */}
-        <div className="z-10 mt-4 flex w-full shrink-0 flex-col gap-3 sm:flex-row md:mt-0 md:w-auto">
+        <div className="z-10 mt-4 flex w-full shrink-0 flex-col gap-3 print:hidden sm:flex-row md:mt-0 md:w-auto">
           {pendingMentorshipRequest ? (
             <>
               <Button
