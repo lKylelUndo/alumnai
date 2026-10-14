@@ -30,7 +30,12 @@ interface ProfileFormFieldsProps {
   userRole: string
   control: Control<z.infer<typeof updateProfileSchema>>
   skills: AddSkillInput[]
-  onOpenDialog: () => void
+  /**
+   * When provided, renders the "Tech or Tools" shortcut that opens the add
+   * skill dialog. The stepped update flow owns skills in its own step, so it
+   * omits this and the block disappears without changing the props contract.
+   */
+  onOpenDialog?: () => void
 }
 
 export default function ProfileFormFields({
@@ -51,6 +56,13 @@ export default function ProfileFormFields({
   const availabilityHelper = isAlumni
     ? "Turn off to pause new mentorship/collaboration requests"
     : "Turn off to pause new collaboration requests"
+
+  // Plain text inputs have no Enter action — suppress only, so Enter can
+  // never implicitly submit the stepper form. Textareas keep Enter for
+  // newlines. Matches the tag inputs in ProfileSkillsStep.
+  const preventEnterSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") e.preventDefault()
+  }
 
   const handleAvailabilityToggle = useCallback(
     async (
@@ -108,10 +120,11 @@ export default function ProfileFormFields({
               {...field}
               id="update-profile-fullname"
               aria-invalid={fieldState.invalid}
-              placeholder="John Doe"
-              autoComplete="off"
-              type="text"
-            />
+                placeholder="John Doe"
+                autoComplete="off"
+                type="text"
+                onKeyDown={preventEnterSubmit}
+              />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
@@ -135,10 +148,11 @@ export default function ProfileFormFields({
                   {...field}
                   id="update-profile-companyname"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Acme Corp"
-                  autoComplete="off"
-                  type="text"
-                />
+                placeholder="Acme Corp"
+                autoComplete="off"
+                type="text"
+                onKeyDown={preventEnterSubmit}
+              />
 
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -163,9 +177,10 @@ export default function ProfileFormFields({
                   {...field}
                   id="update-profile-currentposition"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Junior Frontend Developer"
-                  autoComplete="off"
-                />
+                placeholder="Junior Frontend Developer"
+                autoComplete="off"
+                onKeyDown={preventEnterSubmit}
+              />
 
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -310,27 +325,29 @@ export default function ProfileFormFields({
         )}
       />
 
-      <Field>
-        <FieldLabel className="font-semibold text-primary">
-          Tech or Tools
-        </FieldLabel>
-        <div className="flex h-11 items-center gap-2 rounded-lg border border-input bg-transparent px-3 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
-          <span className="flex-1 truncate text-muted-foreground">
-            {hardSkills.length > 0
-              ? hardSkills.map((s) => s.name).join(", ")
-              : "C#, React, PHP, jQuery"}
-          </span>
-          <button
-            type="button"
-            id="open-tech-tools-dialog-btn"
-            onClick={onOpenDialog}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
-            title="Add Tech or Tools"
-          >
-            <PlusIcon size={14} />
-          </button>
-        </div>
-      </Field>
+      {onOpenDialog && (
+        <Field>
+          <FieldLabel className="font-semibold text-primary">
+            Tech or Tools
+          </FieldLabel>
+          <div className="flex h-11 items-center gap-2 rounded-lg border border-input bg-transparent px-3 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+            <span className="flex-1 truncate text-muted-foreground">
+              {hardSkills.length > 0
+                ? hardSkills.map((s) => s.name).join(", ")
+                : "C#, React, PHP, jQuery"}
+            </span>
+            <button
+              type="button"
+              id="open-tech-tools-dialog-btn"
+              onClick={onOpenDialog}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-input text-muted-foreground transition hover:border-primary hover:text-primary"
+              title="Add Tech or Tools"
+            >
+              <PlusIcon size={14} />
+            </button>
+          </div>
+        </Field>
+      )}
 
       <Controller
         name="socialLink"
@@ -354,6 +371,7 @@ export default function ProfileFormFields({
                 placeholder="Paste link here"
                 autoComplete="off"
                 className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+                onKeyDown={preventEnterSubmit}
               />
               <Link2Icon size={16} className="shrink-0 text-muted-foreground" />
             </div>
