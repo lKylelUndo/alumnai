@@ -14,10 +14,12 @@ interface DataTableProps<TData, TValue> {
   filterPlaceholder: string
   statusFilterColumn?: string
   statusOptions?: string[]
+  roleFilterColumn?: string
+  roleOptions?: string[]
   pageSize?: number
 }
 
-export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder, statusFilterColumn, statusOptions, pageSize = 5 }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder, statusFilterColumn, statusOptions, roleFilterColumn, roleOptions, pageSize = 5 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const table = useReactTable({
     data,
@@ -44,7 +46,7 @@ export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPl
   return (
     <div>
     
-          <div className="flex items-center gap-2 py-4">
+          <div className="flex flex-wrap items-center gap-2 py-4">
             <Input
               placeholder={filterPlaceholder}
               value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
@@ -55,15 +57,41 @@ export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPl
               <Select
                 value={(table.getColumn(statusFilterColumn)?.getFilterValue() as string) ?? "all"}
                 onValueChange={(value) =>
-                  table.getColumn(statusFilterColumn)?.setFilterValue(value === "all" ? "" : value)
+                  table.getColumn(statusFilterColumn)?.setFilterValue(value === "__clear" ? "" : value)
                 }
               >
                 <SelectTrigger className="w-[160px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent className="mt-10">
-                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="all" disabled>
+                    Status
+                  </SelectItem>
+                  <SelectItem value="__clear">All</SelectItem>
                   {statusOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {roleFilterColumn && roleOptions && (
+              <Select
+                value={(table.getColumn(roleFilterColumn)?.getFilterValue() as string) ?? "all"}
+                onValueChange={(value) =>
+                  table.getColumn(roleFilterColumn)?.setFilterValue(value === "__clear" ? "" : value)
+                }
+              >
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent className="mt-10">
+                  <SelectItem value="all" disabled>
+                    Role
+                  </SelectItem>
+                  <SelectItem value="__clear">All</SelectItem>
+                  {roleOptions.map((option) => (
                     <SelectItem key={option} value={option}>
                       {option}
                     </SelectItem>
