@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Settings, Target, Sparkles, Loader2, Code, Database, Box, Layers, Globe, Server, CheckCircle } from "lucide-react"
 import { skillService } from "@/services/skill.service"
+import { useAuthContext } from "@/context/AuthContext"
 import { Button } from "@/components/ui/button"
 
 type SkillGapItem = {
@@ -23,6 +25,8 @@ export default function SkillGapAnalysis() {
   const [data, setData] = useState<SkillGapAnalysisData | null>(null)
   const [hasAnalyzed, setHasAnalyzed] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { user, isLoading: authLoading } = useAuthContext()
+  const workField = user?.profile?.work_field?.trim()
 
   const handleAnalyze = async (forceRefresh = false) => {
     try {
@@ -62,6 +66,34 @@ export default function SkillGapAnalysis() {
       return <Layers className="h-6 w-6 text-cyan-500" />
     }
     return <Code className="h-6 w-6 text-primary" />
+  }
+
+  // The analysis compares against alumni in the student's specialization —
+  // without one there is nothing meaningful (or honest) to compare, so stop
+  // here instead of burning an AI call against the backend's fallback field.
+  if (!authLoading && !workField) {
+    return (
+      <div className="w-full space-y-4">
+        <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600">
+                <Target className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Specialization required</h2>
+                <p className="text-sm text-muted-foreground">
+                  Set your Specialization / IT Field in your profile first — the analysis compares your skills against alumni in your field.
+                </p>
+              </div>
+            </div>
+            <Button asChild className="w-full sm:w-auto bg-[#1e2356] hover:bg-[#151940] text-white px-6 py-2.5 rounded-xl font-medium">
+              <Link href="/student/profile/update">Update Profile</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

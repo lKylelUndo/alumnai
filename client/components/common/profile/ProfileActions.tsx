@@ -5,7 +5,7 @@ import { Download, Edit3 } from "lucide-react"
 
 const ProfileActions = ({ updateProfileURL }: { updateProfileURL: string }) => {
   return (
-    <div className="z-10 mt-4 flex w-full flex-col items-center gap-3 md:mt-0 md:w-auto md:flex-row md:items-end">
+    <div className="z-10 mt-4 flex w-full flex-col items-center gap-3 print:hidden md:mt-0 md:w-auto md:flex-row md:items-end">
       <button
         onClick={() => window.print()}
         className="download-btn flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted md:w-auto"
