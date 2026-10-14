@@ -14,6 +14,13 @@ export interface Certification {
   updatedAt?: string;
 }
 
+export interface ProfileRelationRow {
+  id: string;
+  fullName: string;
+  profilePicture: string | null;
+  subtitle: string | null;
+}
+
 export interface Profile {
   id: string;
   userId: string;
@@ -33,6 +40,9 @@ export interface Profile {
   skills: Skill[];
   certifications: Certification[];
   mentorshipStatus?: "PENDING" | "ACTIVE" | null;
+  mentors?: ProfileRelationRow[];
+  mentees?: ProfileRelationRow[];
+  collaborations?: ProfileRelationRow[];
   user?: {
     id: string;
     email?: string | null;
