@@ -1,11 +1,11 @@
 "use client";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import AccountMenu from "@/components/common/layout/AccountMenu"
 import { useAuthContext } from "@/context/AuthContext"
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { User, LogOut } from "lucide-react";
+import { Home, User, LogOut, Users } from "lucide-react";
 import InstitutionWordmark from "@/components/common/layout/InstitutionWordmark";
 import { cn } from "@/lib/utils";
 
@@ -67,6 +67,19 @@ const AlumniHeader = () => {
           email={user?.email}
           roleLabel="Alumni"
         >
+          <div className="sm:hidden">
+            <DropdownMenuItem asChild className="cursor-pointer text-sm hover:bg-muted">
+              <Link href="/alumni/dashboard" className={cn("flex items-center gap-2", pathname === "/alumni/dashboard" && "text-primary")}>
+                <Home className="h-3.5 w-3.5 text-primary" /> Home
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer text-sm hover:bg-muted">
+              <Link href="/alumni/find-collaborators" className={cn("flex items-center gap-2", pathname === "/alumni/find-collaborators" && "text-primary")}>
+                <Users className="h-3.5 w-3.5 text-primary" /> Collaborators
+              </Link>
+            </DropdownMenuItem>
+          </div>
+          <DropdownMenuSeparator className="sm:hidden" />
           <DropdownMenuItem asChild className="cursor-pointer text-sm hover:bg-muted">
             <Link href="/alumni/profile" className="flex items-center gap-2">
               <User className="h-3.5 w-3.5 text-primary" /> Profile

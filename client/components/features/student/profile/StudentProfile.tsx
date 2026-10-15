@@ -1,4 +1,5 @@
 import StudentCurrentMentors from "./StudentCurrentMentors"
+import StudentCurrentCollaborators from "./StudentCurrentCollaborators"
 import Certifications from "@/components/common/layout/Certifications"
 import StudentProfileHeader from "./StudentProfileHeader"
 import StudentProfileAbout from "./StudentProfileAbout"
@@ -20,9 +21,10 @@ const StudentProfile = () => {
             <StudentProfileSkills />
           </div>
 
-          {/* Right Column: Mentors & Certifications */}
+          {/* Right Column: Mentors, Collaborators & Certifications */}
           <div className="lg:col-span-4 flex flex-col gap-8">
             <StudentCurrentMentors />
+            <StudentCurrentCollaborators />
             <Certifications />
           </div>
         </div>
