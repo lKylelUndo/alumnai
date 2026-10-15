@@ -1,4 +1,6 @@
 import AlumniRecognition from "./AlumniRecognition"
+import AlumniCurrentMentees from "./AlumniCurrentMentees"
+import AlumniCurrentCollaborators from "./AlumniCurrentCollaborators"
 import Certifications from "@/components/common/layout/Certifications"
 import AlumniProfileHeader from "./AlumniProfileHeader"
 import AlumniProfileAbout from "./AlumniProfileAbout"
@@ -20,9 +22,11 @@ const AlumniProfile = () => {
             <AlumniProfileSkills />
           </div>
 
-          {/* Right Column: Recognitions & Certifications */}
+          {/* Right Column: Recognitions, Mentees, Collaborations & Certifications */}
           <div className="lg:col-span-4 flex flex-col gap-8">
             <AlumniRecognition />
+            <AlumniCurrentMentees />
+            <AlumniCurrentCollaborators />
             <Certifications />
           </div>
         </div>
