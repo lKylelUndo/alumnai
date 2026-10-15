@@ -26,9 +26,29 @@ import { authService } from "@/services/auth.service"
 import { skillService } from "@/services/skill.service"
 import { toast } from "sonner"
 
+/** Pulls the backend's reason out of an axios rejection; the server sends
+ *  { status:"error", code:400, message, reason } and axios surfaces it as
+ *  err.response.data. Falls back for network/unknown errors. */
+const getSkillRejectionMessage = (error: unknown): string => {
+  if (error && typeof error === "object" && "response" in error) {
+    const data = (error as { response?: { data?: { message?: string } } }).response?.data
+    if (data?.message) return data.message
+  }
+  return "Couldn't add this skill"
+}
+
+interface RejectedSkill {
+  name: string
+  message: string
+}
+
 const UpdateProfileForm = () => {
   const { user, setUser } = useAuthContext()
   const [skills, setSkills] = useState<z.infer<typeof addSkillSchema>[]>([])
+  // Skills the backend refused on the last submit, with the reason. Rendered
+  // inline on the Skills step so the user can fix or remove them; cleared on
+  // the next submit.
+  const [rejectedSkills, setRejectedSkills] = useState<RejectedSkill[]>([])
 
   const [stepIndex, setStepIndex] = useState(0)
   const [furthestIndex, setFurthestIndex] = useState(0)
@@ -175,6 +195,7 @@ const UpdateProfileForm = () => {
     console.log("Profile update payload:", data)
     console.log("Skills to submit separately:", skills)
     try {
+      setRejectedSkills([])
       const profileUpdateResponse = await profileService.updateProfile(data)
       console.log("Profile update response:", profileUpdateResponse)
 
@@ -184,11 +205,36 @@ const UpdateProfileForm = () => {
         profileId,
       }))
 
-      const addSkillResponses = await Promise.all(
+      // allSettled, not all: a rejected skill must not cancel the rest of the
+      // batch. Axios throws on the backend's 400, so Promise.all would abort
+      // on the first rejection — leaving later skills unsubmitted and the
+      // reason unreachable. Each result is indexed back to its submitted
+      // skill so the error can name it.
+      const addSkillResults = await Promise.allSettled(
         savedSkills.map((skill) => skillService.addSkill(skill))
       )
 
-      console.log("🚀 ~ onSubmit ~ addSkillResponse:", addSkillResponses)
+      const rejected = addSkillResults.flatMap((result, index) =>
+        result.status === "rejected"
+          ? [{ skill: savedSkills[index], message: getSkillRejectionMessage(result.reason) }]
+          : []
+      )
+
+      // Partial failure: the profile itself was saved, but one or more skills
+      // were refused. Stay on the form (back on the Skills step so the errors
+      // are visible), keep the rejected skills staged for editing/removal, and
+      // never navigate as if everything succeeded.
+      if (rejected.length > 0) {
+        setSkills(rejected.map(({ skill }) => skill))
+        setRejectedSkills(
+          rejected.map(({ skill, message }) => ({ name: skill.name, message }))
+        )
+        goToStep(steps.findIndex((step) => step.id === "skills"))
+        toast.warning(`Profile saved, but ${rejected.length} skill(s) were rejected`)
+        return
+      }
+
+      console.log("🚀 ~ onSubmit ~ addSkillResponse:", addSkillResults)
 
       // refetch full fresh user data from backend
       const meResponse = await authService.getMe()
@@ -254,6 +300,27 @@ const UpdateProfileForm = () => {
             </div>
 
             <div hidden={currentStep.id !== "skills"}>
+              {rejectedSkills.length > 0 && (
+                <div
+                  role="alert"
+                  className="mb-6 rounded-lg border border-destructive/30 bg-destructive/5 px-3.5 py-3"
+                >
+                  <p className="text-sm font-medium text-destructive">
+                    Your profile was saved, but {rejectedSkills.length} skill(s) couldn&apos;t be
+                    added. Edit or remove them below, then save again.
+                  </p>
+                  <ul className="mt-1.5 space-y-0.5">
+                    {rejectedSkills.map((rejected, index) => (
+                      <li
+                        key={`${rejected.name}-${index}`}
+                        className="text-xs font-medium text-destructive"
+                      >
+                        {rejected.name}: {rejected.message}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <ProfileSkillsStep
                 skills={skills}
                 onSkillsChange={setSkills}
