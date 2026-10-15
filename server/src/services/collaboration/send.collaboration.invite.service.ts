@@ -28,6 +28,15 @@ export const SendCollaborationInviteService = async (userId: string, data: SendC
         message: "This student already has a pending mentorship request with you. Accept or decline it first.",
       };
 
+    const activeMentorship = await mentorshipRepository.findActiveBetween(data.toStudentId, userId);
+
+    if (activeMentorship)
+      return {
+        status: "error",
+        code: 400,
+        message: "You already have an active mentorship with this student. End it before starting a collaboration.",
+      };
+
     const response = await collaborationRepository.send(userId, data);
 
     if (Object.keys(response).length === 0)

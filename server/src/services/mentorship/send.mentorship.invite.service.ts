@@ -2,12 +2,14 @@ import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { SendMentorshipInviteTypes } from "@/schema/mentorship";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
+import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { ENV } from "@/config/env";
 import { notifyPeer } from "@/services/mail/notify";
 import { prisma } from "@/lib/prisma";
 
 export const SendMentorshipInviteService = async (userId: string, data: SendMentorshipInviteTypes) => {
   const mentorshipRepository = new MentorshipRepository();
+  const collaborationRepository = new CollaborationRepository();
   const alumniRepository = new AlumniRepository();
   const studentRepository = new StudentRepository();
 
@@ -16,6 +18,15 @@ export const SendMentorshipInviteService = async (userId: string, data: SendMent
 
     if (alreadyInvited)
       return { status: "error", code: 400, message: "Already sent a mentorship invite" };
+
+    const activeCollaboration = await collaborationRepository.findActiveBetween(data.toAlumniId, userId);
+
+    if (activeCollaboration)
+      return {
+        status: "error",
+        code: 400,
+        message: "You already have an active collaboration with this alumni. End it before requesting mentorship.",
+      };
 
     const response = await mentorshipRepository.send(userId, data);
 

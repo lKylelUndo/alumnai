@@ -1,4 +1,5 @@
 import { CollaborationRepository } from "@/repositories/collaboration.repository";
+import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { AlumniRepository } from "@/repositories/alumni.repository";
 import { StudentRepository } from "@/repositories/student.repository";
 import { AdminRepository } from "@/repositories/admin.repository";
@@ -6,10 +7,12 @@ import { ChatRepository } from "@/repositories/chat.repository";
 import { ProfileRepository } from "@/repositories/profile.repository";
 import { ENV } from "@/config/env";
 import { notifyPeer } from "@/services/mail/notify";
+import { DeclineMentorshipService } from "@/services/mentorship/decline.mentorship.service";
 import { prisma } from "@/lib/prisma";
 
 export const AcceptCollaborationService = async (collaborationId: string) => {
   const collaborationRepository = new CollaborationRepository();
+  const mentorshipRepository = new MentorshipRepository();
   const alumniRepository = new AlumniRepository();
   const studentRepository = new StudentRepository();
   const adminRepository = new AdminRepository();
@@ -17,6 +20,22 @@ export const AcceptCollaborationService = async (collaborationId: string) => {
   const profileRepository = new ProfileRepository();
 
   try {
+    // Fetch the invite first so the pair guard runs before anything mutates.
+    const collaboration = await prisma.collaboration.findUnique({ where: { id: collaborationId } });
+
+    // One ACTIVE relationship per pair: this pending collaboration may only
+    // turn ACTIVE while no ACTIVE mentorship exists between the same users.
+    const activeMentorship = collaboration
+      ? await mentorshipRepository.findActiveBetween(collaboration.toStudentId, collaboration.fromAlumniId)
+      : null;
+
+    if (activeMentorship)
+      return {
+        status: "error",
+        code: 400,
+        message: "An active mentorship already exists between you. End it before accepting this collaboration.",
+      };
+
     const response = await collaborationRepository.accept(collaborationId);
 
     if (!response)
@@ -74,6 +93,27 @@ export const AcceptCollaborationService = async (collaborationId: string) => {
       },
       subject: "Collaboration request accepted",
     });
+
+    // Rival auto-decline: this pair's PENDING mentorship request loses to the
+    // collaboration just accepted. Reuses DeclineMentorshipService — the exact
+    // path the decline endpoint calls — so cache invalidation and both
+    // notifyPeer refreshes behave identically. Best-effort: a failed or absent
+    // rival decline must never fail the already-completed accept.
+    try {
+      const rivalMentorship = await mentorshipRepository.findPendingBetween(
+        response.toStudentId,
+        response.fromAlumniId,
+      );
+
+      if (rivalMentorship) {
+        const decline = await DeclineMentorshipService(rivalMentorship.id, response.fromAlumniId);
+
+        if (decline.status === "error")
+          console.warn("AcceptCollaborationService", "rival mentorship auto-decline failed:", decline.message);
+      }
+    } catch (error) {
+      console.error("AcceptCollaborationService", "rival mentorship auto-decline errored:", error);
+    }
 
     return { status: "success", code: 200, message: "Successfully accept a collaboration" };
   } catch (error) {
