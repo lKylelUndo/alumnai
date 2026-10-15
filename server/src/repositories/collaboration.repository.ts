@@ -58,6 +58,16 @@ export class CollaborationRepository {
     });
   }
 
+  async findActiveBetween(fromAlumniId: string, toStudentId: string) {
+    return await prisma.collaboration.findFirst({
+      where: {
+        fromAlumniId,
+        toStudentId,
+        status: "ACTIVE",
+      },
+    });
+  }
+
   async accept(collaborationId: string) {
     return await prisma.collaboration.update({
       where: { id: collaborationId },

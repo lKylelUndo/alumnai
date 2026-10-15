@@ -21,6 +21,13 @@ export interface ProfileRelationRow {
   subtitle: string | null;
 }
 
+export interface PendingCollaborationInvite {
+  collaborationId: string;
+  fromAlumniId: string;
+  message: string;
+  status: string;
+}
+
 export interface Profile {
   id: string;
   userId: string;
@@ -40,6 +47,7 @@ export interface Profile {
   skills: Skill[];
   certifications: Certification[];
   mentorshipStatus?: "PENDING" | "ACTIVE" | null;
+  pendingCollaborationInvite?: PendingCollaborationInvite | null;
   mentors?: ProfileRelationRow[];
   mentees?: ProfileRelationRow[];
   collaborations?: ProfileRelationRow[];

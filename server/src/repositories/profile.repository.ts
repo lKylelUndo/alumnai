@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 import { RoleType } from "@/generated/prisma/enums";
 import { UpdateProfileInputTypes } from "@/schema/profile";
+import { CollaborationRepository } from "@/repositories/collaboration.repository";
+import { MentorshipRepository } from "@/repositories/mentorship.repository";
 
 export class ProfileRepository {
   /**
@@ -149,16 +151,80 @@ export class ProfileRepository {
           })
         : null;
 
+    const pendingCollaboration =
+      viewer?.role === RoleType.STUDENT
+        ? await prisma.collaboration.findFirst({
+            where: {
+              fromAlumniId: profileId,
+              toStudentId: userIdWhoRequested,
+              status: "PENDING",
+            },
+            select: {
+              id: true,
+              fromAlumniId: true,
+              message_details: true,
+              status: true,
+            },
+          })
+        : null;
+
+    // One ACTIVE relationship per pair: a collab invite needs no ACTIVE
+    // mentorship and a mentorship request needs no ACTIVE collaboration
+    // between the same two users. Mentorship rows run student → alumni and
+    // collaboration rows alumni → student, so resolve each side of the pair
+    // from the two roles before querying. Best-effort: a flag failure must
+    // never fail the profile read.
+    const studentId =
+      viewer?.role === RoleType.STUDENT
+        ? userIdWhoRequested
+        : profile.user?.role === RoleType.STUDENT
+          ? profileId
+          : null;
+    const alumniId =
+      viewer?.role === RoleType.ALUMNI
+        ? userIdWhoRequested
+        : profile.user?.role === RoleType.ALUMNI
+          ? profileId
+          : null;
+
+    let hasActiveMentorship = false;
+    let hasActiveCollaboration = false;
+
+    if (studentId && alumniId) {
+      try {
+        const mentorshipRepository = new MentorshipRepository();
+        const collaborationRepository = new CollaborationRepository();
+        const [activeMentorship, activeCollaboration] = await Promise.all([
+          mentorshipRepository.findActiveBetween(studentId, alumniId),
+          collaborationRepository.findActiveBetween(alumniId, studentId),
+        ]);
+        hasActiveMentorship = activeMentorship !== null;
+        hasActiveCollaboration = activeCollaboration !== null;
+      } catch (error) {
+        console.warn("[ProfileRepository] active relationship flags failed:", error);
+      }
+    }
+
     const profileWithMentorshipStatus = {
       ...profile,
       mentorshipStatus: mentorship?.status ?? null,
       alreadyInvitedCollaboration: alreadyInvitedCollaboration !== null,
+      hasActiveMentorship,
+      hasActiveCollaboration,
       pendingMentorshipRequest: pendingMentorship
         ? {
             mentorshipRecordId: pendingMentorship.id,
             fromStudentId: pendingMentorship.fromStudentId,
             message: pendingMentorship.message_details,
             status: pendingMentorship.status,
+          }
+        : null,
+      pendingCollaborationInvite: pendingCollaboration
+        ? {
+            collaborationId: pendingCollaboration.id,
+            fromAlumniId: pendingCollaboration.fromAlumniId,
+            message: pendingCollaboration.message_details,
+            status: pendingCollaboration.status,
           }
         : null,
     };

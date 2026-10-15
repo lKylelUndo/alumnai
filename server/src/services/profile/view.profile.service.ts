@@ -1,5 +1,6 @@
 import { RoleType } from "@/generated/prisma/enums";
 import { AlumniRepository } from "@/repositories/alumni.repository";
+import { CollaborationRepository } from "@/repositories/collaboration.repository";
 import { MentorshipRepository } from "@/repositories/mentorship.repository";
 import { ProfileRepository } from "@/repositories/profile.repository";
 
@@ -41,6 +42,14 @@ type StudentSourceRow = {
   track: string;
 };
 
+type CollaboratorSourceRow = {
+  fromAlumniId: string;
+  fullName: string;
+  profilePicture: string | null;
+  currentPosition: string | null;
+  companyName: string | null;
+};
+
 // formatStudentCard placeholders — "N/A"/"GENERAL" say nothing about a person.
 const PLACEHOLDER_SUBTITLES = new Set(["N/A", "GENERAL"]);
 
@@ -62,6 +71,16 @@ const mapStudentRow = (row: StudentSourceRow): ProfileRelationRow => ({
     [row.yearLevel, row.track]
       .filter((part) => Boolean(part) && !PLACEHOLDER_SUBTITLES.has(part))
       .join(" • ") || null,
+});
+
+const mapCollaboratorRow = (row: CollaboratorSourceRow): ProfileRelationRow => ({
+  id: row.fromAlumniId,
+  fullName: row.fullName,
+  profilePicture: row.profilePicture ?? null,
+  subtitle:
+    row.currentPosition && row.companyName
+      ? `${row.currentPosition} @ ${row.companyName}`
+      : row.currentPosition || row.companyName || null,
 });
 
 /**
@@ -87,6 +106,7 @@ export const ViewProfileService = async (profileId: string, userIdWhoRequested: 
   const profileRepository = new ProfileRepository();
   const mentorshipRepository = new MentorshipRepository();
   const alumniRepository = new AlumniRepository();
+  const collaborationRepository = new CollaborationRepository();
 
   try {
     const profile = await profileRepository.findById(profileId, userIdWhoRequested);
@@ -97,8 +117,9 @@ export const ViewProfileService = async (profileId: string, userIdWhoRequested: 
     const viewedProfile: ViewedProfile = profile;
     const viewedRole = viewedProfile.user?.role ?? null;
 
-    // Gating: a student only has mentors, an alumni only has mentees and
-    // collaborations — everything else stays [] without touching the repos.
+    // Gating: a student has mentors and collaborations, an alumni has
+    // mentees and collaborations — everything else stays [] without
+    // touching the repos.
     const mentors: ProfileRelationRow[] =
       viewedRole === RoleType.STUDENT
         ? await fetchRelationList("mentors", () =>
@@ -115,7 +136,10 @@ export const ViewProfileService = async (profileId: string, userIdWhoRequested: 
       viewedRole === RoleType.ALUMNI
         ? await fetchRelationList("collaborations", () =>
             alumniRepository.getActiveCollaborations(profileId), mapStudentRow)
-        : [];
+        : viewedRole === RoleType.STUDENT
+          ? await fetchRelationList("collaborations", () =>
+              collaborationRepository.getActiveCollaborations(profileId), mapCollaboratorRow)
+          : [];
 
     return {
       status: "success",
