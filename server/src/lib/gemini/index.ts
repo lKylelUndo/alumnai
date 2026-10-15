@@ -6,6 +6,7 @@ export { recommendStudent } from "@/lib/gemini/recommendStudent"
 export { generateSkillAnalytics, buildLocalSkillAnalytics } from "@/lib/gemini/generateSkillAnalytics"
 export { analyzeGithubSkills } from "@/lib/gemini/analyzeGithubSkills"
 export { generateSkillGapAnalysis } from "@/lib/gemini/skillGapAnalysis"
+export { validateSkillInput } from "@/lib/gemini/validate.skill.input"
 
 export const AVAILABLE_GEMINI_MODELS = [
   "gemini-3.1-pro-preview",
