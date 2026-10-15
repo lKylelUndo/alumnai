@@ -48,6 +48,16 @@ export class MentorshipRepository {
     });
   }
 
+  async findActiveBetween(fromStudentId: string, toAlumniId: string) {
+    return await prisma.mentorship.findFirst({
+      where: {
+        fromStudentId,
+        toAlumniId,
+        status: "ACTIVE",
+      },
+    });
+  }
+
   async getAllInvites(id: string) {
     return await prisma.mentorship.findMany({
       where: { toAlumniId: id },

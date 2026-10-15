@@ -34,6 +34,9 @@ interface ViewProfileClientCmpProps {
 type ViewableProfile = Profile & {
   alreadyInvitedCollaboration: boolean
   pendingMentorshipRequest: PendingMentorshipRequest | null
+  // Fixed contract fields — may be absent on stale payloads, treat as false.
+  hasActiveMentorship?: boolean
+  hasActiveCollaboration?: boolean
 }
 
 const getApiErrorMessage = (error: unknown, fallback: string): string => {
@@ -61,6 +64,7 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
   const [inviteError, setInviteError] = useState<string | null>(null)
 
   const [mentorshipRequestPending, setMentorshipRequestPending] = useState(false)
+  const [collaborationInvitePending, setCollaborationInvitePending] = useState(false)
 
   // Mentors of the viewed student (visitor-safe endpoint — works for alumni,
   // student, and admin viewers alike). Same shape as getMyMentors.
@@ -271,6 +275,36 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
     }
   }
 
+  const handleCollaborationInviteAction = async (action: "ACCEPT" | "DECLINE") => {
+    const invite = profile.pendingCollaborationInvite
+    if (!invite || collaborationInvitePending) return
+
+    setCollaborationInvitePending(true)
+    try {
+      const response =
+        action === "ACCEPT"
+          ? await collaborationService.acceptCollab({
+              collaborationId: invite.collaborationId,
+            })
+          : await collaborationService.declineCollab({
+              collaborationId: invite.collaborationId,
+            })
+
+      if (response.status === "success") {
+        toast.success(
+          action === "ACCEPT"
+            ? "Collaboration invite accepted"
+            : "Collaboration invite declined"
+        )
+        await refreshProfile()
+      }
+    } catch (error) {
+      console.error("Failed to update collaboration invite:", error)
+    } finally {
+      setCollaborationInvitePending(false)
+    }
+  }
+
   const openInviteModal = () => {
     setInviteError(null)
     setInviteSuccess(false)
@@ -304,12 +338,18 @@ export default function ViewProfileClientCmp({ userId: propUserId }: ViewProfile
               isStudent={isStudent}
               isAlumni={isAlumni}
               alreadyInvited={profile.alreadyInvitedCollaboration}
+              hasActiveMentorship={profile.hasActiveMentorship === true}
+              hasActiveCollaboration={profile.hasActiveCollaboration === true}
               mentorshipStatus={isAlumni ? profile.mentorshipStatus : null}
               pendingMentorshipRequest={profile.pendingMentorshipRequest}
               requestActionPending={mentorshipRequestPending}
+              pendingCollaborationInvite={profile.pendingCollaborationInvite}
+              collabActionPending={collaborationInvitePending}
               onOpenInviteModal={openInviteModal}
               onAcceptMentorshipRequest={() => handleMentorshipRequestAction("ACCEPT")}
               onRejectMentorshipRequest={() => handleMentorshipRequestAction("REJECT")}
+              onAcceptCollaborationInvite={() => handleCollaborationInviteAction("ACCEPT")}
+              onDeclineCollaborationInvite={() => handleCollaborationInviteAction("DECLINE")}
             />
           </div>
 

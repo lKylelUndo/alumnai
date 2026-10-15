@@ -89,7 +89,7 @@ export default function RequestAlumniUpgradeDialog({ open, onOpenChange }: Reque
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 py-5">
+        <div className="min-w-0 overflow-hidden px-6 py-5">
           {success ? (
             <div className="flex flex-col items-center gap-3 py-6">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">

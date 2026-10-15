@@ -4,7 +4,7 @@ import { Profile, ProfileRelationRow } from "@/lib/types/profile"
 import { Card } from "@/components/ui/card"
 import Certifications from "@/components/common/layout/Certifications"
 import ProfileRecognitionsCard from "./ProfileRecognitionsCard"
-import { Briefcase, LinkIcon, User, Building2, Mail, CheckCircle, GraduationCap, Sparkles, Users, Handshake, ChevronLeft, ChevronRight } from "lucide-react"
+import { Briefcase, LinkIcon, User, Building2, Mail, GraduationCap, Sparkles, Users, Handshake, ChevronLeft, ChevronRight } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import ProfileCardHeader from "./ProfileCardHeader"
 import { getProficiencyColor } from "@/utils/skill"
@@ -367,17 +367,7 @@ const ViewProfileServerCmp = ({ profile, showStudentId = false }: ViewProfilePro
               <ProfileRecognitionsCard recognitions={profile.user?.receivedRecognitions} />
             )}
             {isStudent && (
-              <Card className="rounded-2xl p-6">
-                <ProfileCardHeader
-                  icon={CheckCircle}
-                  title="Available for Collaboration"
-                  description={
-                    profile.isAvailableForCollaboration === false
-                      ? "Not accepting collaboration invites"
-                      : "Open to collaboration invites"
-                  }
-                />
-              </Card>
+              <RelationCard icon={Handshake} title="Current Collaborators" rows={profile.collaborations} />
             )}
             {isStudent && (
               <RelationCard icon={Users} title="Current Mentors" rows={profile.mentors} />
