@@ -1,6 +1,17 @@
 import { AVAILABLE_GEMINI_MODELS, genAI } from ".";
 import { RecommendedStudentTypes } from "@/types/student";
 
+/**
+ * recommendStudent — Step 6 of the smart-search pipeline.
+ *
+ * Role: author of `contextScore` (1.0–5.0) + `reason` ONLY. It must NOT return
+ * a final score — the final number is computed deterministically in code by
+ * computeFinalScore (50/50 average of heuristic base and context as percentages).
+ *
+ * Reads per candidate: matched skill names/levels/descriptions + one bio line.
+ * Judges: depth of practical context (production work, projects, tooling) vs the query.
+ * Returns: [{ id, contextScore, reason }]. Empty input → [] (no wasted call).
+ */
 export async function recommendStudent(
   rawSearch: string,
   extractedSkills: string[],
@@ -23,7 +34,14 @@ SCORING GUIDELINES:
      * 1.0 - 2.0: Basic or superficial mention with minimal practical context.
      * 2.1 - 3.5: Moderate relevance with demonstrated project usage or coursework.
      * 3.6 - 5.0: High relevance with deep practical, hands-on, or specialized contextual alignment with the query.
-3. Final Score: Combine candidate's base qualifications with the contextual relevance bonus (capped at 100).
+3. Context score ONLY (1.0 to 5.0):
+   - Review each candidate's skill 'description', project background, and 'bio' against the User Query.
+   - Evaluate the depth of practical context (e.g., production experience, relevant projects, specific tooling, architectural work).
+   - Assign a Context Relevance score between 1.0 and 5.0 (can use decimals like 1.2, 2.5, 3.8, up to 5.0):
+      * 1.0 - 2.0: Basic or superficial mention with minimal practical context.
+      * 2.1 - 3.5: Moderate relevance with demonstrated project usage or coursework.
+      * 3.6 - 5.0: High relevance with deep practical, hands-on, or specialized contextual alignment with the query.
+   - Do NOT compute a final score — return contextScore and reason only. The final score is computed deterministically in code (see computeFinalScore).
 
 RULES:
 - Use ONLY the candidates provided below.
@@ -39,11 +57,10 @@ ${JSON.stringify(extractedSkills)}
 Candidates Data:
 ${JSON.stringify(data)}
 
-Return this exact JSON structure:
+ Return this exact JSON structure:
 [
   {
     "id": "candidate-id",
-    "score": 92.5,
     "contextScore": 3.8,
     "reason": "Explain briefly how their skill context and experience specifically align with the query."
   }
